@@ -1,13 +1,15 @@
 import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { Download, Plus, Search } from 'lucide-react'
+import { Download, Plus, Search, X } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { StatusBadge } from '@/admin/components/StatusBadge'
 import { DOC_TYPE_LABELS, formatAED } from '@/admin/utils/documentCalc'
 import { calcTotals } from '@/admin/utils/documentCalc'
 import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
 import type { AlSururDocument, DocType, DocStatus } from '@/admin/types'
+
+const STATUS_OPTIONS: DocStatus[] = ['draft', 'sent', 'paid', 'overdue']
 
 async function fetchDocuments(): Promise<(AlSururDocument & { total: number })[]> {
   const { data, error } = await supabase
@@ -23,10 +25,12 @@ async function fetchDocuments(): Promise<(AlSururDocument & { total: number })[]
 }
 
 export function DocumentsListPage() {
+  const queryClient = useQueryClient()
   const { data: documents, isLoading } = useQuery({ queryKey: ['admin-documents'], queryFn: fetchDocuments })
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<DocType | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<DocStatus | 'all'>('all')
+  const [selected, setSelected] = useState<Set<number>>(new Set())
 
   const filtered = useMemo(() => {
     if (!documents) return []
@@ -39,13 +43,34 @@ export function DocumentsListPage() {
     })
   }, [documents, search, typeFilter, statusFilter])
 
-  const exportExcel = () => {
+  const toggleSelected = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const allFilteredSelected = filtered.length > 0 && filtered.every((d) => selected.has(d.id))
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) setSelected(new Set())
+    else setSelected(new Set(filtered.map((d) => d.id)))
+  }
+
+  const bulkUpdateStatus = async (status: DocStatus) => {
+    await supabase.from('documents').update({ status }).in('id', [...selected])
+    queryClient.invalidateQueries({ queryKey: ['admin-documents'] })
+    setSelected(new Set())
+  }
+
+  const exportRows = (rows: (AlSururDocument & { total: number })[], label: string) => {
     exportStyledExcel({
       title: 'Al Surur — Documents Export',
-      subtitle: `${filtered.length} documents · Generated ${new Date().toLocaleString()}`,
+      subtitle: `${rows.length} documents · Generated ${new Date().toLocaleString()}`,
       sheetName: 'Documents',
-      filename: `al-surur-documents-${new Date().toISOString().slice(0, 10)}`,
-      rows: filtered,
+      filename: `al-surur-documents-${label}-${new Date().toISOString().slice(0, 10)}`,
+      rows,
       columns: [
         { header: 'Number', value: (d) => d.doc_number, width: 16 },
         { header: 'Type', value: (d) => DOC_TYPE_LABELS[d.doc_type], width: 16 },
@@ -66,7 +91,7 @@ export function DocumentsListPage() {
         </div>
         <div className="flex gap-3">
           <button
-            onClick={exportExcel}
+            onClick={() => exportRows(filtered, 'all')}
             className="flex items-center gap-2 rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy-light"
           >
             <Download size={14} /> Export Excel
@@ -97,14 +122,45 @@ export function DocumentsListPage() {
         </select>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as DocStatus | 'all')} className="rounded-xl border border-navy/10 bg-white px-3 py-2 text-sm outline-none focus:border-primary">
           <option value="all">All statuses</option>
-          {['draft', 'sent', 'paid', 'overdue'].map((s) => <option key={s} value={s}>{s}</option>)}
+          {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
+
+      {selected.size > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-navy px-5 py-3 text-white">
+          <span className="text-sm font-semibold">{selected.size} selected</span>
+          <select
+            defaultValue=""
+            onChange={(e) => e.target.value && bulkUpdateStatus(e.target.value as DocStatus)}
+            className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm outline-none"
+          >
+            <option value="" disabled>Set status to...</option>
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s} className="text-navy">{s}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => exportRows(filtered.filter((d) => selected.has(d.id)), 'selected')}
+            className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-sm font-semibold hover:bg-white/20"
+          >
+            <Download size={13} /> Export Selected
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="ms-auto flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
+          >
+            <X size={14} /> Clear
+          </button>
+        </div>
+      )}
 
       <div className="mt-6 overflow-hidden rounded-2xl bg-white ring-1 ring-navy/5">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-navy/5 text-xs uppercase tracking-widest text-gray">
+              <th className="w-10 px-5 py-3">
+                <input type="checkbox" checked={allFilteredSelected} onChange={toggleSelectAll} className="h-4 w-4 rounded border-navy/20" />
+              </th>
               <th className="px-5 py-3 text-start font-semibold">Number</th>
               <th className="px-5 py-3 text-start font-semibold">Type</th>
               <th className="px-5 py-3 text-start font-semibold">Customer</th>
@@ -116,6 +172,14 @@ export function DocumentsListPage() {
           <tbody>
             {filtered.map((d) => (
               <tr key={d.id} className="border-b border-navy/5 last:border-0 hover:bg-bg">
+                <td className="px-5 py-4">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(d.id)}
+                    onChange={() => toggleSelected(d.id)}
+                    className="h-4 w-4 rounded border-navy/20"
+                  />
+                </td>
                 <td className="px-5 py-4">
                   <Link to={`/dashboard/documents/${d.id}`} className="font-semibold text-primary" dir="ltr">{d.doc_number}</Link>
                 </td>

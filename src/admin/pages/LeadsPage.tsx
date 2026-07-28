@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Download, Search } from 'lucide-react'
+import { Download, Search, X } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { StatusBadge } from '@/admin/components/StatusBadge'
 import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
@@ -65,6 +65,7 @@ export function LeadsPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all')
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
 
   const filtered = useMemo(() => {
     if (!leads) return []
@@ -84,13 +85,41 @@ export function LeadsPage() {
     queryClient.invalidateQueries({ queryKey: ['admin-leads'] })
   }
 
-  const exportExcel = () => {
+  const bulkUpdateStatus = async (status: LeadStatus) => {
+    const selectedLeads = filtered.filter((l) => selected.has(l.id))
+    const quoteIds = selectedLeads.filter((l) => l.source === 'quote').map((l) => Number(l.id.split('-')[1]))
+    const contactIds = selectedLeads.filter((l) => l.source === 'contact').map((l) => Number(l.id.split('-')[1]))
+
+    await Promise.all([
+      quoteIds.length > 0 ? supabase.from('quote_requests').update({ status }).in('id', quoteIds) : Promise.resolve(),
+      contactIds.length > 0 ? supabase.from('contact_messages').update({ status }).in('id', contactIds) : Promise.resolve(),
+    ])
+    queryClient.invalidateQueries({ queryKey: ['admin-leads'] })
+    setSelected(new Set())
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const allFilteredSelected = filtered.length > 0 && filtered.every((l) => selected.has(l.id))
+  const toggleSelectAll = () => {
+    if (allFilteredSelected) setSelected(new Set())
+    else setSelected(new Set(filtered.map((l) => l.id)))
+  }
+
+  const exportRows = (rows: UnifiedLead[], label: string) => {
     exportStyledExcel({
       title: 'Al Surur — Leads Export',
-      subtitle: `${filtered.length} leads · Generated ${new Date().toLocaleString()}`,
+      subtitle: `${rows.length} leads · Generated ${new Date().toLocaleString()}`,
       sheetName: 'Leads',
-      filename: `al-surur-leads-${new Date().toISOString().slice(0, 10)}`,
-      rows: filtered,
+      filename: `al-surur-leads-${label}-${new Date().toISOString().slice(0, 10)}`,
+      rows,
       columns: [
         { header: 'Name', value: (l) => l.name, width: 22 },
         { header: 'Company', value: (l) => l.company ?? '—', width: 24 },
@@ -112,7 +141,7 @@ export function LeadsPage() {
           <p className="mt-1 text-sm text-gray">Quote requests and contact messages from the website.</p>
         </div>
         <button
-          onClick={exportExcel}
+          onClick={() => exportRows(filtered, 'all')}
           className="flex items-center gap-2 rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy-light"
         >
           <Download size={14} /> Export Excel
@@ -141,10 +170,41 @@ export function LeadsPage() {
         </select>
       </div>
 
+      {selected.size > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-navy px-5 py-3 text-white">
+          <span className="text-sm font-semibold">{selected.size} selected</span>
+          <select
+            defaultValue=""
+            onChange={(e) => e.target.value && bulkUpdateStatus(e.target.value as LeadStatus)}
+            className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-sm outline-none"
+          >
+            <option value="" disabled>Set status to...</option>
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s} className="text-navy">{s}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => exportRows(filtered.filter((l) => selected.has(l.id)), 'selected')}
+            className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-sm font-semibold hover:bg-white/20"
+          >
+            <Download size={13} /> Export Selected
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="ms-auto flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
+          >
+            <X size={14} /> Clear
+          </button>
+        </div>
+      )}
+
       <div className="mt-6 overflow-hidden rounded-2xl bg-white ring-1 ring-navy/5">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-navy/5 text-start text-xs uppercase tracking-widest text-gray">
+              <th className="w-10 px-5 py-3">
+                <input type="checkbox" checked={allFilteredSelected} onChange={toggleSelectAll} className="h-4 w-4 rounded border-navy/20" />
+              </th>
               <th className="px-5 py-3 text-start font-semibold">Name</th>
               <th className="px-5 py-3 text-start font-semibold">Contact</th>
               <th className="px-5 py-3 text-start font-semibold">Interest</th>
@@ -155,25 +215,30 @@ export function LeadsPage() {
           <tbody>
             {filtered.map((lead) => (
               <Fragment key={lead.id}>
-                <tr
-                  onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}
-                  className="cursor-pointer border-b border-navy/5 last:border-0 hover:bg-bg"
-                >
-                  <td className="px-5 py-4">
+                <tr className="border-b border-navy/5 last:border-0 hover:bg-bg">
+                  <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selected.has(lead.id)}
+                      onChange={() => toggleSelected(lead.id)}
+                      className="h-4 w-4 rounded border-navy/20"
+                    />
+                  </td>
+                  <td className="cursor-pointer px-5 py-4" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>
                     <p className="font-semibold text-navy">{lead.name}</p>
                     {lead.company && <p className="text-xs text-gray">{lead.company}</p>}
                   </td>
-                  <td className="px-5 py-4 text-xs text-gray" dir="ltr">
+                  <td className="cursor-pointer px-5 py-4 text-xs text-gray" dir="ltr" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>
                     <p>{lead.email}</p>
                     {lead.phone && <p>{lead.phone}</p>}
                   </td>
-                  <td className="px-5 py-4 text-gray">{lead.interest ?? '—'}</td>
-                  <td className="px-5 py-4"><StatusBadge status={lead.status} /></td>
-                  <td className="px-5 py-4 text-xs text-gray">{new Date(lead.created_at).toLocaleDateString()}</td>
+                  <td className="cursor-pointer px-5 py-4 text-gray" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>{lead.interest ?? '—'}</td>
+                  <td className="cursor-pointer px-5 py-4" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}><StatusBadge status={lead.status} /></td>
+                  <td className="cursor-pointer px-5 py-4 text-xs text-gray" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>{new Date(lead.created_at).toLocaleDateString()}</td>
                 </tr>
                 {expanded === lead.id && (
                   <tr className="border-b border-navy/5 bg-bg/60">
-                    <td colSpan={5} className="px-5 py-4">
+                    <td colSpan={6} className="px-5 py-4">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-widest text-gray">Message</p>

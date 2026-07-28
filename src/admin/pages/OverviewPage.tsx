@@ -4,6 +4,15 @@ import { DollarSign, Inbox, FileText, TrendingUp, ArrowUpRight, AlertTriangle } 
 import { supabase } from '@/services/supabase'
 import { formatAED } from '@/admin/utils/documentCalc'
 import { StatusBadge } from '@/admin/components/StatusBadge'
+import { RevenueTrendChart } from '@/admin/components/charts/RevenueTrendChart'
+import { StatusBreakdownChart } from '@/admin/components/charts/StatusBreakdownChart'
+
+const STATUS_CHART_COLORS: Record<string, string> = {
+  draft: '#64748B',
+  sent: '#2563EB',
+  paid: '#059669',
+  overdue: '#DC2626',
+}
 
 async function fetchOverview() {
   const [documentsRes, itemsRes, leadsRes, contactsRes, productsRes] = await Promise.all([
@@ -44,7 +53,41 @@ async function fetchOverview() {
 
   const newLeadsCount = leads.filter((l) => l.status === 'new').length + contacts.filter((c) => c.status === 'new').length
 
-  return { documents: documents.slice(0, 6), revenue, outstanding, conversionRate, topCustomers, newLeadsCount, leads: leads.slice(0, 5), lowStockProducts }
+  // Revenue trend: paid documents' totals, bucketed by month, last 6 months
+  const now = new Date()
+  const monthBuckets: { key: string; label: string }[] = Array.from({ length: 6 }).map((_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
+    return { key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString('en-US', { month: 'short' }) }
+  })
+  const revenueByMonth = new Map<string, number>(monthBuckets.map((m) => [m.key, 0]))
+  for (const d of paidDocs) {
+    const date = new Date(d.doc_date)
+    const key = `${date.getFullYear()}-${date.getMonth()}`
+    if (revenueByMonth.has(key)) {
+      revenueByMonth.set(key, (revenueByMonth.get(key) ?? 0) + (totalsByDoc.get(d.id) ?? 0))
+    }
+  }
+  const revenueTrend = monthBuckets.map((m) => ({ label: m.label, value: revenueByMonth.get(m.key) ?? 0 }))
+
+  const statusBreakdown = ['draft', 'sent', 'paid', 'overdue'].map((status) => ({
+    key: status,
+    label: status.charAt(0).toUpperCase() + status.slice(1),
+    value: documents.filter((d) => d.status === status).length,
+    color: STATUS_CHART_COLORS[status],
+  }))
+
+  return {
+    documents: documents.slice(0, 6),
+    revenue,
+    outstanding,
+    conversionRate,
+    topCustomers,
+    newLeadsCount,
+    leads: leads.slice(0, 5),
+    lowStockProducts,
+    revenueTrend,
+    statusBreakdown,
+  }
 }
 
 export function OverviewPage() {
@@ -72,6 +115,22 @@ export function OverviewPage() {
             <p className="mt-3 font-display text-2xl font-bold text-navy">{isLoading ? '...' : c.value}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="rounded-2xl bg-white p-6 ring-1 ring-navy/5 lg:col-span-2">
+          <h2 className="font-display text-lg font-semibold text-navy">Revenue — Last 6 Months</h2>
+          <div className="mt-4">
+            {data ? <RevenueTrendChart data={data.revenueTrend} /> : <div className="h-[220px] animate-pulse rounded-xl bg-bg" />}
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white p-6 ring-1 ring-navy/5">
+          <h2 className="font-display text-lg font-semibold text-navy">Documents by Status</h2>
+          <div className="mt-5">
+            {data ? <StatusBreakdownChart data={data.statusBreakdown} /> : <div className="h-[150px] animate-pulse rounded-xl bg-bg" />}
+          </div>
+        </div>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">

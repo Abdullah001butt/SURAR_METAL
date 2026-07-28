@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { ArrowUpRight } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
+import { TiltCard } from '@/components/ui/TiltCard'
 import { productCategories } from '@/data/products'
 
 export function ProductCategories() {
@@ -28,27 +29,29 @@ export function ProductCategories() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
               whileHover={{ y: -8 }}
-              className="group relative overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-navy/5"
+              className="group relative"
             >
-              <Link to={product.href}>
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={t(`productsData.${product.id}.title`)}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-display text-xl font-semibold text-navy">{t(`productsData.${product.id}.title`)}</h3>
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white rtl:-scale-x-100">
-                      <ArrowUpRight size={16} />
-                    </span>
+              <TiltCard maxTilt={6} className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-navy/5">
+                <Link to={product.href}>
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={product.image}
+                      alt={t(`productsData.${product.id}.title`)}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-gray">{t(`productsData.${product.id}.description`)}</p>
-                </div>
-              </Link>
+                  <div className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-display text-xl font-semibold text-navy">{t(`productsData.${product.id}.title`)}</h3>
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white rtl:-scale-x-100">
+                        <ArrowUpRight size={16} />
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-gray">{t(`productsData.${product.id}.description`)}</p>
+                  </div>
+                </Link>
+              </TiltCard>
             </motion.div>
           ))}
         </div>

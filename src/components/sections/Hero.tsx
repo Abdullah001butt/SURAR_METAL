@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronRight, ShieldCheck, Award, Truck, Factory } from 'lucide-react'
@@ -18,17 +19,26 @@ interface HeroProps {
 
 export function Hero({ onRequestQuote }: HeroProps) {
   const { t } = useTranslation()
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '22%'])
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.22])
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-navy pt-20">
-      <div
+    <section ref={sectionRef} className="relative flex min-h-screen items-center overflow-hidden bg-navy pt-20">
+      <motion.div
         className="absolute inset-0 bg-cover bg-center opacity-40"
-        style={{ backgroundImage: `url(${heroImg})` }}
+        style={{ backgroundImage: `url(${heroImg})`, y: bgY, scale: bgScale }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/50 rtl:bg-gradient-to-l" />
       <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/40" />
 
-      <div className="container-px relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-16 py-32 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="container-px relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-16 py-32 lg:grid-cols-[1.1fr_0.9fr] lg:items-center"
+      >
         <div>
           <motion.span
             initial={{ opacity: 0, y: 16 }}
@@ -95,7 +105,7 @@ export function Hero({ onRequestQuote }: HeroProps) {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
