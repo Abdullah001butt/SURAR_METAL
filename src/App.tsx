@@ -1,0 +1,82 @@
+import { lazy, Suspense } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Layout } from '@/components/layout/Layout'
+import { ScrollToTop } from '@/components/layout/ScrollToTop'
+import { AuthGuard } from '@/admin/components/AuthGuard'
+
+const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })))
+const ProductsPage = lazy(() => import('@/pages/ProductsPage').then((m) => ({ default: m.ProductsPage })))
+const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage })))
+const IndustriesPage = lazy(() => import('@/pages/IndustriesPage').then((m) => ({ default: m.IndustriesPage })))
+const ProjectsPage = lazy(() => import('@/pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })))
+const AboutPage = lazy(() => import('@/pages/AboutPage').then((m) => ({ default: m.AboutPage })))
+const BlogPage = lazy(() => import('@/pages/BlogPage').then((m) => ({ default: m.BlogPage })))
+const ContactPage = lazy(() => import('@/pages/ContactPage').then((m) => ({ default: m.ContactPage })))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
+
+const LoginPage = lazy(() => import('@/admin/pages/LoginPage').then((m) => ({ default: m.LoginPage })))
+const AdminLayout = lazy(() => import('@/admin/components/AdminLayout').then((m) => ({ default: m.AdminLayout })))
+const OverviewPage = lazy(() => import('@/admin/pages/OverviewPage').then((m) => ({ default: m.OverviewPage })))
+const LeadsPage = lazy(() => import('@/admin/pages/LeadsPage').then((m) => ({ default: m.LeadsPage })))
+const CustomersPage = lazy(() => import('@/admin/pages/CustomersPage').then((m) => ({ default: m.CustomersPage })))
+const ProductCatalogPage = lazy(() => import('@/admin/pages/ProductCatalogPage').then((m) => ({ default: m.ProductCatalogPage })))
+const DocumentsListPage = lazy(() => import('@/admin/pages/DocumentsListPage').then((m) => ({ default: m.DocumentsListPage })))
+const DocumentEditorPage = lazy(() => import('@/admin/pages/DocumentEditorPage').then((m) => ({ default: m.DocumentEditorPage })))
+const ReportsPage = lazy(() => import('@/admin/pages/ReportsPage').then((m) => ({ default: m.ReportsPage })))
+
+const queryClient = new QueryClient()
+
+function PageFallback() {
+  return (
+    <div className="grid min-h-screen place-items-center bg-bg">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route path="dashboard/login" element={<LoginPage />} />
+            <Route
+              path="dashboard"
+              element={
+                <AuthGuard>
+                  <AdminLayout />
+                </AuthGuard>
+              }
+            >
+              <Route index element={<OverviewPage />} />
+              <Route path="leads" element={<LeadsPage />} />
+              <Route path="customers" element={<CustomersPage />} />
+              <Route path="products" element={<ProductCatalogPage />} />
+              <Route path="documents" element={<DocumentsListPage />} />
+              <Route path="documents/new" element={<DocumentEditorPage />} />
+              <Route path="documents/:id" element={<DocumentEditorPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+            </Route>
+
+            <Route element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="products" element={<ProductsPage />} />
+              <Route path="products/:slug" element={<ProductDetailPage />} />
+              <Route path="industries" element={<IndustriesPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="blog" element={<BlogPage />} />
+              <Route path="contact" element={<ContactPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </QueryClientProvider>
+  )
+}
+
+export default App

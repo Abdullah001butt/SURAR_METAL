@@ -1,0 +1,273 @@
+{
+  "nav": {
+    "products": "产品",
+    "industries": "行业",
+    "projects": "项目案例",
+    "about": "关于我们",
+    "blog": "博客",
+    "contact": "联系我们",
+    "requestQuote": "获取报价",
+    "megaProducts": {
+      "racking": "货架系统",
+      "storage": "存储与置物架"
+    },
+    "megaIndustries": {
+      "weServe": "服务行业",
+      "specialized": "专业领域"
+    }
+  },
+  "hero": {
+    "badge": "阿联酋阿治曼 · 始于2008年",
+    "titleLine1": "仓储存储",
+    "titleLine2": "解决方案",
+    "titleHighlight": "为高效性能而生。",
+    "description": "我们为阿联酋各地的仓库、工厂和物流企业设计、制造并安装工业货架、置物架与阁楼系统。",
+    "ctaPrimary": "获取报价",
+    "ctaSecondary": "探索产品",
+    "cards": {
+      "experience": "18年以上行业经验",
+      "projects": "已完成500多个项目",
+      "installation": "覆盖阿联酋全境安装",
+      "quality": "工业级品质保证"
+    }
+  },
+  "trustedClients": {
+    "heading": "深受阿联酋知名企业信赖"
+  },
+  "productCategories": {
+    "eyebrow": "我们的产品",
+    "title": "为规模化发展而设计的存储系统。",
+    "description": "从选择性托盘货架到完整的阁楼平台——每一套系统都根据您的负载、布局与吞吐量量身设计。"
+  },
+  "statistics": {
+    "eyebrow": "为何选择 Al Surur",
+    "title": "卓越工程,大规模交付。"
+  },
+  "industries": {
+    "eyebrow": "我们服务的行业",
+    "title": "为您的行业量身定制的解决方案。",
+    "description": "每个行业的运作方式各不相同。我们的存储系统专为满足您独特的运营需求而设计。"
+  },
+  "projects": {
+    "eyebrow": "精选项目",
+    "title": "500多个经久耐用的项目。",
+    "description": "我们在阿联酋各地为仓库、工厂和物流中心带来的真实成果。"
+  },
+  "process": {
+    "eyebrow": "我们的流程",
+    "title": "从咨询到全面安装。"
+  },
+  "testimonials": {
+    "eyebrow": "客户评价",
+    "title": "深受阿联酋各地运营团队信赖。"
+  },
+  "faq": {
+    "eyebrow": "常见问题",
+    "title": "常见问题解答。"
+  },
+  "ctaBanner": {
+    "title": "需要仓储存储解决方案吗?",
+    "description": "让我们携手打造您的仓库——从咨询到全面安装。",
+    "button": "获取免费报价"
+  },
+  "footer": {
+    "description": "我们为阿联酋各地提供优质仓储存储解决方案——包括托盘货架、置物架、阁楼地板及为高性能而生的工业设备。",
+    "company": "公司",
+    "products": "产品",
+    "contact": "联系方式",
+    "aboutUs": "关于我们",
+    "projects": "项目案例",
+    "blog": "博客",
+    "contactLink": "联系我们",
+    "rights": "版权所有。",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "quoteModal": {
+    "title": "获取报价",
+    "description": "告诉我们您的项目需求,我们会尽快与您联系。",
+    "exitBadge": "免费现场勘查",
+    "exitTitle": "离开前,先聊聊您的存储需求。",
+    "exitDescription": "获得我们工程团队提供的免费现场勘查与无约束报价。",
+    "fullName": "姓名",
+    "company": "公司名称",
+    "email": "电子邮箱",
+    "phone": "电话号码",
+    "selectProduct": "选择产品",
+    "message": "项目详情(选填)",
+    "submit": "提交请求",
+    "sending": "发送中...",
+    "successTitle": "已收到您的请求",
+    "successDescription": "我们的团队将在24小时内与您联系。",
+    "close": "关闭",
+    "error": "发送请求时出现问题,请重试或直接致电我们。",
+    "errors": {
+      "name": "请输入您的姓名",
+      "company": "请输入您的公司名称",
+      "email": "请输入有效的电子邮箱地址",
+      "phone": "请输入有效的电话号码",
+      "product": "请选择一个产品"
+    }
+  },
+  "contactPage": {
+    "eyebrow": "联系我们",
+    "title": "聊聊您的仓库项目。",
+    "description": "联系我们,团队将在24小时内回复。",
+    "getInTouch": "联系方式",
+    "fullName": "姓名",
+    "email": "电子邮箱",
+    "messagePlaceholder": "我们能为您做些什么?",
+    "send": "发送消息",
+    "sending": "发送中...",
+    "successTitle": "消息已发送",
+    "successDescription": "我们会尽快与您联系。",
+    "error": "发送消息时出现问题,请重试或直接致电我们。",
+    "errors": {
+      "name": "请输入您的姓名",
+      "email": "请输入有效的电子邮箱地址",
+      "message": "请输入消息内容(至少10个字符)"
+    }
+  },
+  "stickyMobileCta": {
+    "callNow": "立即致电",
+    "requestQuote": "获取报价"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "您访问的页面不存在或已被移动。",
+    "backHome": "返回首页"
+  },
+  "productsPage": {
+    "eyebrow": "产品",
+    "title": "经久耐用的工业存储系统。",
+    "description": "探索我们全系列的货架、置物架与仓储设备解决方案。"
+  },
+  "productDetail": {
+    "eyebrow": "产品",
+    "whyChoose": "为何选择该系统",
+    "features": [
+      "符合阿联酋工业负载标准",
+      "为您的场地量身定制设计",
+      "认证安装团队",
+      "持续的检查与维护支持"
+    ]
+  },
+  "industriesPage": {
+    "eyebrow": "行业",
+    "title": "围绕您的行业打造的存储解决方案。",
+    "description": "从仓储物流到医疗保健,我们设计的系统始终贴合您的运营需求。"
+  },
+  "projectsPage": {
+    "eyebrow": "项目案例",
+    "title": "阿联酋全境500多个安装项目。",
+    "description": "我们参与建设的仓库、工厂与配送中心案例集锦。"
+  },
+  "aboutPage": {
+    "eyebrow": "关于 Al Surur",
+    "title": "18年以上仓储性能工程经验。",
+    "description": "自2008年成立以来,Al Surur General Store Equipment Trading LLC 一直为阿联酋各地的仓库、工厂及物流公司设计、制造并安装工业存储系统。",
+    "body": "我们总部位于阿治曼,工程师与安装团队已完成超过500个项目——从单排置物架系统到价值数百万迪拉姆的政府仓储合同。我们将精密工程与高效可靠的执行相结合,帮助客户充分利用每一平方米的场地空间。"
+  },
+  "blogPage": {
+    "eyebrow": "博客",
+    "title": "关于仓库设计与存储的深度见解。"
+  },
+  "productsData": {
+    "pallet-racking": { "title": "托盘货架", "description": "选择性、驶入式与后推式货架,专为高密度托盘存储而设计。" },
+    "shelving-systems": { "title": "置物架系统", "description": "模块化长跨距与无螺栓置物架,适用于快周转库存与档案存储。" },
+    "mezzanine-floors": { "title": "阁楼地板", "description": "结构钢平台,在不扩大建筑占地面积的前提下成倍增加可用楼面面积。" },
+    "cantilever-racks": { "title": "悬臂式货架", "description": "臂式货架,专为管材、木材等长条或不规则货物设计。" },
+    "industrial-lockers": { "title": "工业储物柜", "description": "坚固耐用的钢制储物柜,适用于严苛环境下的员工及资产安全存放。" },
+    "warehouse-trolleys": { "title": "仓储手推车", "description": "重型手推车与运输车,专为提升厂内物料流转效率而设计。" }
+  },
+  "industriesData": {
+    "warehousing": "仓储物流",
+    "retail": "零售业",
+    "manufacturing": "制造业",
+    "healthcare": "医疗保健",
+    "food": "食品饮料",
+    "automotive": "汽车行业",
+    "logistics": "物流运输"
+  },
+  "statisticsData": {
+    "years": "年行业经验",
+    "projects": "个已交付项目",
+    "quality": "品质承诺",
+    "support": "全天候支持"
+  },
+  "processData": {
+    "consultation": { "title": "咨询沟通", "description": "了解您的运营模式、吞吐量与存储目标。" },
+    "survey": { "title": "现场勘查", "description": "我们的工程师评估您场地的负载、布局与通道条件。" },
+    "design": { "title": "方案设计", "description": "为最大化存储容量量身定制货架与布局图纸。" },
+    "manufacturing": { "title": "生产制造", "description": "按工业标准精密加工的钢结构产品。" },
+    "installation": { "title": "现场安装", "description": "认证团队安装施工,将对运营的干扰降至最低。" },
+    "support": { "title": "后续支持", "description": "持续提供检查、维护与扩展支持服务。" }
+  },
+  "projectsData": {
+    "p1": {
+      "title": "国家物流枢纽",
+      "category": "托盘货架",
+      "location": "迪拜杰贝阿里",
+      "challenge": "一家第三方物流运营商需要在现有12,000平方米厂房内将SKU容量翻倍,且不扩大建筑占地面积。",
+      "result": "在9条通道内部署高密度选择性与驶入式货架,设计充分考虑叉车转弯半径与消防间距要求。",
+      "metrics": [{ "value": "+42%", "label": "存储容量" }, { "value": "6周", "label": "安装周期" }, { "value": "9", "label": "货架通道" }]
+    },
+    "p2": {
+      "title": "零售配送中心",
+      "category": "置物架系统",
+      "location": "阿治曼",
+      "challenge": "快周转零售商品此前一直堆放在地面上,拣货效率低下且货品易受损。",
+      "result": "安装了配备条码标签的模块化长跨距置物架,全面重构了拣货动线。",
+      "metrics": [{ "value": "+35%", "label": "拣货速度" }, { "value": "1,200", "label": "SKU库位数" }]
+    },
+    "p3": {
+      "title": "冷链仓储设施",
+      "category": "阁楼地板",
+      "location": "沙迦",
+      "challenge": "一楼冷藏存储空间已达饱和,且无可用土地进行水平扩建。",
+      "result": "设计建造了可承载托盘荷载的结构钢阁楼,新增了完整的第二存储层。",
+      "metrics": [{ "value": "+2,400 平方米", "label": "新增可用面积" }, { "value": "5周", "label": "安装周期" }]
+    },
+    "p4": {
+      "title": "钢管存储堆场",
+      "category": "悬臂式货架",
+      "location": "阿布扎比",
+      "challenge": "长钢管库存此前以松散堆叠方式存放,导致盘点与取货效率低下且存在安全隐患。",
+      "result": "建造了可承载超大荷载、开放式取货的重型单面与双面悬臂货架。",
+      "metrics": [{ "value": "+60%", "label": "堆场容量" }, { "value": "0", "label": "安装后安全事故数" }, { "value": "18", "label": "悬臂货架单元" }]
+    },
+    "p5": {
+      "title": "政府物资仓库",
+      "category": "托盘货架",
+      "location": "迪拜",
+      "challenge": "一项价值数百万迪拉姆的政府合同要求货架符合严格的荷载与抗震安全标准,且工期固定。",
+      "result": "在合同期限前完成了整个仓库认证选择性货架的交付与安装。",
+      "metrics": [{ "value": "100%", "label": "按时交付率" }, { "value": "420万迪拉姆", "label": "项目价值" }]
+    },
+    "p6": {
+      "title": "汽车配件仓库",
+      "category": "置物架与储物柜",
+      "location": "哈伊马角",
+      "challenge": "数千种小型汽车零配件需要安全、有序的存储方式,并支持员工快速取货。",
+      "result": "将无螺栓置物架与工业储物柜相结合用于高价值零件存放,大幅缩短了取货时间。",
+      "metrics": [{ "value": "-50%", "label": "取货时间" }, { "value": "3,000+", "label": "已整理零件数量" }]
+    }
+  },
+  "testimonialsData": {
+    "t1": { "name": "拉希德·阿尔梅赫里", "role": "运营总监", "company": "海湾分销公司", "quote": "Al Surur 重新规划了我们整个仓库布局,存储容量提升了40%,而无需搬迁到更大的场地。" },
+    "t2": { "name": "法蒂玛·努尔", "role": "供应链经理", "company": "阿联酋零售集团", "quote": "从现场勘查到安装完成,整个过程快速专业,货架品质也非常出色。" },
+    "t3": { "name": "苏雷什·奈尔", "role": "厂长", "company": "艾因制造厂", "quote": "他们的阁楼地板方案让我们的可用空间翻了一倍,是我们合作过的最优秀的承包商之一。" }
+  },
+  "faqData": {
+    "f1": { "question": "你们在阿联酋的服务范围包括哪些区域?", "answer": "我们的项目安装与支持覆盖阿联酋全部七个酋长国,总部设在阿治曼。" },
+    "f2": { "question": "你们是否提供定制货架设计?", "answer": "是的。每个项目都从现场勘查开始,并根据您的负载、空间与工作流程量身定制工程设计方案。" },
+    "f3": { "question": "你们能承接政府项目及大型工业项目吗?", "answer": "当然可以。我们已交付超过500个项目,其中包括价值数百万迪拉姆的政府与企业合同。" },
+    "f4": { "question": "你们的产品是否符合阿联酋安全与荷载标准?", "answer": "所有货架与置物架系统均按照阿联酋工业安全法规进行设计并通过荷载测试。" },
+    "f5": { "question": "项目的典型周期是多长时间?", "answer": "根据项目规模不同,从设计确认到全面安装完成通常需要2至12周时间。" }
+  },
+  "blogData": {
+    "post1": { "title": "如何选择合适的托盘货架系统", "date": "2026年7月" },
+    "post2": { "title": "5个信号提示您的仓库需要阁楼地板", "date": "2026年6月" },
+    "post3": { "title": "详解阿联酋仓库安全标准", "date": "2026年5月" }
+  }
+}

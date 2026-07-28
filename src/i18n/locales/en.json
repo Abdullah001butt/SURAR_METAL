@@ -1,0 +1,273 @@
+{
+  "nav": {
+    "products": "Products",
+    "industries": "Industries",
+    "projects": "Projects",
+    "about": "About",
+    "blog": "Blog",
+    "contact": "Contact",
+    "requestQuote": "Request Quote",
+    "megaProducts": {
+      "racking": "Racking Systems",
+      "storage": "Storage & Shelving"
+    },
+    "megaIndustries": {
+      "weServe": "We Serve",
+      "specialized": "Specialized"
+    }
+  },
+  "hero": {
+    "badge": "Ajman, UAE · Since 2008",
+    "titleLine1": "Warehouse Storage",
+    "titleLine2": "Solutions",
+    "titleHighlight": "Built For Performance.",
+    "description": "We engineer, manufacture and install industrial racking, shelving and mezzanine systems for warehouses, factories and logistics operations across the UAE.",
+    "ctaPrimary": "Request Quote",
+    "ctaSecondary": "Explore Products",
+    "cards": {
+      "experience": "18+ Years Experience",
+      "projects": "500+ Projects Delivered",
+      "installation": "UAE Wide Installation",
+      "quality": "Industrial Grade Quality"
+    }
+  },
+  "trustedClients": {
+    "heading": "Trusted by leading UAE companies"
+  },
+  "productCategories": {
+    "eyebrow": "What We Build",
+    "title": "Storage systems engineered for scale.",
+    "description": "From selective pallet racking to full mezzanine platforms — every system is designed around your load, layout and throughput."
+  },
+  "statistics": {
+    "eyebrow": "Why Choose Al Surur",
+    "title": "Engineering excellence, delivered at scale."
+  },
+  "industries": {
+    "eyebrow": "Industries We Serve",
+    "title": "Solutions tailored to your sector.",
+    "description": "Every industry moves differently. Our storage systems are engineered around your specific operational demands."
+  },
+  "projects": {
+    "eyebrow": "Featured Projects",
+    "title": "500+ projects, built to last.",
+    "description": "Real results from warehouses, factories and logistics hubs we've transformed across the UAE."
+  },
+  "process": {
+    "eyebrow": "Our Process",
+    "title": "From consultation to full installation."
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "title": "Trusted by operations teams across the UAE."
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions."
+  },
+  "ctaBanner": {
+    "title": "Need Warehouse Storage Solutions?",
+    "description": "Let's build your warehouse together — from consultation to full installation.",
+    "button": "Get Your Free Quote"
+  },
+  "footer": {
+    "description": "Engineering premium warehouse storage solutions across the UAE — pallet racking, shelving, mezzanine floors and industrial equipment built for performance.",
+    "company": "Company",
+    "products": "Products",
+    "contact": "Contact",
+    "aboutUs": "About Us",
+    "projects": "Projects",
+    "blog": "Blog",
+    "contactLink": "Contact",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "quoteModal": {
+    "title": "Request a Quote",
+    "description": "Tell us about your project and we'll get back to you fast.",
+    "exitBadge": "Free Site Survey",
+    "exitTitle": "Before you go — let's talk storage.",
+    "exitDescription": "Get a free site survey and no-obligation quote from our engineering team.",
+    "fullName": "Full Name",
+    "company": "Company",
+    "email": "Email",
+    "phone": "Phone",
+    "selectProduct": "Select a product",
+    "message": "Project details (optional)",
+    "submit": "Submit Request",
+    "sending": "Sending...",
+    "successTitle": "Request Received",
+    "successDescription": "Our team will contact you within 24 hours.",
+    "close": "Close",
+    "error": "Something went wrong sending your request. Please try again or call us directly.",
+    "errors": {
+      "name": "Please enter your full name",
+      "company": "Please enter your company name",
+      "email": "Enter a valid email address",
+      "phone": "Enter a valid phone number",
+      "product": "Please select a product"
+    }
+  },
+  "contactPage": {
+    "eyebrow": "Contact",
+    "title": "Let's talk about your warehouse.",
+    "description": "Reach out and our team will respond within 24 hours.",
+    "getInTouch": "Get in touch",
+    "fullName": "Full Name",
+    "email": "Email",
+    "messagePlaceholder": "How can we help?",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "successTitle": "Message Sent",
+    "successDescription": "We'll get back to you shortly.",
+    "error": "Something went wrong sending your message. Please try again or call us directly.",
+    "errors": {
+      "name": "Please enter your name",
+      "email": "Enter a valid email address",
+      "message": "Please enter a message (min 10 characters)"
+    }
+  },
+  "stickyMobileCta": {
+    "callNow": "Call Now",
+    "requestQuote": "Request Quote"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has moved.",
+    "backHome": "Back to Home"
+  },
+  "productsPage": {
+    "eyebrow": "Products",
+    "title": "Industrial storage systems, engineered to last.",
+    "description": "Explore our full range of racking, shelving and warehouse equipment solutions."
+  },
+  "productDetail": {
+    "eyebrow": "Product",
+    "whyChoose": "Why choose this system",
+    "features": [
+      "Engineered to UAE industrial load standards",
+      "Custom-fit design for your facility",
+      "Certified installation team",
+      "Ongoing inspection & maintenance support"
+    ]
+  },
+  "industriesPage": {
+    "eyebrow": "Industries",
+    "title": "Storage solutions built around your sector.",
+    "description": "From warehousing to healthcare, we design systems that match your operational demands."
+  },
+  "projectsPage": {
+    "eyebrow": "Projects",
+    "title": "500+ installations across the UAE.",
+    "description": "A portfolio of warehouses, factories and distribution centers we've helped build."
+  },
+  "aboutPage": {
+    "eyebrow": "About Al Surur",
+    "title": "18+ years engineering warehouse performance.",
+    "description": "Since 2008, Al Surur General Store Equipment Trading LLC has designed, manufactured and installed industrial storage systems for warehouses, factories and logistics companies across the UAE.",
+    "body": "Based in Ajman, our team of engineers and installers has delivered over 500 projects — from single-aisle shelving systems to multi-million AED government warehouse contracts. We combine precision engineering with fast, reliable execution to help our clients maximize every square meter of their facilities."
+  },
+  "blogPage": {
+    "eyebrow": "Blog",
+    "title": "Insights on warehouse design & storage."
+  },
+  "productsData": {
+    "pallet-racking": { "title": "Pallet Racking", "description": "Selective, drive-in and push-back racking engineered for high-density pallet storage." },
+    "shelving-systems": { "title": "Shelving Systems", "description": "Modular longspan and boltless shelving for fast-moving inventory and archives." },
+    "mezzanine-floors": { "title": "Mezzanine Floors", "description": "Structural steel platforms that multiply usable floor area without expanding your footprint." },
+    "cantilever-racks": { "title": "Cantilever Racks", "description": "Arm-style racking built for pipes, timber, and other long or irregular loads." },
+    "industrial-lockers": { "title": "Industrial Lockers", "description": "Rugged steel lockers for secure staff and asset storage in demanding environments." },
+    "warehouse-trolleys": { "title": "Warehouse Trolleys", "description": "Heavy-duty trolleys and carts engineered for efficient in-facility material flow." }
+  },
+  "industriesData": {
+    "warehousing": "Warehousing",
+    "retail": "Retail",
+    "manufacturing": "Manufacturing",
+    "healthcare": "Healthcare",
+    "food": "Food & Beverage",
+    "automotive": "Automotive",
+    "logistics": "Logistics"
+  },
+  "statisticsData": {
+    "years": "Years Experience",
+    "projects": "Projects Delivered",
+    "quality": "Quality Commitment",
+    "support": "Support"
+  },
+  "processData": {
+    "consultation": { "title": "Consultation", "description": "We understand your operation, throughput and storage goals." },
+    "survey": { "title": "Site Survey", "description": "Our engineers assess your facility for load, layout and access." },
+    "design": { "title": "Design", "description": "Custom racking and layout drawings optimized for capacity." },
+    "manufacturing": { "title": "Manufacturing", "description": "Precision-engineered steel fabricated to industrial standards." },
+    "installation": { "title": "Installation", "description": "Certified teams install with minimal disruption to operations." },
+    "support": { "title": "Support", "description": "Ongoing inspection, maintenance and expansion support." }
+  },
+  "projectsData": {
+    "p1": {
+      "title": "National Logistics Hub",
+      "category": "Pallet Racking",
+      "location": "Jebel Ali, Dubai",
+      "challenge": "A 3PL operator needed to double SKU capacity inside an existing 12,000 sqm shell without expanding the building footprint.",
+      "result": "Deployed high-density selective and drive-in racking across 9 aisles, engineered around forklift turning radius and fire-code clearances.",
+      "metrics": [{ "value": "+42%", "label": "Storage Capacity" }, { "value": "6 wks", "label": "Install Time" }, { "value": "9", "label": "Racking Aisles" }]
+    },
+    "p2": {
+      "title": "Retail Distribution Center",
+      "category": "Shelving Systems",
+      "location": "Ajman",
+      "challenge": "Fast-moving retail SKUs were being hand-stacked on the floor, slowing picking and damaging stock.",
+      "result": "Installed modular longspan shelving with barcode-ready bin labeling, restructuring the pick path end to end.",
+      "metrics": [{ "value": "+35%", "label": "Picking Speed" }, { "value": "1,200", "label": "SKU Locations" }]
+    },
+    "p3": {
+      "title": "Cold Chain Facility",
+      "category": "Mezzanine Floor",
+      "location": "Sharjah",
+      "challenge": "Ground-floor cold storage was at capacity with no land available for horizontal expansion.",
+      "result": "Engineered a structural steel mezzanine rated for pallet loads, adding a full second storage level.",
+      "metrics": [{ "value": "+2,400 m²", "label": "Usable Floor Area" }, { "value": "5 wks", "label": "Install Time" }]
+    },
+    "p4": {
+      "title": "Steel Pipe Storage Yard",
+      "category": "Cantilever Racks",
+      "location": "Abu Dhabi",
+      "challenge": "Long steel pipe stock was stored in loose stacks, making inventory counts and retrieval slow and unsafe.",
+      "result": "Built heavy-duty single and double-sided cantilever racks rated for oversized loads with open-face access.",
+      "metrics": [{ "value": "+60%", "label": "Yard Capacity" }, { "value": "0", "label": "Safety Incidents Since" }, { "value": "18", "label": "Cantilever Bays" }]
+    },
+    "p5": {
+      "title": "Government Supply Depot",
+      "category": "Pallet Racking",
+      "location": "Dubai",
+      "challenge": "A multi-million AED government contract required racking rated to strict load and seismic safety standards on a fixed deadline.",
+      "result": "Delivered and installed certified selective racking across the full depot ahead of the contractual deadline.",
+      "metrics": [{ "value": "100%", "label": "On-Time Delivery" }, { "value": "AED 4.2M", "label": "Project Value" }]
+    },
+    "p6": {
+      "title": "Automotive Parts Warehouse",
+      "category": "Shelving & Lockers",
+      "location": "Ras Al Khaimah",
+      "challenge": "Thousands of small automotive SKUs needed secure, organized storage with fast staff access.",
+      "result": "Combined boltless shelving with industrial lockers for high-value parts, cutting part-retrieval time significantly.",
+      "metrics": [{ "value": "-50%", "label": "Retrieval Time" }, { "value": "3,000+", "label": "Parts Organized" }]
+    }
+  },
+  "testimonialsData": {
+    "t1": { "name": "Rashid Al Mheiri", "role": "Operations Director", "company": "Gulf Distribution Co.", "quote": "Al Surur re-engineered our entire warehouse layout. Storage capacity increased by 40% without moving to a bigger facility." },
+    "t2": { "name": "Fatima Noor", "role": "Supply Chain Manager", "company": "Emirates Retail Group", "quote": "From site survey to installation, the process was fast, professional, and the racking quality is outstanding." },
+    "t3": { "name": "Suresh Nair", "role": "Plant Manager", "company": "Al Ain Manufacturing", "quote": "Their mezzanine floor solution doubled our usable space. Genuinely one of the best contractors we have worked with." }
+  },
+  "faqData": {
+    "f1": { "question": "What areas in the UAE do you serve?", "answer": "We install and support projects across all seven Emirates, with our head office based in Ajman." },
+    "f2": { "question": "Do you offer custom racking designs?", "answer": "Yes. Every project starts with a site survey and a custom engineering design tailored to your load, space and workflow." },
+    "f3": { "question": "Can you handle government and large-scale industrial projects?", "answer": "Absolutely. We have delivered 500+ projects, including multi-million AED government and enterprise contracts." },
+    "f4": { "question": "Do your products meet UAE safety and load standards?", "answer": "All racking and shelving systems are engineered and load-tested to meet UAE industrial safety regulations." },
+    "f5": { "question": "What is your typical project timeline?", "answer": "Depending on scope, projects range from 2 to 12 weeks from design approval to full installation." }
+  },
+  "blogData": {
+    "post1": { "title": "How to Choose the Right Pallet Racking System", "date": "Jul 2026" },
+    "post2": { "title": "5 Signs Your Warehouse Needs a Mezzanine Floor", "date": "Jun 2026" },
+    "post3": { "title": "UAE Warehouse Safety Standards Explained", "date": "May 2026" }
+  }
+}
