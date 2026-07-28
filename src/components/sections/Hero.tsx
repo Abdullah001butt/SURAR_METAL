@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronRight, ShieldCheck, Award, Truck, Factory } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import heroImg from '@/assets/images/warehouse-hero.jpg'
@@ -67,9 +68,11 @@ export function Hero({ onRequestQuote }: HeroProps) {
             <Button size="lg" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
               {t('hero.ctaPrimary')}
             </Button>
-            <Button variant="outline-light" size="lg" icon={<ChevronRight size={18} className="rtl:rotate-180" />}>
-              {t('hero.ctaSecondary')}
-            </Button>
+            <Link to="/products">
+              <Button variant="outline-light" size="lg" icon={<ChevronRight size={18} className="rtl:rotate-180" />}>
+                {t('hero.ctaSecondary')}
+              </Button>
+            </Link>
           </motion.div>
         </div>
 
