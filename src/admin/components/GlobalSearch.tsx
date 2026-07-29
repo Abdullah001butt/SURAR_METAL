@@ -123,7 +123,7 @@ export function GlobalSearch() {
                   {results.customers.map((c) => (
                     <button
                       key={c.id}
-                      onClick={() => { navigate('/dashboard/customers'); close() }}
+                      onClick={() => { navigate(`/dashboard/customers/${c.id}`); close() }}
                       className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start text-sm hover:bg-bg"
                     >
                       <Users size={15} className="text-primary" />
@@ -139,7 +139,7 @@ export function GlobalSearch() {
                   {results.leads.map((l) => (
                     <button
                       key={`${l.source}-${l.id}`}
-                      onClick={() => { navigate('/dashboard/leads'); close() }}
+                      onClick={() => { navigate(`/dashboard/leads?highlight=${l.source}-${l.id}`); close() }}
                       className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-start text-sm hover:bg-bg"
                     >
                       <Inbox size={15} className="text-primary" />

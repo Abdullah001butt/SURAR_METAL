@@ -1,4 +1,5 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Download, Search, X } from 'lucide-react'
 import { supabase } from '@/services/supabase'
@@ -62,10 +63,24 @@ async function fetchLeads(): Promise<UnifiedLead[]> {
 export function LeadsPage() {
   const queryClient = useQueryClient()
   const { data: leads, isLoading } = useQuery({ queryKey: ['admin-leads'], queryFn: fetchLeads })
+  const [searchParams, setSearchParams] = useSearchParams()
+  const highlightId = searchParams.get('highlight')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all')
-  const [expanded, setExpanded] = useState<string | null>(null)
+  const [expanded, setExpanded] = useState<string | null>(highlightId)
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const highlightRef = useRef<HTMLTableRowElement>(null)
+
+  useEffect(() => {
+    if (highlightId && leads) {
+      setExpanded(highlightId)
+      const timer = setTimeout(() => {
+        highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        setSearchParams({}, { replace: true })
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [highlightId, leads, setSearchParams])
 
   const filtered = useMemo(() => {
     if (!leads) return []
@@ -215,7 +230,10 @@ export function LeadsPage() {
           <tbody>
             {filtered.map((lead) => (
               <Fragment key={lead.id}>
-                <tr className="border-b border-navy/5 last:border-0 hover:bg-bg">
+                <tr
+                  ref={expanded === lead.id ? highlightRef : undefined}
+                  className={`border-b border-navy/5 last:border-0 hover:bg-bg ${expanded === lead.id ? 'bg-primary/5' : ''}`}
+                >
                   <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"

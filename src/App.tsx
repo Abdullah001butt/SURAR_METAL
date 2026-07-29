@@ -20,6 +20,7 @@ const AdminLayout = lazy(() => import('@/admin/components/AdminLayout').then((m)
 const OverviewPage = lazy(() => import('@/admin/pages/OverviewPage').then((m) => ({ default: m.OverviewPage })))
 const LeadsPage = lazy(() => import('@/admin/pages/LeadsPage').then((m) => ({ default: m.LeadsPage })))
 const CustomersPage = lazy(() => import('@/admin/pages/CustomersPage').then((m) => ({ default: m.CustomersPage })))
+const CustomerDetailPage = lazy(() => import('@/admin/pages/CustomerDetailPage').then((m) => ({ default: m.CustomerDetailPage })))
 const ProductCatalogPage = lazy(() => import('@/admin/pages/ProductCatalogPage').then((m) => ({ default: m.ProductCatalogPage })))
 const DocumentsListPage = lazy(() => import('@/admin/pages/DocumentsListPage').then((m) => ({ default: m.DocumentsListPage })))
 const DocumentEditorPage = lazy(() => import('@/admin/pages/DocumentEditorPage').then((m) => ({ default: m.DocumentEditorPage })))
@@ -54,6 +55,7 @@ function App() {
               <Route index element={<OverviewPage />} />
               <Route path="leads" element={<LeadsPage />} />
               <Route path="customers" element={<CustomersPage />} />
+              <Route path="customers/:id" element={<CustomerDetailPage />} />
               <Route path="products" element={<ProductCatalogPage />} />
               <Route path="documents" element={<DocumentsListPage />} />
               <Route path="documents/new" element={<DocumentEditorPage />} />

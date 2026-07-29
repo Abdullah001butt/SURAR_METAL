@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
@@ -53,7 +54,9 @@ export function CustomersPage() {
           <tbody>
             {customers?.map((c) => (
               <tr key={c.id} className="group border-b border-navy/5 last:border-0 hover:bg-bg">
-                <td className="px-5 py-4 font-semibold text-navy">{c.name}</td>
+                <td className="px-5 py-4">
+                  <Link to={`/dashboard/customers/${c.id}`} className="font-semibold text-navy hover:text-primary">{c.name}</Link>
+                </td>
                 <td className="px-5 py-4 text-gray" dir="ltr">{c.phone ?? '—'}</td>
                 <td className="px-5 py-4 text-gray">{c.address ?? '—'}</td>
                 <td className="px-5 py-4 text-gray" dir="ltr">{c.trn_no ?? '—'}</td>
