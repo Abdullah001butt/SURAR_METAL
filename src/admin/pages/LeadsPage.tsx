@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Download, Search, X } from 'lucide-react'
+import { AlertTriangle, Clock, Download, Search, X } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { StatusBadge } from '@/admin/components/StatusBadge'
 import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
+import { cn } from '@/utils/cn'
 import type { LeadStatus } from '@/admin/types'
 
 interface UnifiedLead {
@@ -22,6 +23,33 @@ interface UnifiedLead {
 }
 
 const STATUS_OPTIONS: LeadStatus[] = ['new', 'contacted', 'quoted', 'won', 'lost']
+
+function hoursSince(isoDate: string): number {
+  return (Date.now() - new Date(isoDate).getTime()) / 3_600_000
+}
+
+function formatElapsed(hours: number): string {
+  if (hours < 1) return `${Math.max(1, Math.round(hours * 60))}m`
+  if (hours < 24) return `${Math.round(hours)}h`
+  return `${Math.round(hours / 24)}d`
+}
+
+function ResponseBadge({ createdAt }: { createdAt: string }) {
+  const hours = hoursSince(createdAt)
+  const isOverdue = hours >= 24
+  const isWarning = hours >= 12 && hours < 24
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold',
+        isOverdue ? 'bg-red-50 text-red-600' : isWarning ? 'bg-amber-50 text-amber-700' : 'bg-bg text-gray',
+      )}
+    >
+      {isOverdue ? <AlertTriangle size={11} /> : <Clock size={11} />}
+      {formatElapsed(hours)}
+    </span>
+  )
+}
 
 async function fetchLeads(): Promise<UnifiedLead[]> {
   const [quotesRes, contactsRes] = await Promise.all([
@@ -93,6 +121,8 @@ export function LeadsPage() {
     })
   }, [leads, search, statusFilter])
 
+  const overdueLeads = useMemo(() => (leads ?? []).filter((l) => l.status === 'new' && hoursSince(l.created_at) >= 24), [leads])
+
   const updateLead = async (lead: UnifiedLead, patch: Partial<{ status: LeadStatus; notes: string }>) => {
     const [source, rawId] = lead.id.split('-')
     const table = source === 'quote' ? 'quote_requests' : 'contact_messages'
@@ -163,6 +193,22 @@ export function LeadsPage() {
         </button>
       </div>
 
+      {overdueLeads.length > 0 && (
+        <div className="mt-6 flex items-center gap-3 rounded-2xl bg-red-50 px-5 py-3 text-sm text-red-700 ring-1 ring-red-200">
+          <AlertTriangle size={16} className="shrink-0" />
+          <span>
+            <strong>{overdueLeads.length}</strong> lead{overdueLeads.length > 1 ? 's have' : ' has'} gone{' '}
+            <strong>24+ hours</strong> without a response.
+          </span>
+          <button
+            onClick={() => setStatusFilter('new')}
+            className="ms-auto shrink-0 rounded-full bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+          >
+            Show new leads
+          </button>
+        </div>
+      )}
+
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <div className="relative">
           <Search size={16} className="absolute start-3 top-1/2 -translate-y-1/2 text-gray" />
@@ -225,6 +271,7 @@ export function LeadsPage() {
               <th className="px-5 py-3 text-start font-semibold">Interest</th>
               <th className="px-5 py-3 text-start font-semibold">Status</th>
               <th className="px-5 py-3 text-start font-semibold">Date</th>
+              <th className="px-5 py-3 text-start font-semibold">Response</th>
             </tr>
           </thead>
           <tbody>
@@ -253,10 +300,13 @@ export function LeadsPage() {
                   <td className="cursor-pointer px-5 py-4 text-gray" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>{lead.interest ?? '—'}</td>
                   <td className="cursor-pointer px-5 py-4" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}><StatusBadge status={lead.status} /></td>
                   <td className="cursor-pointer px-5 py-4 text-xs text-gray" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>{new Date(lead.created_at).toLocaleDateString()}</td>
+                  <td className="cursor-pointer px-5 py-4" onClick={() => setExpanded(expanded === lead.id ? null : lead.id)}>
+                    {lead.status === 'new' ? <ResponseBadge createdAt={lead.created_at} /> : <span className="text-xs text-gray">—</span>}
+                  </td>
                 </tr>
                 {expanded === lead.id && (
                   <tr className="border-b border-navy/5 bg-bg/60">
-                    <td colSpan={6} className="px-5 py-4">
+                    <td colSpan={7} className="px-5 py-4">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-widest text-gray">Message</p>

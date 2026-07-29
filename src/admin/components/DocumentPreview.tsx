@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
-import { ArrowLeft, Download, Printer } from 'lucide-react'
+import { ArrowLeft, Download, Loader2, MessageCircle, Printer } from 'lucide-react'
 import { calcTotals, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
 import { amountToWordsAED } from '@/admin/utils/numberToWords'
 import { exportElementToPdf } from '@/admin/utils/pdfExport'
+import { sendDocumentViaWhatsApp } from '@/admin/utils/whatsapp'
 import type { AlSururDocument } from '@/admin/types'
 import logo from '@/assets/logo.png'
 
@@ -20,6 +21,8 @@ export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
   const totalWeight = items.reduce((sum, it) => sum + (it.weight ?? 0), 0)
   const sheetRef = useRef<HTMLDivElement>(null)
   const [downloading, setDownloading] = useState(false)
+  const [sendingWhatsApp, setSendingWhatsApp] = useState(false)
+  const [whatsAppError, setWhatsAppError] = useState<string | null>(null)
 
   const filename = `${document.doc_number || 'document'}-${document.customer?.name || 'Al-Surur'}`
 
@@ -33,13 +36,41 @@ export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
     }
   }
 
+  const handleSendWhatsApp = async () => {
+    if (!sheetRef.current) return
+    setWhatsAppError(null)
+    setSendingWhatsApp(true)
+    try {
+      const result = await sendDocumentViaWhatsApp({
+        element: sheetRef.current,
+        docNumber: document.doc_number,
+        docTypeLabel: DOC_TYPE_LABELS[document.doc_type],
+        customerName: document.customer?.name ?? 'Customer',
+        customerPhone: document.customer?.phone,
+        netTotal: formatAED(totals.net),
+      })
+      if (!result.ok) setWhatsAppError(result.reason)
+    } finally {
+      setSendingWhatsApp(false)
+    }
+  }
+
   return (
     <div className="bg-navy/5">
       <div className="no-print sticky top-0 z-10 flex items-center justify-between border-b border-navy/10 bg-white px-6 py-4">
         <button onClick={onClose} className="flex items-center gap-2 text-sm font-medium text-gray hover:text-navy">
           <ArrowLeft size={16} /> Back to Editor
         </button>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          {whatsAppError && <p className="max-w-xs text-end text-xs text-red-600">{whatsAppError}</p>}
+          <button
+            onClick={handleSendWhatsApp}
+            disabled={sendingWhatsApp}
+            className="flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-white hover:bg-[#20BD5C] disabled:opacity-60"
+          >
+            {sendingWhatsApp ? <Loader2 size={16} className="animate-spin" /> : <MessageCircle size={16} />}
+            {sendingWhatsApp ? 'Preparing...' : 'Send via WhatsApp'}
+          </button>
           <button
             onClick={() => window.print()}
             className="flex items-center gap-2 rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy-light"

@@ -23,7 +23,12 @@ export function ProductDetailPage() {
   return (
     <>
       <Seo title={title} description={description} path={`/products/${product.id}`} image={product.image} />
-      <PageHero eyebrow={t('productDetail.eyebrow')} title={title} description={description} />
+      <PageHero
+        eyebrow={t('productDetail.eyebrow')}
+        title={title}
+        description={description}
+        breadcrumbs={[{ label: t('nav.products'), href: '/products' }, { label: title }]}
+      />
       <section className="container-px mx-auto max-w-5xl py-20">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-center">
           <img src={product.image} alt={title} className="aspect-4/3 w-full rounded-3xl object-cover" />

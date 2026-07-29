@@ -19,6 +19,7 @@ export function ProductsPage() {
         eyebrow={t('productsPage.eyebrow')}
         title={t('productsPage.title')}
         description={t('productsPage.description')}
+        breadcrumbs={[{ label: t('nav.products') }]}
       />
       <ProductCategories />
       <CtaBanner onRequestQuote={open} />

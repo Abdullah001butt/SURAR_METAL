@@ -56,7 +56,7 @@ export function ContactPage() {
         description="Get in touch with Al Surur General Store Equipment Trading LLC in Ajman, UAE. Request a free site survey and quote for your warehouse storage project."
         path="/contact"
       />
-      <PageHero eyebrow={t('contactPage.eyebrow')} title={t('contactPage.title')} description={t('contactPage.description')} />
+      <PageHero eyebrow={t('contactPage.eyebrow')} title={t('contactPage.title')} description={t('contactPage.description')} breadcrumbs={[{ label: t('nav.contact') }]} />
       <section className="container-px mx-auto max-w-5xl py-20">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           <div>

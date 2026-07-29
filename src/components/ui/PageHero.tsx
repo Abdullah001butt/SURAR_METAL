@@ -1,15 +1,27 @@
 import { motion } from 'framer-motion'
+import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
 
 interface PageHeroProps {
   eyebrow: string
   title: string
   description?: string
+  breadcrumbs?: BreadcrumbItem[]
 }
 
-export function PageHero({ eyebrow, title, description }: PageHeroProps) {
+export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroProps) {
   return (
     <section className="bg-navy pb-20 pt-40">
       <div className="container-px mx-auto max-w-4xl text-center">
+        {breadcrumbs && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="mb-5"
+          >
+            <Breadcrumb items={breadcrumbs} light />
+          </motion.div>
+        )}
         <motion.span
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

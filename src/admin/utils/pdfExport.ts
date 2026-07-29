@@ -5,7 +5,7 @@ export function sanitizeFilename(name: string): string {
   return name.replace(/[^a-z0-9\-_. ]/gi, '-').replace(/\s+/g, '-')
 }
 
-export async function exportElementToPdf(element: HTMLElement, filename: string) {
+async function buildPdfFromElement(element: HTMLElement): Promise<jsPDF> {
   const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
   const imgData = canvas.toDataURL('image/png')
 
@@ -29,5 +29,15 @@ export async function exportElementToPdf(element: HTMLElement, filename: string)
     heightLeft -= pageHeight
   }
 
+  return pdf
+}
+
+export async function exportElementToPdf(element: HTMLElement, filename: string) {
+  const pdf = await buildPdfFromElement(element)
   pdf.save(`${sanitizeFilename(filename)}.pdf`)
+}
+
+export async function elementToPdfBlob(element: HTMLElement): Promise<Blob> {
+  const pdf = await buildPdfFromElement(element)
+  return pdf.output('blob')
 }

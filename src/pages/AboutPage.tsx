@@ -20,6 +20,7 @@ export function AboutPage() {
         eyebrow={t('aboutPage.eyebrow')}
         title={t('aboutPage.title')}
         description={t('aboutPage.description')}
+        breadcrumbs={[{ label: t('nav.about') }]}
       />
       <section className="container-px mx-auto max-w-4xl py-20 text-center">
         <p className="text-lg leading-relaxed text-gray">

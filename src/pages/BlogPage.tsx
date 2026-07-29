@@ -14,7 +14,7 @@ export function BlogPage() {
         description="Insights on warehouse design, racking systems and storage best practices from Al Surur's engineering team."
         path="/blog"
       />
-      <PageHero eyebrow={t('blogPage.eyebrow')} title={t('blogPage.title')} />
+      <PageHero eyebrow={t('blogPage.eyebrow')} title={t('blogPage.title')} breadcrumbs={[{ label: t('nav.blog') }]} />
       <section className="container-px mx-auto max-w-4xl py-20">
         <div className="space-y-6">
           {posts.map((post) => (
