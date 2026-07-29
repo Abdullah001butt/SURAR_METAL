@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Plus, X } from 'lucide-react'
+import { AlertTriangle, Pencil, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { formatAED } from '@/admin/utils/documentCalc'
+import { ProductModal } from '@/admin/components/ProductModal'
+import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { cn } from '@/utils/cn'
 import type { Product } from '@/admin/types'
 
@@ -16,33 +18,23 @@ async function fetchProducts(): Promise<Product[]> {
 export function ProductCatalogPage() {
   const queryClient = useQueryClient()
   const { data: products, isLoading } = useQuery({ queryKey: ['admin-products'], queryFn: fetchProducts })
-  const [open, setOpen] = useState(false)
-  const [form, setForm] = useState({ item_code: '', description: '', unit: 'pcs', default_unit_price: '', stock_qty: '', reorder_level: '' })
-  const [saving, setSaving] = useState(false)
-
-  const resetForm = () => setForm({ item_code: '', description: '', unit: 'pcs', default_unit_price: '', stock_qty: '', reorder_level: '' })
+  const [modalProduct, setModalProduct] = useState<Product | null | 'new'>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Product | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const lowStock = products?.filter((p) => p.stock_qty <= p.reorder_level && p.reorder_level > 0) ?? []
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSaving(true)
-    await supabase.from('products').insert({
-      item_code: form.item_code || null,
-      description: form.description,
-      unit: form.unit,
-      default_unit_price: Number(form.default_unit_price) || 0,
-      stock_qty: Number(form.stock_qty) || 0,
-      reorder_level: Number(form.reorder_level) || 0,
-    })
-    setSaving(false)
-    setOpen(false)
-    resetForm()
+  const updateStock = async (product: Product, stockQty: number) => {
+    await supabase.from('products').update({ stock_qty: stockQty }).eq('id', product.id)
     queryClient.invalidateQueries({ queryKey: ['admin-products'] })
   }
 
-  const updateStock = async (product: Product, stockQty: number) => {
-    await supabase.from('products').update({ stock_qty: stockQty }).eq('id', product.id)
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    await supabase.from('products').delete().eq('id', deleteTarget.id)
+    setDeleting(false)
+    setDeleteTarget(null)
     queryClient.invalidateQueries({ queryKey: ['admin-products'] })
   }
 
@@ -53,7 +45,7 @@ export function ProductCatalogPage() {
           <h1 className="font-display text-2xl font-semibold text-navy">Product Catalog</h1>
           <p className="mt-1 text-sm text-gray">Saved rack types and dimensions for fast line-item entry.</p>
         </div>
-        <Button onClick={() => setOpen(true)} icon={<Plus size={16} />}>New Product</Button>
+        <Button onClick={() => setModalProduct('new')} icon={<Plus size={16} />}>New Product</Button>
       </div>
 
       {lowStock.length > 0 && (
@@ -76,13 +68,14 @@ export function ProductCatalogPage() {
               <th className="px-5 py-3 text-start font-semibold">Default Price</th>
               <th className="px-5 py-3 text-start font-semibold">Stock</th>
               <th className="px-5 py-3 text-start font-semibold">Reorder Level</th>
+              <th className="w-24 px-5 py-3"></th>
             </tr>
           </thead>
           <tbody>
             {products?.map((p) => {
               const isLow = p.reorder_level > 0 && p.stock_qty <= p.reorder_level
               return (
-                <tr key={p.id} className="border-b border-navy/5 last:border-0 hover:bg-bg">
+                <tr key={p.id} className="group border-b border-navy/5 last:border-0 hover:bg-bg">
                   <td className="px-5 py-4 text-gray" dir="ltr">{p.item_code ?? '—'}</td>
                   <td className="px-5 py-4 font-semibold text-navy">{p.description}</td>
                   <td className="px-5 py-4 text-gray">{p.unit}</td>
@@ -99,6 +92,16 @@ export function ProductCatalogPage() {
                     />
                   </td>
                   <td className="px-5 py-4 text-gray" dir="ltr">{p.reorder_level}</td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button onClick={() => setModalProduct(p)} aria-label="Edit" className="grid h-8 w-8 place-items-center rounded-lg text-gray hover:bg-primary/10 hover:text-primary">
+                        <Pencil size={14} />
+                      </button>
+                      <button onClick={() => setDeleteTarget(p)} aria-label="Delete" className="grid h-8 w-8 place-items-center rounded-lg text-gray hover:bg-red-50 hover:text-red-600">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               )
             })}
@@ -107,28 +110,25 @@ export function ProductCatalogPage() {
         {!isLoading && products?.length === 0 && <p className="py-10 text-center text-sm text-gray">No products yet.</p>}
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/60 p-4" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-3xl bg-white p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold text-navy">New Product</h2>
-              <button onClick={() => setOpen(false)}><X size={18} className="text-gray" /></button>
-            </div>
-            <form onSubmit={onSubmit} className="mt-4 space-y-3">
-              <input placeholder="Item code (optional)" value={form.item_code} onChange={(e) => setForm({ ...form, item_code: e.target.value })} className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-2.5 text-sm outline-none focus:border-primary" />
-              <input required placeholder="Description (e.g. Heavy Duty Frame 1200x4000)" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-2.5 text-sm outline-none focus:border-primary" />
-              <div className="grid grid-cols-2 gap-3">
-                <input placeholder="Unit (pcs, m, kg...)" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-2.5 text-sm outline-none focus:border-primary" />
-                <input type="number" step="0.01" placeholder="Default price" value={form.default_unit_price} onChange={(e) => setForm({ ...form, default_unit_price: e.target.value })} className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-2.5 text-sm outline-none focus:border-primary" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <input type="number" placeholder="Stock quantity" value={form.stock_qty} onChange={(e) => setForm({ ...form, stock_qty: e.target.value })} className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-2.5 text-sm outline-none focus:border-primary" />
-                <input type="number" placeholder="Reorder level" value={form.reorder_level} onChange={(e) => setForm({ ...form, reorder_level: e.target.value })} className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-2.5 text-sm outline-none focus:border-primary" />
-              </div>
-              <Button type="submit" className="w-full" disabled={saving}>{saving ? 'Saving...' : 'Save Product'}</Button>
-            </form>
-          </div>
-        </div>
+      {modalProduct && (
+        <ProductModal
+          product={modalProduct === 'new' ? null : modalProduct}
+          onClose={() => setModalProduct(null)}
+          onSaved={() => {
+            setModalProduct(null)
+            queryClient.invalidateQueries({ queryKey: ['admin-products'] })
+          }}
+        />
+      )}
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Delete product?"
+          description={`"${deleteTarget.description}" will be removed from the catalog. Documents that already reference it keep their line items.`}
+          onConfirm={handleDelete}
+          onClose={() => setDeleteTarget(null)}
+          loading={deleting}
+        />
       )}
     </div>
   )

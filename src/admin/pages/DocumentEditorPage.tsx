@@ -6,8 +6,9 @@ import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/admin/components/StatusBadge'
 import { DocumentPreview } from '@/admin/components/DocumentPreview'
-import { QuickAddCustomerModal } from '@/admin/components/QuickAddCustomerModal'
+import { CustomerModal } from '@/admin/components/CustomerModal'
 import { ActivityLog } from '@/admin/components/ActivityLog'
+import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { calcTotals, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
 import { logActivity } from '@/admin/utils/activity'
 import type { AlSururDocument, Customer, DocType, DocStatus, DocumentItem, Product } from '@/admin/types'
@@ -93,6 +94,8 @@ function DocumentEditorPageInner() {
   const [loadedId, setLoadedId] = useState<number | null>(null)
   const [showQuickAddCustomer, setShowQuickAddCustomer] = useState(false)
   const [initialStatus, setInitialStatus] = useState<DocStatus | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   // Hydrate from an existing document (edit mode)
   useEffect(() => {
@@ -235,6 +238,16 @@ function DocumentEditorPageInner() {
     }
   }
 
+  const handleDeleteDocument = async () => {
+    if (!existingDoc) return
+    setDeleting(true)
+    await supabase.from('documents').delete().eq('id', existingDoc.id)
+    setDeleting(false)
+    setShowDeleteConfirm(false)
+    queryClient.invalidateQueries({ queryKey: ['admin-documents'] })
+    navigate('/dashboard/documents', { replace: true })
+  }
+
   const previewDoc: AlSururDocument = {
     id: existingDoc?.id ?? 0,
     doc_number: docNumber,
@@ -272,6 +285,9 @@ function DocumentEditorPageInner() {
           <ArrowLeft size={16} /> Back to Documents
         </Link>
         <div className="flex gap-3">
+          {existingDoc && (
+            <Button variant="ghost" onClick={() => setShowDeleteConfirm(true)} icon={<Trash2 size={16} />}>Delete</Button>
+          )}
           <Button variant="ghost" onClick={() => setShowPreview(true)} icon={<Printer size={16} />}>Preview / Print</Button>
           <Button onClick={save} disabled={saving} icon={<Save size={16} />}>{saving ? 'Saving...' : 'Save Document'}</Button>
         </div>
@@ -442,13 +458,23 @@ function DocumentEditorPageInner() {
       </div>
 
       {showQuickAddCustomer && (
-        <QuickAddCustomerModal
+        <CustomerModal
           onClose={() => setShowQuickAddCustomer(false)}
-          onCreated={(customer) => {
+          onSaved={(customer) => {
             setCustomerId(customer.id)
             setShowQuickAddCustomer(false)
             queryClient.invalidateQueries({ queryKey: ['admin-customers'] })
           }}
+        />
+      )}
+
+      {showDeleteConfirm && existingDoc && (
+        <ConfirmDialog
+          title="Delete document?"
+          description={`"${existingDoc.doc_number}" and its line items will be permanently deleted. This cannot be undone.`}
+          onConfirm={handleDeleteDocument}
+          onClose={() => setShowDeleteConfirm(false)}
+          loading={deleting}
         />
       )}
     </div>

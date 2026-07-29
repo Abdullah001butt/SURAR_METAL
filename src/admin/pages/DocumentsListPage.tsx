@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { Download, Plus, Search, X } from 'lucide-react'
+import { Download, Plus, Search, Trash2, X } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { StatusBadge } from '@/admin/components/StatusBadge'
+import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { DOC_TYPE_LABELS, formatAED } from '@/admin/utils/documentCalc'
 import { calcTotals } from '@/admin/utils/documentCalc'
 import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
@@ -31,6 +32,8 @@ export function DocumentsListPage() {
   const [typeFilter, setTypeFilter] = useState<DocType | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<DocStatus | 'all'>('all')
   const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [deleteTarget, setDeleteTarget] = useState<AlSururDocument | 'bulk' | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const filtered = useMemo(() => {
     if (!documents) return []
@@ -62,6 +65,20 @@ export function DocumentsListPage() {
     await supabase.from('documents').update({ status }).in('id', [...selected])
     queryClient.invalidateQueries({ queryKey: ['admin-documents'] })
     setSelected(new Set())
+  }
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    if (deleteTarget === 'bulk') {
+      await supabase.from('documents').delete().in('id', [...selected])
+      setSelected(new Set())
+    } else {
+      await supabase.from('documents').delete().eq('id', deleteTarget.id)
+    }
+    setDeleting(false)
+    setDeleteTarget(null)
+    queryClient.invalidateQueries({ queryKey: ['admin-documents'] })
   }
 
   const exportRows = (rows: (AlSururDocument & { total: number })[], label: string) => {
@@ -146,6 +163,12 @@ export function DocumentsListPage() {
             <Download size={13} /> Export Selected
           </button>
           <button
+            onClick={() => setDeleteTarget('bulk')}
+            className="flex items-center gap-1.5 rounded-lg bg-red-500/20 px-3 py-1.5 text-sm font-semibold text-red-100 hover:bg-red-500/30"
+          >
+            <Trash2 size={13} /> Delete Selected
+          </button>
+          <button
             onClick={() => setSelected(new Set())}
             className="ms-auto flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
           >
@@ -167,11 +190,12 @@ export function DocumentsListPage() {
               <th className="px-5 py-3 text-start font-semibold">Date</th>
               <th className="px-5 py-3 text-start font-semibold">Total</th>
               <th className="px-5 py-3 text-start font-semibold">Status</th>
+              <th className="w-12 px-5 py-3"></th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((d) => (
-              <tr key={d.id} className="border-b border-navy/5 last:border-0 hover:bg-bg">
+              <tr key={d.id} className="group border-b border-navy/5 last:border-0 hover:bg-bg">
                 <td className="px-5 py-4">
                   <input
                     type="checkbox"
@@ -188,6 +212,15 @@ export function DocumentsListPage() {
                 <td className="px-5 py-4 text-xs text-gray">{new Date(d.doc_date).toLocaleDateString()}</td>
                 <td className="px-5 py-4 text-navy" dir="ltr">AED {formatAED(d.total)}</td>
                 <td className="px-5 py-4"><StatusBadge status={d.status} /></td>
+                <td className="px-5 py-4">
+                  <button
+                    onClick={() => setDeleteTarget(d)}
+                    aria-label="Delete"
+                    className="grid h-8 w-8 place-items-center rounded-lg text-gray opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -195,6 +228,20 @@ export function DocumentsListPage() {
         {!isLoading && filtered.length === 0 && <p className="py-10 text-center text-sm text-gray">No documents yet.</p>}
         {isLoading && <p className="py-10 text-center text-sm text-gray">Loading...</p>}
       </div>
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title={deleteTarget === 'bulk' ? `Delete ${selected.size} documents?` : 'Delete document?'}
+          description={
+            deleteTarget === 'bulk'
+              ? 'This permanently removes the selected documents and their line items. This cannot be undone.'
+              : `"${deleteTarget.doc_number}" and its line items will be permanently deleted. This cannot be undone.`
+          }
+          onConfirm={handleDelete}
+          onClose={() => setDeleteTarget(null)}
+          loading={deleting}
+        />
+      )}
     </div>
   )
 }
