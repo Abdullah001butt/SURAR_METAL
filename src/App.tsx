@@ -25,6 +25,9 @@ const ProductCatalogPage = lazy(() => import('@/admin/pages/ProductCatalogPage')
 const DocumentsListPage = lazy(() => import('@/admin/pages/DocumentsListPage').then((m) => ({ default: m.DocumentsListPage })))
 const DocumentEditorPage = lazy(() => import('@/admin/pages/DocumentEditorPage').then((m) => ({ default: m.DocumentEditorPage })))
 const ReportsPage = lazy(() => import('@/admin/pages/ReportsPage').then((m) => ({ default: m.ReportsPage })))
+const BlogPostsPage = lazy(() => import('@/admin/pages/BlogPostsPage').then((m) => ({ default: m.BlogPostsPage })))
+const BlogPostEditorPage = lazy(() => import('@/admin/pages/BlogPostEditorPage').then((m) => ({ default: m.BlogPostEditorPage })))
+const BlogPostPage = lazy(() => import('@/pages/BlogPostPage').then((m) => ({ default: m.BlogPostPage })))
 
 const queryClient = new QueryClient()
 
@@ -61,6 +64,9 @@ function App() {
               <Route path="documents/new" element={<DocumentEditorPage />} />
               <Route path="documents/:id" element={<DocumentEditorPage />} />
               <Route path="reports" element={<ReportsPage />} />
+              <Route path="blog" element={<BlogPostsPage />} />
+              <Route path="blog/new" element={<BlogPostEditorPage />} />
+              <Route path="blog/:id" element={<BlogPostEditorPage />} />
             </Route>
 
             <Route element={<Layout />}>
@@ -71,6 +77,7 @@ function App() {
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="blog" element={<BlogPage />} />
+              <Route path="blog/:slug" element={<BlogPostPage />} />
               <Route path="contact" element={<ContactPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>

@@ -10,6 +10,9 @@ interface SeoProps {
   path?: string
   image?: string
   noIndex?: boolean
+  type?: 'website' | 'article'
+  jsonLd?: Record<string, unknown>
+  keywords?: string
 }
 
 function setMetaTag(attr: 'name' | 'property', key: string, content: string) {
@@ -22,6 +25,10 @@ function setMetaTag(attr: 'name' | 'property', key: string, content: string) {
   el.setAttribute('content', content)
 }
 
+function removeMetaTag(attr: 'name' | 'property', key: string) {
+  document.querySelector(`meta[${attr}="${key}"]`)?.remove()
+}
+
 function setCanonical(href: string) {
   let el = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
   if (!el) {
@@ -32,7 +39,18 @@ function setCanonical(href: string) {
   el.setAttribute('href', href)
 }
 
-export function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, noIndex = false }: SeoProps) {
+function setJsonLd(id: string, data: Record<string, unknown> | undefined) {
+  const existing = document.getElementById(id)
+  if (existing) existing.remove()
+  if (!data) return
+  const script = document.createElement('script')
+  script.id = id
+  script.type = 'application/ld+json'
+  script.textContent = JSON.stringify(data)
+  document.head.appendChild(script)
+}
+
+export function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, noIndex = false, type = 'website', jsonLd, keywords }: SeoProps) {
   useEffect(() => {
     const fullTitle = `${title} | ${SITE_NAME}`
     const url = `${SITE_URL}${path}`
@@ -43,7 +61,10 @@ export function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, noI
     setMetaTag('name', 'robots', noIndex ? 'noindex, nofollow' : 'index, follow')
     setCanonical(url)
 
-    setMetaTag('property', 'og:type', 'website')
+    if (keywords) setMetaTag('name', 'keywords', keywords)
+    else removeMetaTag('name', 'keywords')
+
+    setMetaTag('property', 'og:type', type)
     setMetaTag('property', 'og:site_name', SITE_NAME)
     setMetaTag('property', 'og:title', fullTitle)
     setMetaTag('property', 'og:description', description)
@@ -54,7 +75,11 @@ export function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, noI
     setMetaTag('name', 'twitter:title', fullTitle)
     setMetaTag('name', 'twitter:description', description)
     setMetaTag('name', 'twitter:image', absoluteImage)
-  }, [title, description, path, image])
+
+    setJsonLd('page-jsonld', jsonLd)
+
+    return () => setJsonLd('page-jsonld', undefined)
+  }, [title, description, path, image, noIndex, type, jsonLd, keywords])
 
   return null
 }

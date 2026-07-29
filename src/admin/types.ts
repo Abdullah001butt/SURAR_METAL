@@ -83,3 +83,19 @@ export interface ContactMessage {
   notes: string | null
   created_at: string
 }
+
+export interface BlogPost {
+  id: number
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  cover_image: string | null
+  meta_title: string | null
+  meta_description: string | null
+  keywords: string | null
+  published: boolean
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}

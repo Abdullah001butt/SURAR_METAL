@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper } from 'lucide-react'
 import { useAdminAuth } from '@/admin/hooks/useAdminAuth'
 import { GlobalSearch } from '@/admin/components/GlobalSearch'
 import { cn } from '@/utils/cn'
@@ -14,6 +14,7 @@ const navItems = [
   { to: '/dashboard/customers', label: 'Customers', icon: Users },
   { to: '/dashboard/products', label: 'Product Catalog', icon: Package },
   { to: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
+  { to: '/dashboard/blog', label: 'Blog', icon: Newspaper },
 ]
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
