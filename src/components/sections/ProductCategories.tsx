@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { ArrowUpRight } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
@@ -23,10 +22,9 @@ export function ProductCategories() {
 
         <GsapStagger className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {productCategories.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              whileHover={{ y: -8 }}
-              className="group relative"
+              className="group relative transition-transform duration-300 hover:-translate-y-2"
             >
               <TiltCard maxTilt={6} className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-navy/5">
                 <Link to={product.href}>
@@ -49,7 +47,7 @@ export function ProductCategories() {
                   </div>
                 </Link>
               </TiltCard>
-            </motion.div>
+            </div>
           ))}
         </GsapStagger>
       </div>

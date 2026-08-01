@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion'
+import { useLayoutEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Phone, FileText } from 'lucide-react'
+import { gsap } from '@/lib/gsap'
 
 interface StickyMobileCtaProps {
   onRequestQuote: () => void
@@ -8,12 +9,15 @@ interface StickyMobileCtaProps {
 
 export function StickyMobileCta({ onRequestQuote }: StickyMobileCtaProps) {
   const { t } = useTranslation()
+  const ref = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    gsap.fromTo(ref.current, { y: 80 }, { y: 0, duration: 0.6, delay: 0.8, ease: 'back.out(1.4)' })
+  }, [])
 
   return (
-    <motion.div
-      initial={{ y: 80 }}
-      animate={{ y: 0 }}
-      transition={{ delay: 0.8, type: 'spring', stiffness: 260, damping: 26 }}
+    <div
+      ref={ref}
       className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-navy/95 backdrop-blur-xl lg:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
@@ -31,6 +35,6 @@ export function StickyMobileCta({ onRequestQuote }: StickyMobileCtaProps) {
         <FileText size={16} />
         {t('stickyMobileCta.requestQuote')}
       </button>
-    </motion.div>
+    </div>
   )
 }

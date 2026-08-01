@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { SectionTitle } from '@/components/ui/SectionTitle'
+import { GsapStagger } from '@/components/ui/GsapStagger'
 import { processSteps } from '@/data/process'
 import { gsap } from '@/lib/gsap'
 
@@ -51,22 +51,18 @@ export function ProcessTimeline() {
             className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 origin-top bg-primary lg:block"
           />
 
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-x-16 lg:gap-y-20">
-            {processSteps.map((step, i) => (
-              <motion.div
+          <GsapStagger className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-x-16 lg:gap-y-20" stagger={0.08}>
+            {processSteps.map((step) => (
+              <div
                 key={step.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
                 className="relative rounded-3xl bg-bg p-8 ring-1 ring-navy/5"
               >
                 <span className="font-display text-5xl font-bold text-primary/15">{step.step}</span>
                 <h3 className="mt-3 font-display text-xl font-semibold text-navy">{t(`processData.${step.id}.title`)}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray">{t(`processData.${step.id}.description`)}</p>
-              </motion.div>
+              </div>
             ))}
-          </div>
+          </GsapStagger>
         </div>
       </div>
     </section>

@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { MagneticButton } from '@/components/ui/MagneticButton'
 import { RevealHeading } from '@/components/ui/RevealHeading'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 interface CtaBannerProps {
   onRequestQuote: () => void
@@ -14,11 +14,8 @@ export function CtaBanner({ onRequestQuote }: CtaBannerProps) {
 
   return (
     <section className="container-px mx-auto max-w-7xl py-20">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+      <FadeIn
+        y={30}
         className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy to-navy-light px-8 py-16 text-center sm:px-16"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,90,31,0.25),transparent_60%)]" />
@@ -35,7 +32,7 @@ export function CtaBanner({ onRequestQuote }: CtaBannerProps) {
             </Button>
           </MagneticButton>
         </div>
-      </motion.div>
+      </FadeIn>
     </section>
   )
 }

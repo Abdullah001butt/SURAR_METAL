@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import type { ReactNode, MouseEvent } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { gsap } from '@/lib/gsap'
 import { cn } from '@/utils/cn'
 
 interface TiltCardProps {
@@ -11,45 +11,48 @@ interface TiltCardProps {
 
 export function TiltCard({ children, className, maxTilt = 8 }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const mouseX = useMotionValue(0.5)
-  const mouseY = useMotionValue(0.5)
-
-  const springConfig = { stiffness: 200, damping: 20, mass: 0.5 }
-  const rotateX = useSpring(useTransform(mouseY, [0, 1], [maxTilt, -maxTilt]), springConfig)
-  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-maxTilt, maxTilt]), springConfig)
-  const glareX = useTransform(mouseX, [0, 1], ['0%', '100%'])
-  const glareY = useTransform(mouseY, [0, 1], ['0%', '100%'])
-  const glareBackground = useTransform(
-    [glareX, glareY],
-    ([gx, gy]) => `radial-gradient(circle at ${gx} ${gy}, rgba(255,255,255,0.16), transparent 60%)`,
-  )
+  const glareRef = useRef<HTMLDivElement>(null)
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return
-    const rect = ref.current.getBoundingClientRect()
-    mouseX.set((e.clientX - rect.left) / rect.width)
-    mouseY.set((e.clientY - rect.top) / rect.height)
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width
+    const py = (e.clientY - rect.top) / rect.height
+
+    gsap.to(el, {
+      rotateX: maxTilt - py * maxTilt * 2,
+      rotateY: px * maxTilt * 2 - maxTilt,
+      duration: 0.5,
+      ease: 'power3.out',
+      overwrite: true,
+    })
+
+    if (glareRef.current) {
+      gsap.set(glareRef.current, {
+        background: `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,0.16), transparent 60%)`,
+      })
+    }
   }
 
   const handleMouseLeave = () => {
-    mouseX.set(0.5)
-    mouseY.set(0.5)
+    gsap.to(ref.current, { rotateX: 0, rotateY: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' })
   }
 
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformStyle: 'preserve-3d', transformPerspective: 800 }}
+      style={{ transformStyle: 'preserve-3d', perspective: 800 }}
       className={cn('relative', className)}
     >
       {children}
-      <motion.div
+      <div
+        ref={glareRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: glareBackground }}
       />
-    </motion.div>
+    </div>
   )
 }

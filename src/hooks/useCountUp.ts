@@ -1,26 +1,32 @@
-import { useEffect, useRef, useState } from 'react'
-import { useInView } from 'framer-motion'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { gsap, ScrollTrigger } from '@/lib/gsap'
 
-export function useCountUp(target: number, duration = 1600) {
+export function useCountUp(target: number, duration = 1.6) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
   const [value, setValue] = useState(0)
 
-  useEffect(() => {
-    if (!inView) return
-    let raf: number
-    const start = performance.now()
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
 
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setValue(Math.floor(eased * target))
-      if (progress < 1) raf = requestAnimationFrame(tick)
+    const counter = { value: 0 }
+    const ctx = gsap.context(() => {
+      gsap.to(counter, {
+        value: target,
+        duration,
+        ease: 'power3.out',
+        onUpdate: () => setValue(Math.floor(counter.value)),
+        scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+      })
+    }, el)
+
+    return () => {
+      ctx.revert()
+      ScrollTrigger.getAll().forEach((st) => {
+        if (st.trigger === el) st.kill()
+      })
     }
-
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [inView, target, duration])
+  }, [target, duration])
 
   return { ref, value }
 }
