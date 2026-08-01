@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { ArrowUpRight } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { TiltCard } from '@/components/ui/TiltCard'
+import { GsapStagger } from '@/components/ui/GsapStagger'
 import { productCategories } from '@/data/products'
 
 export function ProductCategories() {
@@ -20,14 +21,10 @@ export function ProductCategories() {
           />
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {productCategories.map((product, i) => (
+        <GsapStagger className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {productCategories.map((product) => (
             <motion.div
               key={product.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
               whileHover={{ y: -8 }}
               className="group relative"
             >
@@ -54,7 +51,7 @@ export function ProductCategories() {
               </TiltCard>
             </motion.div>
           ))}
-        </div>
+        </GsapStagger>
       </div>
     </section>
   )

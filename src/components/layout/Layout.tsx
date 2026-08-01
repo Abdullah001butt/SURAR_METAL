@@ -8,12 +8,14 @@ import { BackToTop } from '@/components/ui/BackToTop'
 import { StickyMobileCta } from '@/components/ui/StickyMobileCta'
 import { QuoteModalContext } from '@/hooks/useQuoteModal'
 import { useExitIntent } from '@/hooks/useExitIntent'
+import { useLenis } from '@/hooks/useLenis'
 
 const EXIT_INTENT_KEY = 'al-surur-exit-intent-shown'
 
 export function Layout() {
   const [quoteOpen, setQuoteOpen] = useState(false)
   const [exitIntentOpen, setExitIntentOpen] = useState(false)
+  useLenis()
 
   const triggerExitIntent = useCallback(() => {
     if (sessionStorage.getItem(EXIT_INTENT_KEY)) return

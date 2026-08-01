@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronRight, ShieldCheck, Award, Truck, Factory } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { RevealHeading } from '@/components/ui/RevealHeading'
+import { MagneticButton } from '@/components/ui/MagneticButton'
 import heroImg from '@/assets/images/warehouse-hero.jpg'
 
 const floatingCards = [
@@ -49,16 +51,15 @@ export function Hero({ onRequestQuote }: HeroProps) {
             {t('hero.badge')}
           </motion.span>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+          <RevealHeading
+            as="h1"
+            delay={0.1}
             className="mt-6 text-4xl font-semibold leading-[1.05] text-white sm:text-5xl lg:text-6xl"
           >
             {t('hero.titleLine1')}
             <br />
             {t('hero.titleLine2')} <span className="text-gradient">{t('hero.titleHighlight')}</span>
-          </motion.h1>
+          </RevealHeading>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
@@ -75,9 +76,11 @@ export function Hero({ onRequestQuote }: HeroProps) {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="mt-9 flex flex-wrap gap-4"
           >
-            <Button size="lg" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
-              {t('hero.ctaPrimary')}
-            </Button>
+            <MagneticButton className="inline-block">
+              <Button size="lg" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
+                {t('hero.ctaPrimary')}
+              </Button>
+            </MagneticButton>
             <Link to="/products">
               <Button variant="outline-light" size="lg" icon={<ChevronRight size={18} className="rtl:rotate-180" />}>
                 {t('hero.ctaSecondary')}

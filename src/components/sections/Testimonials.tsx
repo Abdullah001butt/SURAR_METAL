@@ -1,14 +1,30 @@
+import { useLayoutEffect, useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
 import { useTranslation } from 'react-i18next'
 import { Star, Quote } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { testimonials } from '@/data/testimonials'
+import { gsap } from '@/lib/gsap'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
 export function Testimonials() {
   const { t, i18n } = useTranslation()
+  const carouselRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const el = carouselRef.current
+    if (!el) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } },
+      )
+    }, el)
+    return () => ctx.revert()
+  }, [])
 
   return (
     <section className="relative overflow-hidden bg-navy py-24 lg:py-32">
@@ -16,7 +32,7 @@ export function Testimonials() {
       <div className="container-px relative mx-auto max-w-7xl">
         <SectionTitle eyebrow={t('testimonials.eyebrow')} title={t('testimonials.title')} align="center" light />
 
-        <div className="mt-14">
+        <div ref={carouselRef} className="mt-14">
           <Swiper
             key={i18n.dir()}
             dir={i18n.dir()}

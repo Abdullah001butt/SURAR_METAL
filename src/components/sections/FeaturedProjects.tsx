@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { ArrowUpRight, TrendingUp } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { TiltCard } from '@/components/ui/TiltCard'
+import { GsapStagger } from '@/components/ui/GsapStagger'
 import { projects } from '@/data/projects'
 import { cn } from '@/utils/cn'
 
@@ -23,8 +23,8 @@ export function FeaturedProjects() {
           description={t('projects.description')}
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {projects.map((project, i) => {
+        <GsapStagger className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+          {projects.map((project) => {
             const metrics = t(`projectsData.${project.id}.metrics`, { returnObjects: true }) as ProjectMetric[]
             const heroMetric = metrics[0]
             const title = t(`projectsData.${project.id}.title`)
@@ -33,12 +33,8 @@ export function FeaturedProjects() {
             const result = t(`projectsData.${project.id}.result`)
 
             return (
-              <motion.div
+              <div
                 key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: (i % 4) * 0.08 }}
                 className={cn('group', project.size === 'large' ? 'sm:row-span-2 h-[560px]' : 'h-[270px]')}
               >
                 <TiltCard maxTilt={5} className="h-full w-full overflow-hidden rounded-3xl">
@@ -81,10 +77,10 @@ export function FeaturedProjects() {
                     </div>
                   </div>
                 </TiltCard>
-              </motion.div>
+              </div>
             )
           })}
-        </div>
+        </GsapStagger>
       </div>
     </section>
   )
