@@ -5,11 +5,9 @@ import { gsap, ScrollTrigger } from '@/lib/gsap'
 export function useLenis() {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 0.65,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      wheelMultiplier: 1.15,
-      touchMultiplier: 1.5,
     })
 
     lenis.on('scroll', ScrollTrigger.update)
