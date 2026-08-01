@@ -7,12 +7,13 @@ export function ProcessTimeline() {
   const { t } = useTranslation()
 
   return (
-    <section className="bg-white py-24 lg:py-32">
+    <section className="bg-white py-20 lg:py-24">
       <div className="container-px mx-auto max-w-7xl">
         <SectionTitle
           eyebrow={t('process.eyebrow')}
           title={t('process.title')}
           align="center"
+          size="sm"
         />
 
         <div className="relative mt-16">
@@ -28,7 +29,7 @@ export function ProcessTimeline() {
                 transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
                 className="relative rounded-3xl bg-bg p-8 ring-1 ring-navy/5"
               >
-                <span className="font-display text-5xl font-bold text-primary/15">{step.step}</span>
+                <span className="font-accent text-5xl font-semibold text-primary/20">{step.step}</span>
                 <h3 className="mt-3 font-display text-xl font-semibold text-navy">{t(`processData.${step.id}.title`)}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray">{t(`processData.${step.id}.description`)}</p>
               </motion.div>

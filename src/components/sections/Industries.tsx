@@ -7,7 +7,7 @@ export function Industries() {
   const { t } = useTranslation()
 
   return (
-    <section className="bg-white py-24 lg:py-32">
+    <section className="bg-white py-20 lg:py-28">
       <div className="container-px mx-auto max-w-7xl">
         <SectionTitle
           eyebrow={t('industries.eyebrow')}

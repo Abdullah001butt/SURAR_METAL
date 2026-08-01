@@ -42,11 +42,13 @@ export function FeaturedProjects() {
                 className={cn('group', project.size === 'large' ? 'sm:row-span-2 h-[560px]' : 'h-[270px]')}
               >
                 <TiltCard maxTilt={5} className="h-full w-full overflow-hidden rounded-3xl">
-                  <img
-                    src={project.image}
-                    alt={title}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                  <div className="photo-duotone absolute inset-0">
+                    <img
+                      src={project.image}
+                      alt={title}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/95 via-navy/25 to-navy/10 transition-opacity group-hover:from-navy/95 group-hover:via-navy/60" />
 
                   <div className="absolute start-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 backdrop-blur-md ring-1 ring-white/20">

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Layout } from '@/components/layout/Layout'
 import { ScrollToTop } from '@/components/layout/ScrollToTop'
 import { AuthGuard } from '@/admin/components/AuthGuard'
+import logo from '@/assets/logo.png'
 
 const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })))
 const ProductsPage = lazy(() => import('@/pages/ProductsPage').then((m) => ({ default: m.ProductsPage })))
@@ -36,8 +37,13 @@ const queryClient = new QueryClient()
 
 function PageFallback() {
   return (
-    <div className="grid min-h-screen place-items-center bg-bg">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    <div className="grid min-h-screen place-items-center bg-navy">
+      <div className="flex flex-col items-center gap-5">
+        <img src={logo} alt="Al Surur" className="h-10 w-auto animate-pulse rounded-lg bg-white/95 px-2 py-1.5" />
+        <div className="h-0.5 w-24 overflow-hidden rounded-full bg-white/10">
+          <div className="h-full w-1/3 animate-[loading-bar_1.1s_ease-in-out_infinite] rounded-full bg-primary" />
+        </div>
+      </div>
     </div>
   )
 }

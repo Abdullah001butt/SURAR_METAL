@@ -85,13 +85,23 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-2xl border border-white/10">
+        <div className="relative mt-12 overflow-hidden rounded-2xl border border-white/10">
           <iframe
             title="Al Surur Location Map"
             src="https://www.google.com/maps?q=Ajman,UAE&output=embed"
-            className="h-56 w-full grayscale invert-[0.92] contrast-[1.1]"
+            className="h-56 w-full grayscale invert-[0.92] contrast-[1.15] sepia-[0.15] hue-rotate-[180deg]"
             loading="lazy"
           />
+          <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
+          <div className="pointer-events-none absolute start-4 top-4 flex items-center gap-2 rounded-xl bg-navy/90 px-3.5 py-2.5 shadow-lg backdrop-blur-md">
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-white">
+              <MapPin size={14} />
+            </span>
+            <div>
+              <p className="text-xs font-semibold text-white">Al Surur General Store</p>
+              <p className="text-[11px] text-white/50">Industrial Area, Ajman</p>
+            </div>
+          </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40 md:flex-row">

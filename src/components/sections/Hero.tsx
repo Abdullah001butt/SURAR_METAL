@@ -29,11 +29,13 @@ export function Hero({ onRequestQuote }: HeroProps) {
   return (
     <section ref={sectionRef} className="relative flex min-h-screen items-center overflow-hidden bg-navy pt-20">
       <motion.div
-        className="absolute inset-0 bg-cover bg-center opacity-40"
+        className="absolute inset-0 bg-cover bg-center opacity-55 contrast-[1.08] saturate-[0.85]"
         style={{ backgroundImage: `url(${heroImg})`, y: bgY, scale: bgScale }}
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/50 rtl:bg-gradient-to-l" />
-      <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/55 rtl:bg-gradient-to-l" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/50" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(0,0,0,0.5),transparent_65%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-primary/10 to-transparent" />
 
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}

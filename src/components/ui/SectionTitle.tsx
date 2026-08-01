@@ -1,15 +1,24 @@
 import { motion } from 'framer-motion'
 import { cn } from '@/utils/cn'
 
+type SectionTitleSize = 'lg' | 'default' | 'sm'
+
 interface SectionTitleProps {
   eyebrow?: string
   title: string
   description?: string
   align?: 'left' | 'center'
   light?: boolean
+  size?: SectionTitleSize
 }
 
-export function SectionTitle({ eyebrow, title, description, align = 'left', light = false }: SectionTitleProps) {
+const sizeClasses: Record<SectionTitleSize, string> = {
+  lg: 'text-4xl md:text-5xl lg:text-6xl font-semibold',
+  default: 'text-3xl md:text-4xl lg:text-5xl font-semibold',
+  sm: 'text-2xl md:text-3xl lg:text-4xl font-medium',
+}
+
+export function SectionTitle({ eyebrow, title, description, align = 'left', light = false, size = 'default' }: SectionTitleProps) {
   return (
     <div className={cn('max-w-2xl', align === 'center' && 'mx-auto text-center')}>
       {eyebrow && (
@@ -29,7 +38,8 @@ export function SectionTitle({ eyebrow, title, description, align = 'left', ligh
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.05 }}
         className={cn(
-          'mt-4 text-3xl font-semibold leading-tight md:text-4xl lg:text-5xl',
+          'mt-4 leading-tight',
+          sizeClasses[size],
           light ? 'text-white' : 'text-navy',
         )}
       >

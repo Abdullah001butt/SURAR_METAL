@@ -17,9 +17,11 @@ export function CtaBanner({ onRequestQuote }: CtaBannerProps) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy to-navy-light px-8 py-16 text-center sm:px-16"
+        className="clip-notch relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy to-navy-light px-8 py-16 text-center sm:px-16"
       >
+        <div className="dot-grid absolute inset-0 opacity-40" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,90,31,0.25),transparent_60%)]" />
+        <div className="absolute -top-1 end-0 h-14 w-14 rounded-bl-2xl bg-primary" />
         <div className="relative">
           <h2 className="mx-auto max-w-2xl font-display text-3xl font-semibold text-white md:text-4xl lg:text-5xl">
             {t('ctaBanner.title')}

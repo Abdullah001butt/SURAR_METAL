@@ -11,9 +11,9 @@ export function Faq() {
   const [open, setOpen] = useState<string | null>(faqItems[0].id)
 
   return (
-    <section className="bg-bg py-24 lg:py-32">
+    <section className="bg-bg py-20 lg:py-24">
       <div className="container-px mx-auto max-w-4xl">
-        <SectionTitle eyebrow={t('faq.eyebrow')} title={t('faq.title')} align="center" />
+        <SectionTitle eyebrow={t('faq.eyebrow')} title={t('faq.title')} align="center" size="sm" />
 
         <div className="mt-14 space-y-3">
           {faqItems.map((item) => {

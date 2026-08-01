@@ -11,10 +11,10 @@ export function Testimonials() {
   const { t, i18n } = useTranslation()
 
   return (
-    <section className="relative overflow-hidden bg-navy py-24 lg:py-32">
+    <section className="seam-top-navy relative overflow-hidden bg-navy py-28 lg:py-36">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,90,31,0.1),transparent_50%)]" />
       <div className="container-px relative mx-auto max-w-7xl">
-        <SectionTitle eyebrow={t('testimonials.eyebrow')} title={t('testimonials.title')} align="center" light />
+        <SectionTitle eyebrow={t('testimonials.eyebrow')} title={t('testimonials.title')} align="center" light size="lg" />
 
         <div className="mt-14">
           <Swiper

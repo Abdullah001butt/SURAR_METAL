@@ -33,13 +33,13 @@ export function ProductCategories() {
             >
               <TiltCard maxTilt={6} className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-navy/5">
                 <Link to={product.href}>
-                  <div className="relative h-56 overflow-hidden">
+                  <div className="photo-duotone relative h-56 overflow-hidden">
                     <img
                       src={product.image}
                       alt={t(`productsData.${product.id}.title`)}
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
                   </div>
                   <div className="p-6">
                     <div className="flex items-start justify-between gap-4">
