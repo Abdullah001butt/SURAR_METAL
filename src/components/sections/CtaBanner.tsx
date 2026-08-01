@@ -2,8 +2,6 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { MagneticButton } from '@/components/ui/MagneticButton'
-import { RevealHeading } from '@/components/ui/RevealHeading'
 
 interface CtaBannerProps {
   onRequestQuote: () => void
@@ -23,17 +21,15 @@ export function CtaBanner({ onRequestQuote }: CtaBannerProps) {
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,90,31,0.25),transparent_60%)]" />
         <div className="relative">
-          <RevealHeading className="mx-auto max-w-2xl font-display text-3xl font-semibold text-white md:text-4xl lg:text-5xl">
+          <h2 className="mx-auto max-w-2xl font-display text-3xl font-semibold text-white md:text-4xl lg:text-5xl">
             {t('ctaBanner.title')}
-          </RevealHeading>
+          </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-white/70">
             {t('ctaBanner.description')}
           </p>
-          <MagneticButton className="mt-8 inline-block">
-            <Button size="lg" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
-              {t('ctaBanner.button')}
-            </Button>
-          </MagneticButton>
+          <Button size="lg" className="mt-8" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
+            {t('ctaBanner.button')}
+          </Button>
         </div>
       </motion.div>
     </section>

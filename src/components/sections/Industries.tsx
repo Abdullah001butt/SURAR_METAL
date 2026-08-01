@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { SectionTitle } from '@/components/ui/SectionTitle'
-import { GsapStagger } from '@/components/ui/GsapStagger'
 import { industries } from '@/data/industries'
 
 export function Industries() {
@@ -16,11 +15,15 @@ export function Industries() {
           description={t('industries.description')}
         />
 
-        <GsapStagger className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4" stagger={0.06} y={24}>
-          {industries.map((industry) => (
+        <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          {industries.map((industry, i) => (
             <motion.div
               key={industry.id}
               id={industry.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
               whileHover={{ y: -6, scale: 1.02 }}
               className="group flex flex-col items-center gap-4 rounded-2xl bg-bg p-8 text-center ring-1 ring-navy/5 transition-colors hover:bg-navy"
             >
@@ -30,7 +33,7 @@ export function Industries() {
               <p className="font-display text-sm font-semibold text-navy group-hover:text-white">{t(`industriesData.${industry.id}`)}</p>
             </motion.div>
           ))}
-        </GsapStagger>
+        </div>
       </div>
     </section>
   )

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { RevealHeading } from '@/components/ui/RevealHeading'
 import { cn } from '@/utils/cn'
 
 interface SectionTitleProps {
@@ -24,14 +23,18 @@ export function SectionTitle({ eyebrow, title, description, align = 'left', ligh
           {eyebrow}
         </motion.span>
       )}
-      <RevealHeading
+      <motion.h2
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.05 }}
         className={cn(
           'mt-4 text-3xl font-semibold leading-tight md:text-4xl lg:text-5xl',
           light ? 'text-white' : 'text-navy',
         )}
       >
         {title}
-      </RevealHeading>
+      </motion.h2>
       {description && (
         <motion.p
           initial={{ opacity: 0, y: 16 }}
