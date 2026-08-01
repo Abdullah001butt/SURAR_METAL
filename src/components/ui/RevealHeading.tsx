@@ -25,10 +25,10 @@ export function RevealHeading({ as: Tag = 'h2', className, children, delay = 0 }
       gsap.to(split.lines, {
         yPercent: 0,
         opacity: 1,
-        duration: 0.9,
+        duration: 0.6,
         delay,
-        ease: 'power4.out',
-        stagger: 0.08,
+        ease: 'power3.out',
+        stagger: 0.05,
         scrollTrigger: {
           trigger: el,
           start: 'top 85%',

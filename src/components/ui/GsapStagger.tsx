@@ -13,7 +13,7 @@ interface GsapStaggerProps {
 }
 
 /** Reveals direct child items with a scroll-triggered stagger — used for card grids. */
-export function GsapStagger({ children, className, itemSelector = ':scope > *', stagger = 0.1, y = 40 }: GsapStaggerProps) {
+export function GsapStagger({ children, className, itemSelector = ':scope > *', stagger = 0.06, y = 30 }: GsapStaggerProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
@@ -28,7 +28,7 @@ export function GsapStagger({ children, className, itemSelector = ':scope > *', 
       gsap.to(items, {
         opacity: 1,
         y: 0,
-        duration: 0.7,
+        duration: 0.5,
         ease: 'power3.out',
         stagger,
         scrollTrigger: {
