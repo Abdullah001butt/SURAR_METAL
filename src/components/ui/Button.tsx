@@ -1,13 +1,12 @@
-import { forwardRef, useRef } from 'react'
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { gsap } from '@/lib/gsap'
+import { forwardRef } from 'react'
+import type { ReactNode } from 'react'
+import { motion, type HTMLMotionProps } from 'framer-motion'
 import { cn } from '@/utils/cn'
-import { mergeRefs } from '@/utils/mergeRefs'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline-light'
 type ButtonSize = 'md' | 'lg'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: ButtonVariant
   size?: ButtonSize
   icon?: ReactNode
@@ -29,15 +28,12 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'md', icon, iconPosition = 'right', className, children, ...props }, ref) => {
-    const btnRef = useRef<HTMLButtonElement>(null)
-
     return (
-      <button
-        ref={mergeRefs(ref, btnRef)}
-        onMouseEnter={() => gsap.to(btnRef.current, { scale: 1.03, duration: 0.35, ease: 'power3.out' })}
-        onMouseLeave={() => gsap.to(btnRef.current, { scale: 1, duration: 0.4, ease: 'elastic.out(1, 0.5)' })}
-        onMouseDown={() => gsap.to(btnRef.current, { scale: 0.97, duration: 0.15, ease: 'power2.out' })}
-        onMouseUp={() => gsap.to(btnRef.current, { scale: 1.03, duration: 0.25, ease: 'power2.out' })}
+      <motion.button
+        ref={ref}
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         className={cn(
           'relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-semibold tracking-tight transition-colors duration-200 cursor-pointer',
           variantClasses[variant],
@@ -49,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {icon && iconPosition === 'left' && icon}
         {children}
         {icon && iconPosition === 'right' && icon}
-      </button>
+      </motion.button>
     )
   },
 )

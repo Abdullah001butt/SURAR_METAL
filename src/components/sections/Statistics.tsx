@@ -1,18 +1,20 @@
+import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { statistics } from '@/data/statistics'
 import { useCountUp } from '@/hooks/useCountUp'
 import { SectionTitle } from '@/components/ui/SectionTitle'
-import { GsapStagger } from '@/components/ui/GsapStagger'
-import { gsap } from '@/lib/gsap'
 
-function StatCard({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+function StatCard({ value, suffix, label, delay }: { value: number; suffix: string; label: string; delay: number }) {
   const { ref, value: animated } = useCountUp(value)
 
   return (
-    <div
+    <motion.div
       ref={ref}
-      onMouseEnter={(e) => gsap.to(e.currentTarget, { y: -6, duration: 0.3, ease: 'power2.out' })}
-      onMouseLeave={(e) => gsap.to(e.currentTarget, { y: 0, duration: 0.4, ease: 'power2.out' })}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+      whileHover={{ y: -6 }}
       className="rounded-3xl bg-white/5 p-8 text-center backdrop-blur-sm ring-1 ring-white/10"
     >
       <p className="font-display text-4xl font-bold text-primary md:text-5xl">
@@ -20,7 +22,7 @@ function StatCard({ value, suffix, label }: { value: number; suffix: string; lab
         {suffix}
       </p>
       <p className="mt-2 text-sm font-medium text-white/70">{label}</p>
-    </div>
+    </motion.div>
   )
 }
 
@@ -37,16 +39,17 @@ export function Statistics() {
           align="center"
           light
         />
-        <GsapStagger className="mt-14 grid grid-cols-2 gap-5 lg:grid-cols-4" stagger={0.08}>
-          {statistics.map((stat) => (
+        <div className="mt-14 grid grid-cols-2 gap-5 lg:grid-cols-4">
+          {statistics.map((stat, i) => (
             <StatCard
               key={stat.id}
               value={stat.value}
               suffix={stat.suffix}
               label={t(`statisticsData.${stat.id}`)}
+              delay={i * 0.1}
             />
           ))}
-        </GsapStagger>
+        </div>
       </div>
     </section>
   )

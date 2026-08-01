@@ -2,13 +2,6 @@ import { useEffect } from 'react'
 import Lenis from '@studio-freight/lenis'
 import { gsap, ScrollTrigger } from '@/lib/gsap'
 
-let lenisInstance: Lenis | null = null
-
-export function scrollToTop() {
-  if (lenisInstance) lenisInstance.scrollTo(0, { duration: 1 })
-  else window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
 export function useLenis() {
   useEffect(() => {
     const lenis = new Lenis({
@@ -18,7 +11,6 @@ export function useLenis() {
       wheelMultiplier: 1.15,
       touchMultiplier: 1.5,
     })
-    lenisInstance = lenis
 
     lenis.on('scroll', ScrollTrigger.update)
 
@@ -28,7 +20,6 @@ export function useLenis() {
 
     return () => {
       lenis.destroy()
-      lenisInstance = null
       gsap.ticker.remove(raf)
     }
   }, [])
