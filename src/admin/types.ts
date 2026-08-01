@@ -93,13 +93,14 @@ export interface AlSururDocument {
 export interface QuoteRequest {
   id: number
   name: string
-  company: string
-  email: string
+  company: string | null
+  email: string | null
   phone: string
   product_interest: string
   message: string | null
   status: LeadStatus
   notes: string | null
+  source: string
   created_at: string
 }
 

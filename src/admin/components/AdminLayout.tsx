@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban } from 'lucide-react'
 import { useAdminAuth } from '@/admin/hooks/useAdminAuth'
 import { GlobalSearch } from '@/admin/components/GlobalSearch'
+import { QuickCaptureBar } from '@/admin/components/QuickCaptureBar'
 import { cn } from '@/utils/cn'
 import logo from '@/assets/logo.png'
 
@@ -123,6 +124,8 @@ export function AdminLayout() {
           <Outlet />
         </main>
       </div>
+
+      <QuickCaptureBar />
     </div>
   )
 }

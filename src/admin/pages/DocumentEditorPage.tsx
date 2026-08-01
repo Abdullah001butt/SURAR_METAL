@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Copy, Plus, Printer, Save, Trash2 } from 'lucide-react'
+import { ArrowLeft, Copy, History, Plus, Printer, Save, Sparkles, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/admin/components/StatusBadge'
@@ -11,6 +11,7 @@ import { ActivityLog } from '@/admin/components/ActivityLog'
 import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { calcTotals, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
 import { logActivity } from '@/admin/utils/activity'
+import { fetchFrequentQuoteItems, fetchCustomerPriorQuotes } from '@/admin/utils/smartQuote'
 import type { AlSururDocument, Customer, DocType, DocStatus, DocumentItem, Product } from '@/admin/types'
 
 const DOC_TYPES: DocType[] = ['quotation', 'invoice', 'tax_invoice', 'delivery_note']
@@ -166,6 +167,29 @@ function DocumentEditorPageInner() {
     const product = products?.find((p) => p.id === Number(productId))
     if (!product) return
     updateItem(index, { item_code: product.item_code, description: product.description, unit: product.unit, unit_price: product.default_unit_price })
+  }
+
+  const showSmartAssistant = isNew && docType === 'quotation'
+  const { data: frequentItems } = useQuery({
+    queryKey: ['smart-quote-frequent-items'],
+    queryFn: () => fetchFrequentQuoteItems(),
+    enabled: showSmartAssistant,
+  })
+  const { data: priorQuotes } = useQuery({
+    queryKey: ['smart-quote-prior', customerId],
+    queryFn: () => fetchCustomerPriorQuotes(customerId!),
+    enabled: showSmartAssistant && !!customerId,
+  })
+
+  const addSuggestedItem = (freq: { description: string; item_code: string | null; unit: string; avg_price: number }) => {
+    setItems((prev) => {
+      const base = prev.filter((it) => it.description.trim())
+      return [...base, { sr_no: base.length + 1, item_code: freq.item_code, description: freq.description, weight: null, qty: 1, unit: freq.unit, unit_price: freq.avg_price }]
+    })
+  }
+
+  const copyFromPriorQuote = (quote: { items: DocumentItem[] }) => {
+    setItems(quote.items.map((it, i) => ({ ...it, id: undefined, document_id: undefined, sr_no: i + 1 })))
   }
 
   const save = async () => {
@@ -329,6 +353,51 @@ function DocumentEditorPageInner() {
               </div>
             </div>
           </div>
+
+          {showSmartAssistant && priorQuotes && priorQuotes.length > 0 && (
+            <div className="rounded-2xl bg-primary/5 p-5 ring-1 ring-primary/10">
+              <div className="flex items-center gap-2">
+                <History size={15} className="text-primary" />
+                <h2 className="text-sm font-semibold text-navy">This customer has {priorQuotes.length} previous quotation{priorQuotes.length > 1 ? 's' : ''}</h2>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {priorQuotes.map((q) => (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => copyFromPriorQuote(q)}
+                    className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-navy ring-1 ring-navy/10 hover:bg-primary hover:text-white hover:ring-primary"
+                  >
+                    Copy items from {q.doc_number} ({new Date(q.doc_date).toLocaleDateString()})
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {showSmartAssistant && frequentItems && frequentItems.length > 0 && (
+            <div className="rounded-2xl bg-white p-5 ring-1 ring-navy/5">
+              <div className="flex items-center gap-2">
+                <Sparkles size={15} className="text-primary" />
+                <h2 className="text-sm font-semibold text-navy">Frequently quoted items</h2>
+              </div>
+              <p className="mt-1 text-xs text-gray">Learned from your past quotations — click to add at the average price used.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {frequentItems.map((freq) => (
+                  <button
+                    key={freq.description}
+                    type="button"
+                    onClick={() => addSuggestedItem(freq)}
+                    className="flex items-center gap-1.5 rounded-full bg-bg px-3 py-1.5 text-xs font-medium text-navy hover:bg-primary/10 hover:text-primary"
+                  >
+                    <Plus size={11} />
+                    {freq.description}
+                    <span className="text-gray">· AED {formatAED(freq.avg_price)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="rounded-2xl bg-white p-6 ring-1 ring-navy/5">
             <div className="flex items-center justify-between">

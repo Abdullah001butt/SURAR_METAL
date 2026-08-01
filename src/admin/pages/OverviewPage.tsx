@@ -6,6 +6,7 @@ import { formatAED } from '@/admin/utils/documentCalc'
 import { StatusBadge } from '@/admin/components/StatusBadge'
 import { RevenueTrendChart } from '@/admin/components/charts/RevenueTrendChart'
 import { StatusBreakdownChart } from '@/admin/components/charts/StatusBreakdownChart'
+import { GaugeChart } from '@/admin/components/charts/GaugeChart'
 
 const STATUS_CHART_COLORS: Record<string, string> = {
   draft: '#64748B',
@@ -15,12 +16,13 @@ const STATUS_CHART_COLORS: Record<string, string> = {
 }
 
 async function fetchOverview() {
-  const [documentsRes, itemsRes, leadsRes, contactsRes, productsRes] = await Promise.all([
+  const [documentsRes, itemsRes, leadsRes, contactsRes, productsRes, projectsRes] = await Promise.all([
     supabase.from('documents').select('id, doc_number, doc_type, status, doc_date, converted_from_id, customer:customers(name)').order('created_at', { ascending: false }),
     supabase.from('document_items').select('document_id, qty, unit_price'),
     supabase.from('quote_requests').select('id, name, company, product_interest, status, created_at').order('created_at', { ascending: false }),
     supabase.from('contact_messages').select('id, name, status, created_at').order('created_at', { ascending: false }),
     supabase.from('products').select('id, description, stock_qty, reorder_level'),
+    supabase.from('projects').select('id, status, progress_pct'),
   ])
 
   const documents = documentsRes.data ?? []
@@ -81,6 +83,28 @@ async function fetchOverview() {
     color: STATUS_CHART_COLORS[status],
   }))
 
+  // ── Business Health Score: average of 4 sub-scores, each 0-100 ───────────
+  const newLeadsForScore = [...leads.filter((l) => l.status === 'new'), ...contacts.filter((c) => c.status === 'new')]
+  const overdueNewCount = newLeadsForScore.filter((l) => isOverdue(l.created_at)).length
+  const responseScore = newLeadsForScore.length === 0 ? 100 : Math.round(100 * (1 - overdueNewCount / newLeadsForScore.length))
+
+  const conversionScore = conversionRate
+
+  const paymentRelevantDocs = documents.filter((d) => d.status === 'sent' || d.status === 'overdue' || d.status === 'paid')
+  const overdueDocsCount = documents.filter((d) => d.status === 'overdue').length
+  const paymentScore = paymentRelevantDocs.length === 0 ? 100 : Math.round(100 * (1 - overdueDocsCount / paymentRelevantDocs.length))
+
+  const activeProjects = (projectsRes.data ?? []).filter((p) => p.status !== 'cancelled')
+  const projectScore = activeProjects.length === 0 ? 100 : Math.round(activeProjects.reduce((sum, p) => sum + p.progress_pct, 0) / activeProjects.length)
+
+  const healthScore = Math.round((responseScore + conversionScore + paymentScore + projectScore) / 4)
+  const healthBreakdown = [
+    { label: 'Lead Response', value: responseScore },
+    { label: 'Quote Conversion', value: conversionScore },
+    { label: 'On-Time Payment', value: paymentScore },
+    { label: 'Project Progress', value: projectScore },
+  ]
+
   return {
     documents: documents.slice(0, 6),
     revenue,
@@ -93,6 +117,8 @@ async function fetchOverview() {
     revenueTrend,
     statusBreakdown,
     overdueLeads,
+    healthScore,
+    healthBreakdown,
   }
 }
 
@@ -110,6 +136,31 @@ export function OverviewPage() {
     <div>
       <h1 className="font-display text-2xl font-semibold text-navy">Overview</h1>
       <p className="mt-1 text-sm text-gray">Business snapshot across leads and documents.</p>
+
+      <div className="mt-8 rounded-2xl bg-white p-6 ring-1 ring-navy/5">
+        <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center">
+          <div className="shrink-0">
+            <p className="mb-2 text-center text-xs font-semibold uppercase tracking-widest text-gray">Business Health Score</p>
+            {data ? <GaugeChart value={data.healthScore} /> : <div className="h-[140px] w-[220px] animate-pulse rounded-xl bg-bg" />}
+          </div>
+          <div className="w-full flex-1 space-y-3">
+            {(data?.healthBreakdown ?? []).map((item) => (
+              <div key={item.label}>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-navy">{item.label}</span>
+                  <span className="font-semibold text-navy">{item.value}%</span>
+                </div>
+                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-bg">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${item.value}%`, backgroundColor: item.value >= 70 ? '#059669' : item.value >= 40 ? '#EB6834' : '#DC2626' }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
