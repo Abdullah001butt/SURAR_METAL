@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Pencil, Plus, Trash2 } from 'lucide-react'
+import { AlertTriangle, FileText, Pencil, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { formatAED } from '@/admin/utils/documentCalc'
@@ -62,10 +62,11 @@ export function ProductCatalogPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-navy/5 text-xs uppercase tracking-widest text-gray">
-              <th className="px-5 py-3 text-start font-semibold">Code</th>
+              <th className="w-14 px-5 py-3"></th>
               <th className="px-5 py-3 text-start font-semibold">Description</th>
-              <th className="px-5 py-3 text-start font-semibold">Unit</th>
-              <th className="px-5 py-3 text-start font-semibold">Default Price</th>
+              <th className="px-5 py-3 text-start font-semibold">Category</th>
+              <th className="px-5 py-3 text-start font-semibold">Price</th>
+              <th className="px-5 py-3 text-start font-semibold">MOQ</th>
               <th className="px-5 py-3 text-start font-semibold">Stock</th>
               <th className="px-5 py-3 text-start font-semibold">Reorder Level</th>
               <th className="w-24 px-5 py-3"></th>
@@ -76,10 +77,29 @@ export function ProductCatalogPage() {
               const isLow = p.reorder_level > 0 && p.stock_qty <= p.reorder_level
               return (
                 <tr key={p.id} className="group border-b border-navy/5 last:border-0 hover:bg-bg">
-                  <td className="px-5 py-4 text-gray" dir="ltr">{p.item_code ?? '—'}</td>
-                  <td className="px-5 py-4 font-semibold text-navy">{p.description}</td>
-                  <td className="px-5 py-4 text-gray">{p.unit}</td>
+                  <td className="px-5 py-4">
+                    {p.photo_url ? (
+                      <img src={p.photo_url} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                    ) : (
+                      <div className="h-10 w-10 rounded-lg bg-bg" />
+                    )}
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <p className="font-semibold text-navy">{p.description}</p>
+                        {p.item_code && <p className="text-xs text-gray" dir="ltr">{p.item_code}</p>}
+                      </div>
+                      {p.pdf_catalog_url && (
+                        <a href={p.pdf_catalog_url} target="_blank" rel="noreferrer" aria-label="PDF catalog" className="text-primary hover:text-primary-dark">
+                          <FileText size={14} />
+                        </a>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 text-gray">{p.category ?? '—'}</td>
                   <td className="px-5 py-4 text-gray" dir="ltr">AED {formatAED(p.default_unit_price)}</td>
+                  <td className="px-5 py-4 text-gray" dir="ltr">{p.moq}</td>
                   <td className="px-5 py-4" dir="ltr">
                     <input
                       type="number"

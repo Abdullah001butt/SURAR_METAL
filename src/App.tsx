@@ -28,6 +28,9 @@ const ReportsPage = lazy(() => import('@/admin/pages/ReportsPage').then((m) => (
 const BlogPostsPage = lazy(() => import('@/admin/pages/BlogPostsPage').then((m) => ({ default: m.BlogPostsPage })))
 const BlogPostEditorPage = lazy(() => import('@/admin/pages/BlogPostEditorPage').then((m) => ({ default: m.BlogPostEditorPage })))
 const BlogPostPage = lazy(() => import('@/pages/BlogPostPage').then((m) => ({ default: m.BlogPostPage })))
+const AdminProjectsPage = lazy(() => import('@/admin/pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })))
+const ProjectEditorPage = lazy(() => import('@/admin/pages/ProjectEditorPage').then((m) => ({ default: m.ProjectEditorPage })))
+const SalesPipelinePage = lazy(() => import('@/admin/pages/SalesPipelinePage').then((m) => ({ default: m.SalesPipelinePage })))
 
 const queryClient = new QueryClient()
 
@@ -67,6 +70,10 @@ function App() {
               <Route path="blog" element={<BlogPostsPage />} />
               <Route path="blog/new" element={<BlogPostEditorPage />} />
               <Route path="blog/:id" element={<BlogPostEditorPage />} />
+              <Route path="projects" element={<AdminProjectsPage />} />
+              <Route path="projects/new" element={<ProjectEditorPage />} />
+              <Route path="projects/:id" element={<ProjectEditorPage />} />
+              <Route path="pipeline" element={<SalesPipelinePage />} />
             </Route>
 
             <Route element={<Layout />}>

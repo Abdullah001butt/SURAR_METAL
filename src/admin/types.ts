@@ -20,7 +20,36 @@ export interface Product {
   default_unit_price: number
   stock_qty: number
   reorder_level: number
+  photo_url: string | null
+  pdf_catalog_url: string | null
+  specifications: string | null
+  category: string | null
+  moq: number
   created_at: string
+}
+
+export type ProjectStatus = 'planning' | 'in_progress' | 'on_hold' | 'completed' | 'cancelled'
+
+export interface ProjectDocument {
+  name: string
+  url: string
+}
+
+export interface Project {
+  id: number
+  name: string
+  client_id: number | null
+  status: ProjectStatus
+  progress_pct: number
+  budget: number
+  deadline: string | null
+  assigned_staff: string | null
+  category: string | null
+  photos: string[]
+  documents: ProjectDocument[]
+  created_at: string
+  updated_at: string
+  client?: Customer
 }
 
 export interface DocumentItem {
