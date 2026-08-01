@@ -1,10 +1,11 @@
 import { useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Download } from 'lucide-react'
+import { Download, DatabaseBackup } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { formatAED } from '@/admin/utils/documentCalc'
 import { exportElementToPdf } from '@/admin/utils/pdfExport'
+import { exportFullBackup } from '@/admin/utils/fullBackup'
 import logo from '@/assets/logo.png'
 
 type Period = 'month' | 'quarter'
@@ -72,6 +73,7 @@ export function ReportsPage() {
   const [anchor, setAnchor] = useState(new Date())
   const sheetRef = useRef<HTMLDivElement>(null)
   const [downloading, setDownloading] = useState(false)
+  const [backingUp, setBackingUp] = useState(false)
 
   const { start, end, label } = useMemo(() => getRange(period, anchor), [period, anchor])
   const { data } = useQuery({
@@ -96,6 +98,15 @@ export function ReportsPage() {
     }
   }
 
+  const handleBackup = async () => {
+    setBackingUp(true)
+    try {
+      await exportFullBackup()
+    } finally {
+      setBackingUp(false)
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -103,9 +114,14 @@ export function ReportsPage() {
           <h1 className="font-display text-2xl font-semibold text-navy">Reports</h1>
           <p className="mt-1 text-sm text-gray">Monthly and quarterly business summaries.</p>
         </div>
-        <Button onClick={handleDownload} disabled={downloading} icon={<Download size={16} />}>
-          {downloading ? 'Generating...' : 'Download PDF'}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" onClick={handleBackup} disabled={backingUp} icon={<DatabaseBackup size={16} />}>
+            {backingUp ? 'Preparing...' : 'Backup All Data'}
+          </Button>
+          <Button onClick={handleDownload} disabled={downloading} icon={<Download size={16} />}>
+            {downloading ? 'Generating...' : 'Download PDF'}
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">

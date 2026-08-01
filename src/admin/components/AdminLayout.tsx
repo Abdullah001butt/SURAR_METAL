@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban } from 'lucide-react'
+import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun } from 'lucide-react'
 import { useAdminAuth } from '@/admin/hooks/useAdminAuth'
+import { useTheme } from '@/admin/hooks/useTheme'
 import { GlobalSearch } from '@/admin/components/GlobalSearch'
 import { QuickCaptureBar } from '@/admin/components/QuickCaptureBar'
 import { cn } from '@/utils/cn'
@@ -48,6 +49,7 @@ export function AdminLayout() {
   const { signOut } = useAdminAuth()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { theme, toggleTheme } = useTheme()
 
   const handleSignOut = async () => {
     await signOut()
@@ -55,7 +57,7 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-bg">
+    <div data-admin-shell className="flex min-h-screen bg-bg">
       <aside className="hidden w-64 shrink-0 flex-col border-e border-navy/5 bg-white lg:flex">
         <div className="flex h-20 items-center px-6">
           <img src={logo} alt="Al Surur" className="h-8 w-auto" />
@@ -119,6 +121,13 @@ export function AdminLayout() {
           <div className="ms-auto max-w-sm flex-1 lg:ms-0">
             <GlobalSearch />
           </div>
+          <button
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-navy/60 hover:bg-bg"
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </div>
         <main className="p-4 sm:p-6 lg:p-10">
           <Outlet />

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
@@ -76,6 +77,32 @@
     font-family: "Noto Sans SC", var(--font-display);
     letter-spacing: normal;
   }
+}
+
+/* Dashboard dark theme — scoped overrides for the admin shell only.
+   Unlayered so it wins by cascade order over Tailwind's own utility layer. */
+.dark [data-admin-shell] {
+  color-scheme: dark;
+  background-color: #0B1220;
+}
+.dark [data-admin-shell] .bg-bg { background-color: #0B1220; }
+.dark [data-admin-shell] .bg-white { background-color: #141B2D; }
+.dark [data-admin-shell] .bg-slate-50 { background-color: #1B2338; }
+.dark [data-admin-shell] .bg-gray-50 { background-color: #1B2338; }
+.dark [data-admin-shell] .text-navy { color: #E2E8F0; }
+.dark [data-admin-shell] .text-navy\/60 { color: rgba(226, 232, 240, 0.6); }
+.dark [data-admin-shell] .hover\:text-navy:hover { color: #E2E8F0; }
+.dark [data-admin-shell] .text-gray { color: #94A3B8; }
+.dark [data-admin-shell] .border-navy\/5 { border-color: rgba(226, 232, 240, 0.08); }
+.dark [data-admin-shell] .border-navy\/10 { border-color: rgba(226, 232, 240, 0.12); }
+.dark [data-admin-shell] .ring-navy\/5 { --tw-ring-color: rgba(226, 232, 240, 0.08); }
+.dark [data-admin-shell] .ring-navy\/10 { --tw-ring-color: rgba(226, 232, 240, 0.12); }
+.dark [data-admin-shell] .divide-navy\/5 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(226, 232, 240, 0.08); }
+.dark [data-admin-shell] .hover\:bg-bg:hover { background-color: #1B2338; }
+.dark [data-admin-shell] input,
+.dark [data-admin-shell] select,
+.dark [data-admin-shell] textarea {
+  color-scheme: dark;
 }
 
 @layer utilities {
