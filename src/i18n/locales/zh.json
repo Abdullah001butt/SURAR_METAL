@@ -25,6 +25,8 @@
     "description": "我们为阿联酋各地的仓库、工厂和物流企业设计、制造并安装工业货架、置物架与阁楼系统。",
     "ctaPrimary": "获取报价",
     "ctaSecondary": "探索产品",
+    "typingWords": ["托盘货架", "阁楼平台", "置物架系统", "悬臂式货架", "仓储手推车"],
+    "typingPrefix": "专精于",
     "cards": {
       "experience": "18年以上行业经验",
       "projects": "已完成500多个项目",

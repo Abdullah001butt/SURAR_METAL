@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Copy, History, Plus, Printer, Save, Sparkles, Trash2 } from 'lucide-react'
+import { ArrowLeft, Copy, History, Lock, Plus, Printer, Save, Sparkles, TrendingDown, TrendingUp, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/admin/components/StatusBadge'
@@ -9,7 +9,7 @@ import { DocumentPreview } from '@/admin/components/DocumentPreview'
 import { CustomerModal } from '@/admin/components/CustomerModal'
 import { ActivityLog } from '@/admin/components/ActivityLog'
 import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
-import { calcTotals, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
+import { calcTotals, calcMarginTotals, itemMargin, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
 import { logActivity } from '@/admin/utils/activity'
 import { fetchFrequentQuoteItems, fetchCustomerPriorQuotes } from '@/admin/utils/smartQuote'
 import type { AlSururDocument, Customer, DocType, DocStatus, DocumentItem, Product } from '@/admin/types'
@@ -19,7 +19,7 @@ const QUOTATION_SEQ = 'quotation_number_seq'
 const INVOICE_SEQ = 'invoice_number_seq'
 
 function emptyItem(srNo: number): DocumentItem {
-  return { sr_no: srNo, item_code: null, description: '', weight: null, qty: 1, unit: 'pcs', unit_price: 0 }
+  return { sr_no: srNo, item_code: null, description: '', weight: null, qty: 1, unit: 'pcs', unit_price: 0, cost_price: 0 }
 }
 
 async function fetchCustomers(): Promise<Customer[]> {
@@ -154,6 +154,7 @@ function DocumentEditorPageInner() {
   }, [isNew, docType, docNumber])
 
   const totals = useMemo(() => calcTotals(items, discount, vatRate), [items, discount, vatRate])
+  const margin = useMemo(() => calcMarginTotals(items), [items])
   const selectedCustomer = customers?.find((c) => c.id === customerId) ?? null
 
   const updateItem = (index: number, patch: Partial<DocumentItem>) => {
@@ -184,7 +185,7 @@ function DocumentEditorPageInner() {
   const addSuggestedItem = (freq: { description: string; item_code: string | null; unit: string; avg_price: number }) => {
     setItems((prev) => {
       const base = prev.filter((it) => it.description.trim())
-      return [...base, { sr_no: base.length + 1, item_code: freq.item_code, description: freq.description, weight: null, qty: 1, unit: freq.unit, unit_price: freq.avg_price }]
+      return [...base, { sr_no: base.length + 1, item_code: freq.item_code, description: freq.description, weight: null, qty: 1, unit: freq.unit, unit_price: freq.avg_price, cost_price: 0 }]
     })
   }
 
@@ -238,6 +239,7 @@ function DocumentEditorPageInner() {
           qty: it.qty,
           unit: it.unit,
           unit_price: it.unit_price,
+          cost_price: it.cost_price ?? 0,
         }))
       if (itemRows.length > 0) {
         const { error } = await supabase.from('document_items').insert(itemRows)
@@ -405,50 +407,77 @@ function DocumentEditorPageInner() {
               <button onClick={addItem} className="flex items-center gap-1 text-xs font-semibold text-primary"><Plus size={14} /> Add Item</button>
             </div>
             <div className="mt-4 space-y-3">
-              {items.map((item, i) => (
-                <div key={i} className="grid grid-cols-12 items-center gap-2 rounded-xl bg-bg p-3">
-                  <select
-                    onChange={(e) => applyProduct(i, e.target.value)}
-                    className="col-span-12 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-xs outline-none focus:border-primary sm:col-span-3"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>From catalog...</option>
-                    {products?.map((p) => <option key={p.id} value={p.id}>{p.description}</option>)}
-                  </select>
-                  <input
-                    placeholder="Description"
-                    value={item.description}
-                    onChange={(e) => updateItem(i, { description: e.target.value })}
-                    className="col-span-12 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-4"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Qty"
-                    value={item.qty}
-                    onChange={(e) => updateItem(i, { qty: Number(e.target.value) })}
-                    className="col-span-3 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-1"
-                  />
-                  <input
-                    placeholder="Unit"
-                    value={item.unit}
-                    onChange={(e) => updateItem(i, { unit: e.target.value })}
-                    className="col-span-3 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-1"
-                  />
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    value={item.unit_price}
-                    onChange={(e) => updateItem(i, { unit_price: Number(e.target.value) })}
-                    className="col-span-4 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-2"
-                  />
-                  <span className="col-span-8 text-end text-sm font-semibold text-navy sm:col-span-1" dir="ltr">
-                    {formatAED(item.qty * item.unit_price)}
-                  </span>
-                  <button onClick={() => removeItem(i)} className="col-span-4 flex justify-end text-red-400 hover:text-red-600 sm:col-span-1">
-                    <Trash2 size={16} />
-                  </button>
+              {items.map((item, i) => {
+                const rowMargin = itemMargin(item)
+                return (
+                <div key={i} className="rounded-xl bg-bg p-3">
+                  <div className="grid grid-cols-12 items-center gap-2">
+                    <select
+                      onChange={(e) => applyProduct(i, e.target.value)}
+                      className="col-span-12 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-xs outline-none focus:border-primary sm:col-span-3"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>From catalog...</option>
+                      {products?.map((p) => <option key={p.id} value={p.id}>{p.description}</option>)}
+                    </select>
+                    <input
+                      placeholder="Description"
+                      value={item.description}
+                      onChange={(e) => updateItem(i, { description: e.target.value })}
+                      className="col-span-12 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-4"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Qty"
+                      value={item.qty}
+                      onChange={(e) => updateItem(i, { qty: Number(e.target.value) })}
+                      className="col-span-3 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-1"
+                    />
+                    <input
+                      placeholder="Unit"
+                      value={item.unit}
+                      onChange={(e) => updateItem(i, { unit: e.target.value })}
+                      className="col-span-3 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-1"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Price"
+                      value={item.unit_price}
+                      onChange={(e) => updateItem(i, { unit_price: Number(e.target.value) })}
+                      className="col-span-4 rounded-lg border border-navy/10 bg-white px-2 py-1.5 text-sm outline-none focus:border-primary sm:col-span-2"
+                    />
+                    <span className="col-span-8 text-end text-sm font-semibold text-navy sm:col-span-1" dir="ltr">
+                      {formatAED(item.qty * item.unit_price)}
+                    </span>
+                    <button onClick={() => removeItem(i)} className="col-span-4 flex justify-end text-red-400 hover:text-red-600 sm:col-span-1">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 ring-1 ring-amber-200/60">
+                    <Lock size={11} className="text-amber-600" />
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-700">Internal cost</span>
+                    <input
+                      type="number"
+                      placeholder="Cost / unit"
+                      value={item.cost_price}
+                      onChange={(e) => updateItem(i, { cost_price: Number(e.target.value) })}
+                      className="w-28 rounded-lg border border-amber-300/60 bg-white px-2 py-1 text-xs outline-none focus:border-primary"
+                      dir="ltr"
+                    />
+                    {item.qty > 0 && item.unit_price > 0 && (
+                      <span
+                        className={`ms-auto flex items-center gap-1 text-xs font-semibold ${rowMargin.amount >= 0 ? 'text-emerald-600' : 'text-red-500'}`}
+                        dir="ltr"
+                      >
+                        {rowMargin.amount >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                        AED {formatAED(rowMargin.amount)} ({rowMargin.pct.toFixed(0)}%)
+                      </span>
+                    )}
+                  </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
 
@@ -486,6 +515,34 @@ function DocumentEditorPageInner() {
               <div className="flex items-center justify-between border-t border-navy/10 pt-2">
                 <span className="font-semibold text-navy">Net Total</span>
                 <span className="font-display text-lg font-bold text-primary" dir="ltr">AED {formatAED(totals.net)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-navy p-6 ring-1 ring-navy/5">
+            <div className="flex items-center gap-2">
+              <Lock size={13} className="text-amber-400" />
+              <h2 className="font-display text-sm font-semibold text-white">Margin (internal only)</h2>
+            </div>
+            <div className="mt-4 space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-white/60">Total Cost</span>
+                <span className="font-semibold text-white" dir="ltr">AED {formatAED(margin.cost)}</span>
+              </div>
+              <div className="flex items-center justify-between border-t border-white/10 pt-2">
+                <span className="font-semibold text-white">Profit</span>
+                <span
+                  className={`font-display text-lg font-bold ${margin.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}
+                  dir="ltr"
+                >
+                  AED {formatAED(margin.profit)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-white/60">Margin</span>
+                <span className={margin.pct >= 0 ? 'font-semibold text-emerald-400' : 'font-semibold text-red-400'}>
+                  {margin.pct.toFixed(1)}%
+                </span>
               </div>
             </div>
           </div>

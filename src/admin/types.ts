@@ -62,6 +62,7 @@ export interface DocumentItem {
   qty: number
   unit: string
   unit_price: number
+  cost_price: number
 }
 
 export interface AlSururDocument {

@@ -6,13 +6,15 @@ import { supabase } from '@/services/supabase'
 import { StatusBadge } from '@/admin/components/StatusBadge'
 import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { DOC_TYPE_LABELS, formatAED } from '@/admin/utils/documentCalc'
-import { calcTotals } from '@/admin/utils/documentCalc'
+import { calcTotals, calcMarginTotals } from '@/admin/utils/documentCalc'
 import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
 import type { AlSururDocument, DocType, DocStatus } from '@/admin/types'
 
 const STATUS_OPTIONS: DocStatus[] = ['draft', 'sent', 'paid', 'overdue']
 
-async function fetchDocuments(): Promise<(AlSururDocument & { total: number })[]> {
+type DocumentRow = AlSururDocument & { total: number; marginPct: number }
+
+async function fetchDocuments(): Promise<DocumentRow[]> {
   const { data, error } = await supabase
     .from('documents')
     .select('*, customer:customers(*), items:document_items(*)')
@@ -21,7 +23,8 @@ async function fetchDocuments(): Promise<(AlSururDocument & { total: number })[]
 
   return (data as AlSururDocument[]).map((doc) => {
     const { net } = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate)
-    return { ...doc, total: net }
+    const { pct } = calcMarginTotals(doc.items ?? [])
+    return { ...doc, total: net, marginPct: pct }
   })
 }
 
@@ -81,7 +84,7 @@ export function DocumentsListPage() {
     queryClient.invalidateQueries({ queryKey: ['admin-documents'] })
   }
 
-  const exportRows = (rows: (AlSururDocument & { total: number })[], label: string) => {
+  const exportRows = (rows: DocumentRow[], label: string) => {
     exportStyledExcel({
       title: 'Al Surur — Documents Export',
       subtitle: `${rows.length} documents · Generated ${new Date().toLocaleString()}`,
@@ -94,6 +97,7 @@ export function DocumentsListPage() {
         { header: 'Customer', value: (d) => d.customer?.name ?? '—', width: 28 },
         { header: 'Date', value: (d) => new Date(d.doc_date), width: 16 },
         { header: 'Total (AED)', value: (d) => Number(d.total.toFixed(2)), width: 16 },
+        { header: 'Margin %', value: (d) => Number(d.marginPct.toFixed(1)), width: 12 },
         { header: 'Status', value: (d) => d.status, width: 14, highlight: (d) => STATUS_COLORS[d.status] ?? null },
       ],
     })
@@ -189,6 +193,7 @@ export function DocumentsListPage() {
               <th className="px-5 py-3 text-start font-semibold">Customer</th>
               <th className="px-5 py-3 text-start font-semibold">Date</th>
               <th className="px-5 py-3 text-start font-semibold">Total</th>
+              <th className="px-5 py-3 text-start font-semibold">Margin</th>
               <th className="px-5 py-3 text-start font-semibold">Status</th>
               <th className="w-12 px-5 py-3"></th>
             </tr>
@@ -211,6 +216,15 @@ export function DocumentsListPage() {
                 <td className="px-5 py-4 text-navy">{d.customer?.name ?? '—'}</td>
                 <td className="px-5 py-4 text-xs text-gray">{new Date(d.doc_date).toLocaleDateString()}</td>
                 <td className="px-5 py-4 text-navy" dir="ltr">AED {formatAED(d.total)}</td>
+                <td className="px-5 py-4">
+                  {d.total > 0 ? (
+                    <span className={`text-xs font-semibold ${d.marginPct >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                      {d.marginPct.toFixed(0)}%
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray">—</span>
+                  )}
+                </td>
                 <td className="px-5 py-4"><StatusBadge status={d.status} /></td>
                 <td className="px-5 py-4">
                   <button

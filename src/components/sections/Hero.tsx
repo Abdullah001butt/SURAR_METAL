@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronRight, ShieldCheck, Award, Truck, Factory } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { WordReveal } from '@/components/ui/WordReveal'
+import { TypingText } from '@/components/ui/TypingText'
 import heroImg from '@/assets/images/warehouse-hero.jpg'
 
 const floatingCards = [
@@ -20,6 +22,12 @@ interface HeroProps {
 export function Hero({ onRequestQuote }: HeroProps) {
   const { t } = useTranslation()
   const sectionRef = useRef<HTMLElement>(null)
+  const titleLine1 = t('hero.titleLine1')
+  const titleLine2 = t('hero.titleLine2')
+  const titleHighlight = t('hero.titleHighlight')
+  const line2Delay = 0.1 + titleLine1.split(' ').length * 0.08
+  const highlightDelay = line2Delay + titleLine2.split(' ').length * 0.08
+  const typingWords = t('hero.typingWords', { returnObjects: true }) as string[]
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
   const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '22%'])
   const bgScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.22])
@@ -51,16 +59,12 @@ export function Hero({ onRequestQuote }: HeroProps) {
             {t('hero.badge')}
           </motion.span>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="mt-6 text-4xl font-semibold leading-[1.05] text-white sm:text-5xl lg:text-6xl"
-          >
-            {t('hero.titleLine1')}
+          <h1 className="mt-6 text-4xl font-semibold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
+            <WordReveal text={titleLine1} delay={0.1} />
             <br />
-            {t('hero.titleLine2')} <span className="text-gradient">{t('hero.titleHighlight')}</span>
-          </motion.h1>
+            <WordReveal text={titleLine2} delay={line2Delay} />{' '}
+            <WordReveal text={titleHighlight} delay={highlightDelay} wordClassName="text-gradient" />
+          </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
@@ -70,6 +74,16 @@ export function Hero({ onRequestQuote }: HeroProps) {
           >
             {t('hero.description')}
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mt-5 flex items-center gap-2 text-sm text-white/50"
+          >
+            <span>{t('hero.typingPrefix')}</span>
+            <TypingText words={typingWords} className="font-display text-base font-semibold text-primary" />
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}
