@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun } from 'lucide-react'
+import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun, BookOpen } from 'lucide-react'
 import { useAdminAuth } from '@/admin/hooks/useAdminAuth'
 import { useTheme } from '@/admin/hooks/useTheme'
 import { GlobalSearch } from '@/admin/components/GlobalSearch'
@@ -17,6 +17,7 @@ const navItems = [
   { to: '/dashboard/projects', label: 'Projects', icon: Briefcase },
   { to: '/dashboard/customers', label: 'Customers', icon: Users },
   { to: '/dashboard/products', label: 'Product Catalog', icon: Package },
+  { to: '/dashboard/catalog', label: 'Catalog PDF', icon: BookOpen },
   { to: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
   { to: '/dashboard/blog', label: 'Blog', icon: Newspaper },
 ]

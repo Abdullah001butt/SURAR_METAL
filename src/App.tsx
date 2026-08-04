@@ -32,6 +32,7 @@ const BlogPostPage = lazy(() => import('@/pages/BlogPostPage').then((m) => ({ de
 const AdminProjectsPage = lazy(() => import('@/admin/pages/ProjectsPage').then((m) => ({ default: m.ProjectsPage })))
 const ProjectEditorPage = lazy(() => import('@/admin/pages/ProjectEditorPage').then((m) => ({ default: m.ProjectEditorPage })))
 const SalesPipelinePage = lazy(() => import('@/admin/pages/SalesPipelinePage').then((m) => ({ default: m.SalesPipelinePage })))
+const CatalogPage = lazy(() => import('@/admin/pages/CatalogPage').then((m) => ({ default: m.CatalogPage })))
 
 const queryClient = new QueryClient()
 
@@ -80,6 +81,7 @@ function App() {
               <Route path="projects/new" element={<ProjectEditorPage />} />
               <Route path="projects/:id" element={<ProjectEditorPage />} />
               <Route path="pipeline" element={<SalesPipelinePage />} />
+              <Route path="catalog" element={<CatalogPage />} />
             </Route>
 
             <Route element={<Layout />}>
