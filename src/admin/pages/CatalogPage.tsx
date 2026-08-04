@@ -45,11 +45,11 @@ const services = [
 
 function CategoryCard({ item }: { item: CatalogItem }) {
   return (
-    <div className="overflow-hidden rounded-lg ring-1 ring-[rgba(0,0,0,0.1)]">
-      <div className="h-32 w-full overflow-hidden bg-[#e8ecf3]">
+    <div className="overflow-hidden rounded-xl shadow-sm ring-1 ring-[rgba(0,0,0,0.12)]">
+      <div className="h-48 w-full overflow-hidden bg-[#e8ecf3]">
         <img src={item.image} alt={item.title} className="h-full w-full object-cover" crossOrigin="anonymous" />
       </div>
-      <div className="bg-[#dc2626] py-1.5 text-center text-[11px] font-bold uppercase tracking-wide text-white">
+      <div className="bg-[#dc2626] py-2.5 text-center text-sm font-bold uppercase tracking-wide text-white">
         {item.title}
       </div>
     </div>
@@ -58,35 +58,29 @@ function CategoryCard({ item }: { item: CatalogItem }) {
 
 function CatalogPageSheet({ items }: { items: CatalogItem[] }) {
   return (
-    <div className="mx-auto w-[210mm] bg-white" dir="ltr">
-      <div className="flex items-center justify-between bg-[#fbbf24] px-6 py-4">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Al Surur" className="h-14 w-auto rounded bg-white p-1" crossOrigin="anonymous" />
-          <div>
-            <p className="font-display text-2xl font-extrabold leading-none text-[#dc2626]">AL SURUR</p>
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#1f2937]">General Store Equipment Trading LLC</p>
-          </div>
-        </div>
-        <div className="rounded-md bg-[#dc2626] px-4 py-2 text-end">
-          <p className="text-xs font-bold uppercase tracking-widest text-white">Our Services</p>
+    <div className="mx-auto w-[297mm] bg-white" dir="ltr">
+      <div className="flex items-center justify-between bg-[#fbbf24] px-10 py-6">
+        <img src={logo} alt="Al Surur General Store Equipment Trading LLC" className="h-24 w-auto rounded-lg bg-white p-2.5" crossOrigin="anonymous" />
+        <div className="rounded-lg bg-[#dc2626] px-6 py-3 text-end">
+          <p className="text-base font-bold uppercase tracking-widest text-white">Our Services</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1 bg-[#fbbf24] px-6 pb-4 text-[11px] font-semibold text-[#1f2937]">
+      <div className="grid grid-cols-2 gap-x-10 gap-y-1.5 bg-[#fbbf24] px-10 pb-6 text-sm font-semibold text-[#1f2937]">
         {services.map((s) => (
-          <div key={s} className="flex items-center gap-1.5">
+          <div key={s} className="flex items-center gap-2">
             <span className="text-[#dc2626]">■</span> {s}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-4 bg-[#1e3a8a] p-6">
+      <div className="grid grid-cols-3 gap-6 bg-[#1e3a8a] p-10">
         {items.map((item) => (
           <CategoryCard key={item.title} item={item} />
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-6 bg-[#dc2626] py-3 text-xs font-semibold text-white">
+      <div className="flex items-center justify-center gap-10 bg-[#dc2626] py-4 text-sm font-semibold text-white">
         <span>Mob.: 050 206 9782, 050 345 3231</span>
         <span>E-mail: alsurur108@gmail.com</span>
         <span>Ajman - U.A.E</span>

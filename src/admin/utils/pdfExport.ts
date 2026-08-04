@@ -43,20 +43,23 @@ export async function elementToPdfBlob(element: HTMLElement): Promise<Blob> {
 }
 
 /** Renders each element as its own clean PDF page — no mid-content slicing, unlike exportElementToPdf.
+ *  Each page is sized to exactly match its captured image's aspect ratio (instead of forcing a fixed
+ *  A4 box), so there's never any cropping or letterboxing regardless of the source element's shape.
  *  Uses JPEG (not PNG) since these pages are photo-heavy; keeps the download size reasonable. */
 export async function exportElementsToPdf(elements: HTMLElement[], filename: string) {
-  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const pageWidth = pdf.internal.pageSize.getWidth()
-  const pageHeight = pdf.internal.pageSize.getHeight()
+  let pdf: jsPDF | null = null
 
   for (let i = 0; i < elements.length; i++) {
     const canvas = await html2canvas(elements[i], { scale: 1.5, useCORS: true, backgroundColor: '#ffffff' })
-    const imgData = canvas.toDataURL('image/jpeg', 0.82)
-    const imgHeight = (canvas.height * pageWidth) / canvas.width
+    const imgData = canvas.toDataURL('image/jpeg', 0.85)
 
-    if (i > 0) pdf.addPage()
-    pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, Math.min(imgHeight, pageHeight))
+    if (!pdf) {
+      pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] })
+    } else {
+      pdf.addPage([canvas.width, canvas.height], 'portrait')
+    }
+    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height)
   }
 
-  pdf.save(`${sanitizeFilename(filename)}.pdf`)
+  pdf!.save(`${sanitizeFilename(filename)}.pdf`)
 }
