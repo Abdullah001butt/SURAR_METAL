@@ -52,8 +52,8 @@ function CompletionReportEditorPageInner() {
   const [customerId, setCustomerId] = useState<number | null>(null)
   const [clientName, setClientName] = useState('')
   const [clientLocation, setClientLocation] = useState('')
-  const [staffName, setStaffName] = useState('MOHD FABEZ')
-  const [staffEmail, setStaffEmail] = useState('alsururfabez@gmail.com')
+  const [staffName, setStaffName] = useState('Muhammad Abdullah')
+  const [staffEmail, setStaffEmail] = useState('m.abdullahdev2008@gmail.com')
   const [reportDate, setReportDate] = useState(new Date().toISOString().slice(0, 10))
   const [subject, setSubject] = useState('Work Completion Report.')
   const [introText, setIntroText] = useState(
