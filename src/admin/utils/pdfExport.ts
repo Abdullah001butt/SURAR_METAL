@@ -42,19 +42,20 @@ export async function elementToPdfBlob(element: HTMLElement): Promise<Blob> {
   return pdf.output('blob')
 }
 
-/** Renders each element as its own clean PDF page — no mid-content slicing, unlike exportElementToPdf. */
+/** Renders each element as its own clean PDF page — no mid-content slicing, unlike exportElementToPdf.
+ *  Uses JPEG (not PNG) since these pages are photo-heavy; keeps the download size reasonable. */
 export async function exportElementsToPdf(elements: HTMLElement[], filename: string) {
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const pageWidth = pdf.internal.pageSize.getWidth()
   const pageHeight = pdf.internal.pageSize.getHeight()
 
   for (let i = 0; i < elements.length; i++) {
-    const canvas = await html2canvas(elements[i], { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
-    const imgData = canvas.toDataURL('image/png')
+    const canvas = await html2canvas(elements[i], { scale: 1.5, useCORS: true, backgroundColor: '#ffffff' })
+    const imgData = canvas.toDataURL('image/jpeg', 0.82)
     const imgHeight = (canvas.height * pageWidth) / canvas.width
 
     if (i > 0) pdf.addPage()
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, Math.min(imgHeight, pageHeight))
+    pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, Math.min(imgHeight, pageHeight))
   }
 
   pdf.save(`${sanitizeFilename(filename)}.pdf`)

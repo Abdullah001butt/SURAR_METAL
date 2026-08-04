@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Download } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { TiltCard } from '@/components/ui/TiltCard'
+import { Button } from '@/components/ui/Button'
 import { productCategories } from '@/data/products'
 
 export function ProductCategories() {
@@ -18,6 +19,11 @@ export function ProductCategories() {
             title={t('productCategories.title')}
             description={t('productCategories.description')}
           />
+          <a href="/al-surur-product-catalog.pdf" download className="shrink-0">
+            <Button variant="secondary" icon={<Download size={16} />}>
+              {t('productCategories.downloadCatalog')}
+            </Button>
+          </a>
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
