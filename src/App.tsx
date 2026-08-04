@@ -35,6 +35,9 @@ const SalesPipelinePage = lazy(() => import('@/admin/pages/SalesPipelinePage').t
 const CatalogPage = lazy(() => import('@/admin/pages/CatalogPage').then((m) => ({ default: m.CatalogPage })))
 const CompletionReportsListPage = lazy(() => import('@/admin/pages/CompletionReportsListPage').then((m) => ({ default: m.CompletionReportsListPage })))
 const CompletionReportEditorPage = lazy(() => import('@/admin/pages/CompletionReportEditorPage').then((m) => ({ default: m.CompletionReportEditorPage })))
+const ExpensesPage = lazy(() => import('@/admin/pages/ExpensesPage').then((m) => ({ default: m.ExpensesPage })))
+const SupplierBillsPage = lazy(() => import('@/admin/pages/SupplierBillsPage').then((m) => ({ default: m.SupplierBillsPage })))
+const FinanceReportsPage = lazy(() => import('@/admin/pages/FinanceReportsPage').then((m) => ({ default: m.FinanceReportsPage })))
 
 const queryClient = new QueryClient()
 
@@ -87,6 +90,9 @@ function App() {
               <Route path="completion-reports" element={<CompletionReportsListPage />} />
               <Route path="completion-reports/new" element={<CompletionReportEditorPage />} />
               <Route path="completion-reports/:id" element={<CompletionReportEditorPage />} />
+              <Route path="expenses" element={<ExpensesPage />} />
+              <Route path="supplier-bills" element={<SupplierBillsPage />} />
+              <Route path="finance-reports" element={<FinanceReportsPage />} />
             </Route>
 
             <Route element={<Layout />}>

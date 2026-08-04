@@ -158,3 +158,33 @@ export interface CompletionReport {
   customer?: Customer
   items?: CompletionReportItem[]
 }
+
+export type ExpenseCategory = 'rent' | 'salaries' | 'fuel' | 'utilities' | 'materials' | 'transport' | 'marketing' | 'other'
+export type PaymentMethod = 'cash' | 'bank' | 'card' | 'cheque'
+export type SupplierBillStatus = 'unpaid' | 'paid' | 'overdue'
+
+export interface Expense {
+  id: number
+  category: ExpenseCategory
+  description: string
+  vendor: string | null
+  amount: number
+  vat_amount: number
+  payment_method: PaymentMethod
+  expense_date: string
+  created_at: string
+}
+
+export interface SupplierBill {
+  id: number
+  supplier_name: string
+  bill_number: string | null
+  amount: number
+  vat_amount: number
+  bill_date: string
+  due_date: string | null
+  status: SupplierBillStatus
+  paid_date: string | null
+  notes: string | null
+  created_at: string
+}
