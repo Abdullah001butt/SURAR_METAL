@@ -130,3 +130,31 @@ export interface BlogPost {
   created_at: string
   updated_at: string
 }
+
+export interface CompletionReportItem {
+  id?: number
+  report_id?: number
+  sr_no: number
+  lpo_no: string | null
+  invoice_no: string | null
+  item_date: string | null
+  amount: number
+}
+
+export interface CompletionReport {
+  id: number
+  client_name: string
+  client_location: string | null
+  staff_name: string
+  staff_email: string | null
+  report_date: string
+  subject: string
+  intro_text: string
+  work_details: string
+  confirmation_text: string
+  customer_id: number | null
+  created_at: string
+  updated_at: string
+  customer?: Customer
+  items?: CompletionReportItem[]
+}
