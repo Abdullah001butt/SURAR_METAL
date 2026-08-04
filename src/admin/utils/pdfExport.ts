@@ -53,10 +53,12 @@ export async function exportElementsToPdf(elements: HTMLElement[], filename: str
     const canvas = await html2canvas(elements[i], { scale: 1.5, useCORS: true, backgroundColor: '#ffffff' })
     const imgData = canvas.toDataURL('image/jpeg', 0.85)
 
+    const orientation = canvas.width >= canvas.height ? 'landscape' : 'portrait'
+
     if (!pdf) {
-      pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] })
+      pdf = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height] })
     } else {
-      pdf.addPage([canvas.width, canvas.height], 'portrait')
+      pdf.addPage([canvas.width, canvas.height], orientation)
     }
     pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height)
   }
