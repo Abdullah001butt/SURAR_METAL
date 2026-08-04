@@ -20,9 +20,24 @@ export function ProductDetailPage() {
   const description = t(`productsData.${product.id}.description`)
   const features = t('productDetail.features', { returnObjects: true }) as string[]
 
+  const serviceJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: title,
+    description,
+    image: product.image,
+    provider: {
+      '@type': 'LocalBusiness',
+      name: 'Al Surur General Store Equipment Trading LLC',
+      telephone: '+971554939866',
+      address: { '@type': 'PostalAddress', addressLocality: 'Ajman', addressCountry: 'AE' },
+    },
+    areaServed: { '@type': 'Country', name: 'United Arab Emirates' },
+  }
+
   return (
     <>
-      <Seo title={title} description={description} path={`/products/${product.id}`} image={product.image} />
+      <Seo title={title} description={description} path={`/products/${product.id}`} image={product.image} jsonLd={serviceJsonLd} />
       <PageHero
         eyebrow={t('productDetail.eyebrow')}
         title={title}
