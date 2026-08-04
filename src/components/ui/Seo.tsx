@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 const SITE_NAME = 'Al Surur General Store Equipment Trading LLC'
-const SITE_URL = 'https://www.alsururmetal.com'
+const SITE_URL = 'https://www.alsururmetals.com'
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`
 
 interface SeoProps {

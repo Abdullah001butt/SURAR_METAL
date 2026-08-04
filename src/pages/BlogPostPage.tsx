@@ -41,9 +41,9 @@ export function BlogPostPage() {
     publisher: {
       '@type': 'Organization',
       name: 'Al Surur General Store Equipment Trading LLC',
-      logo: { '@type': 'ImageObject', url: 'https://www.alsururmetal.com/favicon.svg' },
+      logo: { '@type': 'ImageObject', url: 'https://www.alsururmetals.com/favicon.svg' },
     },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.alsururmetal.com/blog/${post.slug}` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.alsururmetals.com/blog/${post.slug}` },
   }
 
   return (

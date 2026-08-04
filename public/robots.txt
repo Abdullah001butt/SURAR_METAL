@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /dashboard
 
-Sitemap: https://www.alsururmetal.com/sitemap.xml
+Sitemap: https://www.alsururmetals.com/sitemap.xml
