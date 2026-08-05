@@ -39,7 +39,7 @@ async function fetchFinanceData(startIso: string, endIso: string) {
   let outputVat = 0
   for (const doc of paidDocs) {
     const items = doc.items ?? []
-    const totals = calcTotals(items, doc.discount, doc.vat_rate)
+    const totals = calcTotals(items, doc.discount, doc.vat_rate, doc.manual_total)
     revenue += totals.net - totals.vatAmount
     outputVat += totals.vatAmount
     cogs += items.reduce((sum, it) => sum + itemCost(it), 0)
@@ -54,7 +54,7 @@ async function fetchFinanceData(startIso: string, endIso: string) {
   const netVat = outputVat - inputVat
 
   const cashIn = outstandingDocs.reduce((sum, doc) => {
-    const totals = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate)
+    const totals = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate, doc.manual_total)
     return sum + totals.net
   }, 0)
 

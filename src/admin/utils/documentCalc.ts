@@ -16,13 +16,17 @@ export function itemMargin(item: DocumentItem): { amount: number; pct: number } 
   return { amount, pct }
 }
 
-export function calcTotals(items: DocumentItem[], discount: number, vatRate: number) {
+export function calcTotals(items: DocumentItem[], discount: number, vatRate: number, manualTotal?: number | null) {
   const gross = items.reduce((sum, item) => sum + itemAmount(item), 0)
   const afterDiscount = gross - discount
   const vatAmount = afterDiscount * (vatRate / 100)
-  const net = afterDiscount + vatAmount
+  const computedNet = afterDiscount + vatAmount
+  // A manually-typed total (e.g. from a handwritten lump-sum quote) wins over
+  // the item-based calculation when set — items may just describe scope of
+  // work without individual pricing.
+  const net = manualTotal != null ? manualTotal : computedNet
 
-  return { gross, discount, vatAmount, net }
+  return { gross, discount, vatAmount, net, isManual: manualTotal != null }
 }
 
 export function calcMarginTotals(items: DocumentItem[]) {

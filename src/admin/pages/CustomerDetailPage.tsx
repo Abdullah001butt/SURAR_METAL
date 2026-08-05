@@ -29,7 +29,7 @@ async function fetchCustomerDetail(id: number) {
 
   const customer = customerRes.data as Customer
   const documents = ((documentsRes.data ?? []) as AlSururDocument[]).map((doc) => {
-    const { net } = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate)
+    const { net } = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate, doc.manual_total)
     return { ...doc, total: net }
   })
   const projects = (projectsRes.data ?? []) as Project[]

@@ -91,6 +91,7 @@ function DocumentEditorPageInner() {
   const [validityDays, setValidityDays] = useState(10)
   const [discount, setDiscount] = useState(0)
   const [vatRate, setVatRate] = useState(5)
+  const [manualTotal, setManualTotal] = useState<number | null>(null)
   const [items, setItems] = useState<DocumentItem[]>([emptyItem(1)])
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
@@ -120,6 +121,7 @@ function DocumentEditorPageInner() {
       setValidityDays(existingDoc.validity_days ?? 10)
       setDiscount(existingDoc.discount)
       setVatRate(existingDoc.vat_rate)
+      setManualTotal(existingDoc.manual_total ?? null)
       setItems(existingDoc.items && existingDoc.items.length > 0 ? existingDoc.items : [emptyItem(1)])
       setLoadedId(existingDoc.id)
       setInitialStatus(existingDoc.status)
@@ -156,7 +158,7 @@ function DocumentEditorPageInner() {
     }
   }, [isNew, docType, docNumber])
 
-  const totals = useMemo(() => calcTotals(items, discount, vatRate), [items, discount, vatRate])
+  const totals = useMemo(() => calcTotals(items, discount, vatRate, manualTotal), [items, discount, vatRate, manualTotal])
   const margin = useMemo(() => calcMarginTotals(items), [items])
   const selectedCustomer = customers?.find((c) => c.id === customerId) ?? null
 
@@ -233,6 +235,7 @@ function DocumentEditorPageInner() {
         validity_days: validityDays,
         discount,
         vat_rate: vatRate,
+        manual_total: manualTotal,
         converted_from_id: convertFromId ? Number(convertFromId) : existingDoc?.converted_from_id ?? null,
       }
 
@@ -313,6 +316,7 @@ function DocumentEditorPageInner() {
     validity_days: validityDays,
     discount,
     vat_rate: vatRate,
+    manual_total: manualTotal,
     converted_from_id: null,
     created_at: '',
     updated_at: '',
@@ -535,8 +539,32 @@ function DocumentEditorPageInner() {
                 <span className="text-gray">VAT %</span>
                 <input type="number" value={vatRate} onChange={(e) => setVatRate(Number(e.target.value))} className="w-24 rounded-lg border border-navy/10 bg-bg px-2 py-1 text-end text-sm outline-none focus:border-primary" dir="ltr" />
               </div>
+
+              <label className="flex items-center justify-between border-t border-navy/10 pt-2">
+                <span className="text-gray">Set amount manually</span>
+                <input
+                  type="checkbox"
+                  checked={manualTotal != null}
+                  onChange={(e) => setManualTotal(e.target.checked ? totals.net : null)}
+                  className="h-4 w-4 rounded border-navy/20"
+                />
+              </label>
+              {manualTotal != null && (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray">Amount (AED)</span>
+                  <input
+                    type="number"
+                    autoFocus
+                    value={manualTotal}
+                    onChange={(e) => setManualTotal(Number(e.target.value))}
+                    className="w-32 rounded-lg border border-primary/40 bg-primary/5 px-2 py-1 text-end text-sm font-semibold outline-none focus:border-primary"
+                    dir="ltr"
+                  />
+                </div>
+              )}
+
               <div className="flex items-center justify-between border-t border-navy/10 pt-2">
-                <span className="font-semibold text-navy">Net Total</span>
+                <span className="font-semibold text-navy">Net Total{manualTotal != null && <span className="ms-1 text-[10px] font-normal text-primary">(manual)</span>}</span>
                 <span className="font-display text-lg font-bold text-primary" dir="ltr">AED {formatAED(totals.net)}</span>
               </div>
             </div>

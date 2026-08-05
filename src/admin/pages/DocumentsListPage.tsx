@@ -22,7 +22,7 @@ async function fetchDocuments(): Promise<DocumentRow[]> {
   if (error) throw error
 
   return (data as AlSururDocument[]).map((doc) => {
-    const { net } = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate)
+    const { net } = calcTotals(doc.items ?? [], doc.discount, doc.vat_rate, doc.manual_total)
     const { pct } = calcMarginTotals(doc.items ?? [])
     return { ...doc, total: net, marginPct: pct }
   })

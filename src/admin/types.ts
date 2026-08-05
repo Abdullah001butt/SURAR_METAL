@@ -84,6 +84,7 @@ export interface AlSururDocument {
   validity_days: number | null
   discount: number
   vat_rate: number
+  manual_total: number | null
   converted_from_id: number | null
   created_at: string
   updated_at: string

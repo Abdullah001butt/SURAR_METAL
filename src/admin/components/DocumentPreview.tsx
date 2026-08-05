@@ -14,7 +14,7 @@ interface DocumentPreviewProps {
 
 export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
   const items = document.items ?? []
-  const totals = calcTotals(items, document.discount, document.vat_rate)
+  const totals = calcTotals(items, document.discount, document.vat_rate, document.manual_total)
   const isTaxInvoice = document.doc_type === 'tax_invoice'
   const isDeliveryNote = document.doc_type === 'delivery_note'
   const hasWeightColumn = isDeliveryNote || document.doc_type === 'invoice'

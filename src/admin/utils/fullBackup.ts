@@ -59,7 +59,7 @@ export async function exportFullBackup() {
           header: 'Total (AED)',
           value: (r) => {
             const doc = r as AlSururDocument
-            return Number(calcTotals(doc.items ?? [], doc.discount, doc.vat_rate).net.toFixed(2))
+            return Number(calcTotals(doc.items ?? [], doc.discount, doc.vat_rate, doc.manual_total).net.toFixed(2))
           },
           width: 16,
         },
