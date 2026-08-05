@@ -143,7 +143,8 @@ export function ReportsPage() {
         </div>
       </div>
 
-      <div ref={sheetRef} className="mx-auto mt-6 max-w-[210mm] bg-[#ffffff] p-10 text-[#000000]" dir="ltr">
+      <div className="mt-6 overflow-x-auto">
+      <div ref={sheetRef} className="mx-auto min-w-[210mm] max-w-[210mm] bg-[#ffffff] p-10 text-[#000000]" dir="ltr">
         <div className="flex items-center justify-between border-b-4 border-[#dc2626] pb-4">
           <img src={logo} alt="Al Surur" className="h-14 w-auto" />
           <div className="text-end">
@@ -211,6 +212,7 @@ export function ReportsPage() {
           <p>Al Surur General Store Equipment Trading LLC</p>
           <p>Tel: 06 553 7662 | Mob: 050 2069 782 | E-mail: alsurur108@gmail.com</p>
         </div>
+      </div>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun, BookOpen, ClipboardCheck, Receipt, Landmark, PieChart } from 'lucide-react'
@@ -56,6 +56,15 @@ export function AdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { theme, toggleTheme } = useTheme()
 
+  useEffect(() => {
+    if (!mobileOpen) return
+    const { overflow } = document.body.style
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = overflow
+    }
+  }, [mobileOpen])
+
   const handleSignOut = async () => {
     await signOut()
     navigate('/dashboard/login', { replace: true })
@@ -91,7 +100,7 @@ export function AdminLayout() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="flex h-full w-72 flex-col bg-white"
+              className="flex h-full w-72 flex-col overflow-y-auto overscroll-contain bg-white"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex h-20 items-center justify-between px-6">

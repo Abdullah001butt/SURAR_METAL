@@ -177,6 +177,7 @@ export function CustomerDetailPage() {
             <div className="border-b border-navy/5 px-6 py-4">
               <h2 className="font-display text-lg font-semibold text-navy">Documents</h2>
             </div>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-navy/5 text-xs uppercase tracking-widest text-gray">
@@ -203,6 +204,7 @@ export function CustomerDetailPage() {
                 ))}
               </tbody>
             </table>
+            </div>
             {documents.length === 0 && <p className="py-10 text-center text-sm text-gray">No documents for this customer yet.</p>}
           </div>
         </div>

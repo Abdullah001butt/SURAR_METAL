@@ -66,7 +66,7 @@ export function SupplierBillsPage() {
         </div>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl bg-white ring-1 ring-navy/5">
+      <div className="mt-6 overflow-x-auto rounded-2xl bg-white ring-1 ring-navy/5">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-navy/5 text-xs uppercase tracking-widest text-gray">
