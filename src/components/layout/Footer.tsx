@@ -67,7 +67,9 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-2">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-primary" />
-                Industrial Area, Ajman, UAE
+                <a href="https://maps.app.goo.gl/ZUC9KTwPS8DTU8pu7" target="_blank" rel="noreferrer" className="hover:text-primary">
+                  Al Owan, Al Nakhil 1, Ajman, UAE
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="shrink-0 text-primary" />
@@ -88,20 +90,25 @@ export function Footer() {
         <div className="relative mt-12 overflow-hidden rounded-2xl border border-white/10">
           <iframe
             title="Al Surur Location Map"
-            src="https://www.google.com/maps?q=Ajman,UAE&output=embed"
+            src="https://www.google.com/maps?q=25.4139231,55.4415914&z=16&output=embed"
             className="h-56 w-full grayscale invert-[0.92] contrast-[1.15] sepia-[0.15] hue-rotate-[180deg]"
             loading="lazy"
           />
           <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
-          <div className="pointer-events-none absolute start-4 top-4 flex items-center gap-2 rounded-xl bg-navy/90 px-3.5 py-2.5 shadow-lg backdrop-blur-md">
+          <a
+            href="https://maps.app.goo.gl/ZUC9KTwPS8DTU8pu7"
+            target="_blank"
+            rel="noreferrer"
+            className="absolute start-4 top-4 flex items-center gap-2 rounded-xl bg-navy/90 px-3.5 py-2.5 shadow-lg backdrop-blur-md transition-colors hover:bg-navy"
+          >
             <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-white">
               <MapPin size={14} />
             </span>
             <div>
               <p className="text-xs font-semibold text-white">Al Surur General Store</p>
-              <p className="text-[11px] text-white/50">Industrial Area, Ajman</p>
+              <p className="text-[11px] text-white/50">Al Owan, Al Nakhil 1, Ajman</p>
             </div>
-          </div>
+          </a>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40 md:flex-row">

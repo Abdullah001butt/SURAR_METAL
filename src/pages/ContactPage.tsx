@@ -43,7 +43,7 @@ export function ContactPage() {
   }
 
   const details = [
-    { icon: MapPin, label: 'Industrial Area, Ajman, UAE' },
+    { icon: MapPin, label: 'Al Owan, Al Nakhil 1, Ajman, UAE', href: 'https://maps.app.goo.gl/ZUC9KTwPS8DTU8pu7' },
     { icon: Phone, label: '+971 55 493 9866', href: 'tel:+971554939866' },
     { icon: Phone, label: '+971 50 206 9782', href: 'tel:+971502069782' },
     { icon: Mail, label: 'info@alsururmetal.com', href: 'mailto:info@alsururmetal.com' },
@@ -67,7 +67,18 @@ export function ContactPage() {
                   <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
                     <d.icon size={18} />
                   </span>
-                  {d.href ? <a href={d.href} className="hover:text-primary" dir="ltr">{d.label}</a> : d.label}
+                  {d.href ? (
+                    <a
+                      href={d.href}
+                      className="hover:text-primary"
+                      dir="ltr"
+                      {...(d.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+                    >
+                      {d.label}
+                    </a>
+                  ) : (
+                    d.label
+                  )}
                 </li>
               ))}
             </ul>
