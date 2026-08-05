@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink as RouterNavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
@@ -19,6 +19,19 @@ export function Navbar({ onRequestQuote }: NavbarProps) {
   const scrolled = useScrollPast(24)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Lock background scroll while the mobile menu is open — without this,
+  // scrolling the page behind it (combined with the mobile browser's URL
+  // bar collapsing/expanding) made the "fixed inset-0" overlay flicker
+  // and show gaps of page content through what should be a solid navy bg.
+  useEffect(() => {
+    if (!mobileOpen) return
+    const { overflow } = document.body.style
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = overflow
+    }
+  }, [mobileOpen])
 
   return (
     <header
@@ -107,7 +120,7 @@ export function Navbar({ onRequestQuote }: NavbarProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-navy lg:hidden"
+            className="fixed inset-0 z-50 h-dvh overflow-y-auto overscroll-contain bg-navy lg:hidden"
           >
             <div className="container-px flex h-20 items-center justify-between">
               <span className="font-display text-lg font-semibold text-white">Menu</span>
