@@ -63,9 +63,8 @@ export async function extractQuoteFromPhoto(file: File): Promise<ExtractedQuote>
 
   const { data, mediaType } = await fileToBase64(file)
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-    {
+  const callGemini = (model: string) =>
+    fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -79,8 +78,13 @@ export async function extractQuoteFromPhoto(file: File): Promise<ExtractedQuote>
         ],
         generationConfig: { responseMimeType: 'application/json' },
       }),
-    },
-  )
+    })
+
+  // gemini-3.5-flash as requested — if that exact model name isn't available
+  // on Google's side yet (or on this key's account), fall back to 2.5 flash
+  // rather than hard-failing the whole feature.
+  let res = await callGemini('gemini-3.5-flash')
+  if (res.status === 404) res = await callGemini('gemini-2.5-flash')
 
   const json = await res.json()
   if (!res.ok) {
