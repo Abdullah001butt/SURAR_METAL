@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Copy, History, Lock, Plus, Printer, Save, Sparkles, TrendingDown, TrendingUp, Trash2 } from 'lucide-react'
+import { ArrowLeft, Camera, Copy, History, Lock, Plus, Printer, Save, Sparkles, TrendingDown, TrendingUp, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { StatusBadge } from '@/admin/components/StatusBadge'
@@ -9,6 +9,7 @@ import { DocumentPreview } from '@/admin/components/DocumentPreview'
 import { CustomerModal } from '@/admin/components/CustomerModal'
 import { ActivityLog } from '@/admin/components/ActivityLog'
 import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
+import { ImportQuoteFromPhotoModal, type ExtractedQuote } from '@/admin/components/ImportQuoteFromPhotoModal'
 import { calcTotals, calcMarginTotals, itemMargin, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
 import { logActivity } from '@/admin/utils/activity'
 import { fetchFrequentQuoteItems, fetchCustomerPriorQuotes } from '@/admin/utils/smartQuote'
@@ -97,6 +98,7 @@ function DocumentEditorPageInner() {
   const [initialStatus, setInitialStatus] = useState<DocStatus | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [showImportPhoto, setShowImportPhoto] = useState(false)
 
   // Hydrate from an existing document (edit mode)
   useEffect(() => {
@@ -191,6 +193,23 @@ function DocumentEditorPageInner() {
 
   const copyFromPriorQuote = (quote: { items: DocumentItem[] }) => {
     setItems(quote.items.map((it, i) => ({ ...it, id: undefined, document_id: undefined, sr_no: i + 1 })))
+  }
+
+  const applyExtractedQuote = (extracted: ExtractedQuote) => {
+    const extractedItems: DocumentItem[] = extracted.items
+      .filter((it) => it.description?.trim())
+      .map((it, i) => ({
+        sr_no: i + 1,
+        item_code: null,
+        description: it.spec ? `${it.description} (${it.spec})` : it.description,
+        weight: null,
+        qty: it.qty ?? 1,
+        unit: it.unit ?? 'pcs',
+        unit_price: it.unit_price ?? 0,
+        cost_price: 0,
+      }))
+    if (extractedItems.length > 0) setItems(extractedItems)
+    setShowImportPhoto(false)
   }
 
   const save = async () => {
@@ -313,6 +332,9 @@ function DocumentEditorPageInner() {
         <div className="flex gap-3">
           {existingDoc && (
             <Button variant="ghost" onClick={() => setShowDeleteConfirm(true)} icon={<Trash2 size={16} />}>Delete</Button>
+          )}
+          {isNew && (
+            <Button variant="ghost" onClick={() => setShowImportPhoto(true)} icon={<Camera size={16} />}>Import from Photo</Button>
           )}
           <Button variant="ghost" onClick={() => setShowPreview(true)} icon={<Printer size={16} />}>Preview / Print</Button>
           <Button onClick={save} disabled={saving} icon={<Save size={16} />}>{saving ? 'Saving...' : 'Save Document'}</Button>
@@ -592,6 +614,10 @@ function DocumentEditorPageInner() {
             queryClient.invalidateQueries({ queryKey: ['admin-customers'] })
           }}
         />
+      )}
+
+      {showImportPhoto && (
+        <ImportQuoteFromPhotoModal onClose={() => setShowImportPhoto(false)} onExtracted={applyExtractedQuote} />
       )}
 
       {showDeleteConfirm && existingDoc && (
