@@ -80,11 +80,9 @@ export async function extractQuoteFromPhoto(file: File): Promise<ExtractedQuote>
       }),
     })
 
-  // gemini-3.5-flash as requested — if that exact model name isn't available
-  // on Google's side yet (or on this key's account), fall back to 2.5 flash
-  // rather than hard-failing the whole feature.
-  let res = await callGemini('gemini-3.5-flash')
-  if (res.status === 404) res = await callGemini('gemini-2.5-flash')
+  // gemini-2.5-flash is deprecated for new users as of Google's own API
+  // response — gemini-3.5-flash is the current stable model, no fallback.
+  const res = await callGemini('gemini-3.5-flash')
 
   const json = await res.json()
   if (!res.ok) {
