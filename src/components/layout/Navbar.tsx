@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, NavLink as RouterNavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
@@ -7,6 +7,7 @@ import { navLinks } from '@/data/navigation'
 import { Button } from '@/components/ui/Button'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { cn } from '@/utils/cn'
+import { useScrollPast } from '@/hooks/useScrollPast'
 import logo from '@/assets/logo.png'
 
 interface NavbarProps {
@@ -15,16 +16,9 @@ interface NavbarProps {
 
 export function Navbar({ onRequestQuote }: NavbarProps) {
   const { t } = useTranslation()
-  const [scrolled, setScrolled] = useState(false)
+  const scrolled = useScrollPast(24)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
-    onScroll()
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   return (
     <header
@@ -92,9 +86,11 @@ export function Navbar({ onRequestQuote }: NavbarProps) {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <Button variant="primary" size="md" className="hidden md:inline-flex" onClick={onRequestQuote}>
-            {t('nav.requestQuote')}
-          </Button>
+          <div className="hidden md:block">
+            <Button variant="primary" size="md" onClick={onRequestQuote}>
+              {t('nav.requestQuote')}
+            </Button>
+          </div>
           <button
             className="grid h-10 w-10 place-items-center rounded-full text-white lg:hidden"
             onClick={() => setMobileOpen(true)}

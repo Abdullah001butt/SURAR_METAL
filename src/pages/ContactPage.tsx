@@ -61,7 +61,7 @@ export function ContactPage() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           <div>
             <h2 className="font-display text-2xl font-semibold text-navy">{t('contactPage.getInTouch')}</h2>
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-6 space-y-4 ps-16 md:ps-0">
               {details.map((d) => (
                 <li key={d.label} className="flex items-center gap-3 text-sm text-gray">
                   <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
