@@ -1,6 +1,11 @@
 import { useEffect } from 'react'
 
 const SITE_NAME = 'Al Surur General Store Equipment Trading LLC'
+// Short brand form for the <title> tag suffix — the full legal name (above) is
+// used for og:site_name/JSON-LD, but appending it to every page title pushes
+// the keyword-rich part of the title past Google's ~60-char display limit,
+// getting it truncated in search results right where the target keyword sits.
+const SITE_TITLE_SUFFIX = 'Al Surur Metals'
 const SITE_URL = 'https://www.alsururmetals.com'
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`
 
@@ -52,7 +57,7 @@ function setJsonLd(id: string, data: Record<string, unknown> | undefined) {
 
 export function Seo({ title, description, path = '/', image = DEFAULT_IMAGE, noIndex = false, type = 'website', jsonLd, keywords }: SeoProps) {
   useEffect(() => {
-    const fullTitle = `${title} | ${SITE_NAME}`
+    const fullTitle = `${title} | ${SITE_TITLE_SUFFIX}`
     const url = `${SITE_URL}${path}`
     const absoluteImage = image.startsWith('http') ? image : `${SITE_URL}${image}`
 

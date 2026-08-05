@@ -5,7 +5,7 @@ import { CtaBanner } from '@/components/sections/CtaBanner'
 import { useQuoteModal } from '@/hooks/useQuoteModal'
 import { productCategories } from '@/data/products'
 import { Button } from '@/components/ui/Button'
-import { ArrowRight, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, CheckCircle2, MapPin } from 'lucide-react'
 import { Seo } from '@/components/ui/Seo'
 
 export function ProductDetailPage() {
@@ -18,26 +18,41 @@ export function ProductDetailPage() {
 
   const title = t(`productsData.${product.id}.title`)
   const description = t(`productsData.${product.id}.description`)
+  const seoTitle = t(`productsData.${product.id}.seoTitle`, { defaultValue: title })
+  const seoDescription = t(`productsData.${product.id}.seoDescription`, { defaultValue: description })
+  const servingLine = t(`productsData.${product.id}.servingLine`, { defaultValue: '' })
   const features = t('productDetail.features', { returnObjects: true }) as string[]
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: title,
-    description,
+    description: seoDescription,
     image: product.image,
     provider: {
       '@type': 'LocalBusiness',
       name: 'Al Surur General Store Equipment Trading LLC',
       telephone: '+971554939866',
-      address: { '@type': 'PostalAddress', addressLocality: 'Ajman', addressCountry: 'AE' },
+      address: { '@type': 'PostalAddress', streetAddress: 'Al Owan, Al Nakhil 1', addressLocality: 'Ajman', addressCountry: 'AE' },
     },
-    areaServed: { '@type': 'Country', name: 'United Arab Emirates' },
+    areaServed: [
+      { '@type': 'City', name: 'Ajman' },
+      { '@type': 'City', name: 'Dubai' },
+      { '@type': 'City', name: 'Sharjah' },
+      { '@type': 'Country', name: 'United Arab Emirates' },
+    ],
   }
 
   return (
     <>
-      <Seo title={title} description={description} path={`/products/${product.id}`} image={product.image} jsonLd={serviceJsonLd} />
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        path={`/products/${product.id}`}
+        image={product.image}
+        jsonLd={serviceJsonLd}
+        keywords={`${title}, ${title} Ajman, ${title} UAE, warehouse storage solutions Ajman`}
+      />
       <PageHero
         eyebrow={t('productDetail.eyebrow')}
         title={title}
@@ -57,6 +72,12 @@ export function ProductDetailPage() {
                 </li>
               ))}
             </ul>
+            {servingLine && (
+              <p className="mt-6 flex items-center gap-2 text-sm text-gray">
+                <MapPin size={16} className="shrink-0 text-primary" />
+                {servingLine}
+              </p>
+            )}
             <Button size="lg" className="mt-8" icon={<ArrowRight size={18} />} onClick={open}>
               {t('nav.requestQuote')}
             </Button>

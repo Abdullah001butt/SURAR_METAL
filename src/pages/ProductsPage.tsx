@@ -11,9 +11,10 @@ export function ProductsPage() {
   return (
     <>
       <Seo
-        title="Warehouse Racking & Shelving Products"
-        description="Pallet racking, shelving systems, mezzanine floors, cantilever racks, industrial lockers and warehouse trolleys — engineered and installed across the UAE."
+        title="Warehouse Racking & Shelving Products Ajman"
+        description="Pallet racking, mezzanine floors, shelving systems, cantilever racks, industrial lockers and warehouse trolleys — engineered and installed in Ajman & across the UAE."
         path="/products"
+        keywords="warehouse storage solutions Ajman, pallet racking Ajman, mezzanine floor Ajman, warehouse trolleys Ajman"
       />
       <PageHero
         eyebrow={t('productsPage.eyebrow')}

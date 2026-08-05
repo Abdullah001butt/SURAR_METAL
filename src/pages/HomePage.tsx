@@ -33,9 +33,10 @@ export function HomePage() {
   return (
     <>
       <Seo
-        title="Warehouse Storage Solutions Built For Performance"
-        description="Al Surur General Store Equipment Trading LLC engineers and installs pallet racking, shelving, mezzanine floors and cantilever racks across the UAE. Based in Ajman, serving all Emirates."
+        title="Warehouse Storage Solutions Ajman, UAE"
+        description="Al Surur engineers and installs pallet racking, mezzanine floors, shelving and warehouse trolleys in Ajman & across the UAE. 18+ years, 500+ projects — request a free site survey."
         path="/"
+        keywords="warehouse storage solutions Ajman, pallet racking Ajman, mezzanine floor Ajman, warehouse trolleys Ajman, shelving systems UAE, warehouse racking UAE"
         jsonLd={faqJsonLd}
       />
       <Hero onRequestQuote={open} />
