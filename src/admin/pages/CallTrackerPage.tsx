@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Phone, Plus, Building2, Calendar } from 'lucide-react'
+import { Phone, Plus, Building2, Calendar, Trash2 } from 'lucide-react'
 import {
   fetchColdCalls,
   updateColdCallStatus,
+  deleteColdCall,
   COLD_CALL_STATUS_OPTIONS,
   type ColdCall,
   type ColdCallStatus,
 } from '@/admin/utils/coldCalls'
 import { ColdCallModal } from '@/admin/components/ColdCallModal'
+import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 
@@ -25,19 +27,30 @@ function ProspectCard({
   prospect,
   onDragStart,
   onClick,
+  onDelete,
 }: {
   prospect: ColdCall
   onDragStart: (e: React.DragEvent, prospect: ColdCall) => void
   onClick: () => void
+  onDelete: () => void
 }) {
   return (
     <div
       draggable
       onDragStart={(e) => onDragStart(e, prospect)}
       onClick={onClick}
-      className="cursor-grab rounded-xl bg-white p-3 shadow-sm ring-1 ring-navy/5 transition-shadow hover:shadow-md active:cursor-grabbing"
+      className="group cursor-grab rounded-xl bg-white p-3 shadow-sm ring-1 ring-navy/5 transition-shadow hover:shadow-md active:cursor-grabbing"
     >
-      <p className="text-sm font-semibold text-navy">{prospect.name}</p>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm font-semibold text-navy">{prospect.name}</p>
+        <button
+          onClick={(e) => { e.stopPropagation(); onDelete() }}
+          aria-label="Delete prospect"
+          className="shrink-0 rounded-lg p-1 text-gray opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+        >
+          <Trash2 size={13} />
+        </button>
+      </div>
       {prospect.company && (
         <p className="mt-0.5 flex items-center gap-1 text-xs text-gray"><Building2 size={11} /> {prospect.company}</p>
       )}
@@ -59,6 +72,8 @@ export function CallTrackerPage() {
   const [dragOverColumn, setDragOverColumn] = useState<ColdCallStatus | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<ColdCall | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<ColdCall | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const columns = useMemo(() => {
     const grouped: Record<ColdCallStatus, ColdCall[]> = {
@@ -107,6 +122,15 @@ export function CallTrackerPage() {
     queryClient.invalidateQueries({ queryKey: ['admin-cold-calls'] })
   }
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    await deleteColdCall(deleteTarget.id)
+    setDeleting(false)
+    setDeleteTarget(null)
+    queryClient.invalidateQueries({ queryKey: ['admin-cold-calls'] })
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -139,7 +163,13 @@ export function CallTrackerPage() {
               </div>
               <div className="mt-3 flex-1 space-y-2">
                 {items.map((prospect) => (
-                  <ProspectCard key={prospect.id} prospect={prospect} onDragStart={handleDragStart} onClick={() => openEdit(prospect)} />
+                  <ProspectCard
+                    key={prospect.id}
+                    prospect={prospect}
+                    onDragStart={handleDragStart}
+                    onClick={() => openEdit(prospect)}
+                    onDelete={() => setDeleteTarget(prospect)}
+                  />
                 ))}
                 {items.length === 0 && (
                   <div className="grid h-20 place-items-center rounded-xl border border-dashed border-navy/10 text-xs text-gray">
@@ -153,6 +183,16 @@ export function CallTrackerPage() {
       </div>
 
       {modalOpen && <ColdCallModal prospect={editing} onClose={closeModal} onSaved={onSaved} />}
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Delete prospect?"
+          description={`"${deleteTarget.name}" will be permanently removed from the call tracker.`}
+          onConfirm={handleDelete}
+          onClose={() => setDeleteTarget(null)}
+          loading={deleting}
+        />
+      )}
     </div>
   )
 }

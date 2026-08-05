@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Clock, Download, Search, X } from 'lucide-react'
+import { AlertTriangle, Clock, Download, Search, Trash2, X } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { StatusBadge } from '@/admin/components/StatusBadge'
+import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
 import { cn } from '@/utils/cn'
 import type { LeadStatus } from '@/admin/types'
@@ -97,6 +98,8 @@ export function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all')
   const [expanded, setExpanded] = useState<string | null>(highlightId)
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [deleteTarget, setDeleteTarget] = useState<UnifiedLead | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const highlightRef = useRef<HTMLTableRowElement>(null)
 
   useEffect(() => {
@@ -123,10 +126,27 @@ export function LeadsPage() {
 
   const overdueLeads = useMemo(() => (leads ?? []).filter((l) => l.status === 'new' && hoursSince(l.created_at) >= 24), [leads])
 
-  const updateLead = async (lead: UnifiedLead, patch: Partial<{ status: LeadStatus; notes: string }>) => {
+  const updateLead = async (
+    lead: UnifiedLead,
+    patch: Partial<{ status: LeadStatus; notes: string; name: string; email: string; company: string; phone: string; product_interest: string }>,
+  ) => {
     const [source, rawId] = lead.id.split('-')
     const table = source === 'quote' ? 'quote_requests' : 'contact_messages'
-    await supabase.from(table).update(patch).eq('id', Number(rawId))
+    // contact_messages has no company/phone/product_interest columns — strip those out
+    // if this lead came from the contact form rather than the quote form.
+    const safePatch = source === 'quote' ? patch : { status: patch.status, notes: patch.notes, name: patch.name, email: patch.email }
+    await supabase.from(table).update(safePatch).eq('id', Number(rawId))
+    queryClient.invalidateQueries({ queryKey: ['admin-leads'] })
+  }
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    const [source, rawId] = deleteTarget.id.split('-')
+    const table = source === 'quote' ? 'quote_requests' : 'contact_messages'
+    await supabase.from(table).delete().eq('id', Number(rawId))
+    setDeleting(false)
+    setDeleteTarget(null)
     queryClient.invalidateQueries({ queryKey: ['admin-leads'] })
   }
 
@@ -139,6 +159,25 @@ export function LeadsPage() {
       quoteIds.length > 0 ? supabase.from('quote_requests').update({ status }).in('id', quoteIds) : Promise.resolve(),
       contactIds.length > 0 ? supabase.from('contact_messages').update({ status }).in('id', contactIds) : Promise.resolve(),
     ])
+    queryClient.invalidateQueries({ queryKey: ['admin-leads'] })
+    setSelected(new Set())
+  }
+
+  const [bulkDeleting, setBulkDeleting] = useState(false)
+  const [confirmBulkDelete, setConfirmBulkDelete] = useState(false)
+
+  const bulkDelete = async () => {
+    setBulkDeleting(true)
+    const selectedLeads = filtered.filter((l) => selected.has(l.id))
+    const quoteIds = selectedLeads.filter((l) => l.source === 'quote').map((l) => Number(l.id.split('-')[1]))
+    const contactIds = selectedLeads.filter((l) => l.source === 'contact').map((l) => Number(l.id.split('-')[1]))
+
+    await Promise.all([
+      quoteIds.length > 0 ? supabase.from('quote_requests').delete().in('id', quoteIds) : Promise.resolve(),
+      contactIds.length > 0 ? supabase.from('contact_messages').delete().in('id', contactIds) : Promise.resolve(),
+    ])
+    setBulkDeleting(false)
+    setConfirmBulkDelete(false)
     queryClient.invalidateQueries({ queryKey: ['admin-leads'] })
     setSelected(new Set())
   }
@@ -251,6 +290,12 @@ export function LeadsPage() {
             <Download size={13} /> Export Selected
           </button>
           <button
+            onClick={() => setConfirmBulkDelete(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-red-500/20 px-3 py-1.5 text-sm font-semibold text-red-100 hover:bg-red-500/30"
+          >
+            <Trash2 size={13} /> Delete Selected
+          </button>
+          <button
             onClick={() => setSelected(new Set())}
             className="ms-auto flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
           >
@@ -308,9 +353,57 @@ export function LeadsPage() {
                   <tr className="border-b border-navy/5 bg-bg/60">
                     <td colSpan={7} className="px-5 py-4">
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-widest text-gray">Message</p>
-                          <p className="mt-1 text-sm text-navy">{lead.message || 'No message.'}</p>
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-widest text-gray">Name</p>
+                            <input
+                              defaultValue={lead.name}
+                              onBlur={(e) => updateLead(lead, { name: e.target.value })}
+                              className="mt-1 w-full rounded-lg border border-navy/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-primary"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-widest text-gray">Email</p>
+                            <input
+                              defaultValue={lead.email}
+                              dir="ltr"
+                              onBlur={(e) => updateLead(lead, { email: e.target.value })}
+                              className="mt-1 w-full rounded-lg border border-navy/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-primary"
+                            />
+                          </div>
+                          {lead.source === 'quote' && (
+                            <>
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-widest text-gray">Company</p>
+                                <input
+                                  defaultValue={lead.company ?? ''}
+                                  onBlur={(e) => updateLead(lead, { company: e.target.value })}
+                                  className="mt-1 w-full rounded-lg border border-navy/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-primary"
+                                />
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-widest text-gray">Phone</p>
+                                <input
+                                  defaultValue={lead.phone ?? ''}
+                                  dir="ltr"
+                                  onBlur={(e) => updateLead(lead, { phone: e.target.value })}
+                                  className="mt-1 w-full rounded-lg border border-navy/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-primary"
+                                />
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-widest text-gray">Interest</p>
+                                <input
+                                  defaultValue={lead.interest ?? ''}
+                                  onBlur={(e) => updateLead(lead, { product_interest: e.target.value })}
+                                  className="mt-1 w-full rounded-lg border border-navy/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-primary"
+                                />
+                              </div>
+                            </>
+                          )}
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-widest text-gray">Message</p>
+                            <p className="mt-1 text-sm text-navy">{lead.message || 'No message.'}</p>
+                          </div>
                         </div>
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-widest text-gray">Status</p>
@@ -331,6 +424,12 @@ export function LeadsPage() {
                             rows={2}
                             className="mt-1 w-full rounded-lg border border-navy/10 bg-white px-3 py-2 text-sm outline-none focus:border-primary"
                           />
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setDeleteTarget(lead) }}
+                            className="mt-4 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 size={13} /> Delete Lead
+                          </button>
                         </div>
                       </div>
                     </td>
@@ -343,6 +442,26 @@ export function LeadsPage() {
         {!isLoading && filtered.length === 0 && <p className="py-10 text-center text-sm text-gray">No leads found.</p>}
         {isLoading && <p className="py-10 text-center text-sm text-gray">Loading...</p>}
       </div>
+
+      {deleteTarget && (
+        <ConfirmDialog
+          title="Delete lead?"
+          description={`"${deleteTarget.name}" will be permanently removed. This can't be undone.`}
+          onConfirm={handleDelete}
+          onClose={() => setDeleteTarget(null)}
+          loading={deleting}
+        />
+      )}
+
+      {confirmBulkDelete && (
+        <ConfirmDialog
+          title={`Delete ${selected.size} lead${selected.size > 1 ? 's' : ''}?`}
+          description="These leads will be permanently removed. This can't be undone."
+          onConfirm={bulkDelete}
+          onClose={() => setConfirmBulkDelete(false)}
+          loading={bulkDeleting}
+        />
+      )}
     </div>
   )
 }
