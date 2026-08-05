@@ -33,6 +33,7 @@ const AdminProjectsPage = lazy(() => import('@/admin/pages/ProjectsPage').then((
 const ProjectEditorPage = lazy(() => import('@/admin/pages/ProjectEditorPage').then((m) => ({ default: m.ProjectEditorPage })))
 const SalesPipelinePage = lazy(() => import('@/admin/pages/SalesPipelinePage').then((m) => ({ default: m.SalesPipelinePage })))
 const CallTrackerPage = lazy(() => import('@/admin/pages/CallTrackerPage').then((m) => ({ default: m.CallTrackerPage })))
+const SettingsPage = lazy(() => import('@/admin/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })))
 const CatalogPage = lazy(() => import('@/admin/pages/CatalogPage').then((m) => ({ default: m.CatalogPage })))
 const CompletionReportsListPage = lazy(() => import('@/admin/pages/CompletionReportsListPage').then((m) => ({ default: m.CompletionReportsListPage })))
 const CompletionReportEditorPage = lazy(() => import('@/admin/pages/CompletionReportEditorPage').then((m) => ({ default: m.CompletionReportEditorPage })))
@@ -88,6 +89,7 @@ function App() {
               <Route path="projects/:id" element={<ProjectEditorPage />} />
               <Route path="pipeline" element={<SalesPipelinePage />} />
               <Route path="call-tracker" element={<CallTrackerPage />} />
+              <Route path="settings" element={<SettingsPage />} />
               <Route path="catalog" element={<CatalogPage />} />
               <Route path="completion-reports" element={<CompletionReportsListPage />} />
               <Route path="completion-reports/new" element={<CompletionReportEditorPage />} />

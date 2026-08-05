@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun, BookOpen, ClipboardCheck, Receipt, Landmark, PieChart, PhoneCall } from 'lucide-react'
+import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun, BookOpen, ClipboardCheck, Receipt, Landmark, PieChart, PhoneCall, Settings } from 'lucide-react'
 import { useAdminAuth } from '@/admin/hooks/useAdminAuth'
 import { useTheme } from '@/admin/hooks/useTheme'
 import { GlobalSearch } from '@/admin/components/GlobalSearch'
@@ -25,6 +25,7 @@ const navItems = [
   { to: '/dashboard/finance-reports', label: 'Finance Reports', icon: PieChart },
   { to: '/dashboard/reports', label: 'Reports', icon: BarChart3 },
   { to: '/dashboard/blog', label: 'Blog', icon: Newspaper },
+  { to: '/dashboard/settings', label: 'Settings', icon: Settings },
 ]
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
