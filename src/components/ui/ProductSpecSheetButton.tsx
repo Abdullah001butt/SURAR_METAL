@@ -83,7 +83,7 @@ export function ProductSpecSheetButton({ product, title, description, features, 
                   capture an invisible/off-screen element (which doesn't work
                   reliably with html2canvas). */}
               <div className="overflow-x-auto rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                <div ref={sheetRef} className="w-[210mm] bg-white p-12 text-[#111827]" dir="ltr">
+                <div ref={sheetRef} className="w-[210mm] bg-[#ffffff] p-12 text-[#111827]" dir="ltr">
                   <div className="flex items-center justify-between border-b-4 border-[#DC2626] pb-5">
                     <img src={logo} alt="Al Surur" className="h-14 w-auto" />
                     <div className="text-end">
@@ -113,12 +113,12 @@ export function ProductSpecSheetButton({ product, title, description, features, 
                     </ul>
                   </div>
 
-                  <div className="mt-10 rounded-2xl bg-[#0F172A] p-6 text-white">
+                  <div className="mt-10 rounded-2xl bg-[#0F172A] p-6 text-[#ffffff]">
                     <p className="text-sm font-bold">Get a Free Site Survey & Quote</p>
-                    <p className="mt-1 text-xs text-white/70">
+                    <p className="mt-1 text-xs text-[#cbd5e1]">
                       Tel: +971 55 493 9866 &nbsp;|&nbsp; WhatsApp: +971 55 493 9866 &nbsp;|&nbsp; www.alsururmetals.com
                     </p>
-                    <p className="mt-1 text-xs text-white/70">Al Owan, Al Nakhil 1, Ajman, UAE</p>
+                    <p className="mt-1 text-xs text-[#cbd5e1]">Al Owan, Al Nakhil 1, Ajman, UAE</p>
                   </div>
 
                   <p className="mt-6 text-center text-[10px] text-[#9ca3af]">
