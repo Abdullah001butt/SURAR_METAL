@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { statistics } from '@/data/statistics'
 import { useCountUp } from '@/hooks/useCountUp'
 import { SectionTitle } from '@/components/ui/SectionTitle'
+import { GradientOrbs } from '@/components/ui/GradientOrbs'
 
 function StatCard({ value, suffix, label, delay }: { value: number; suffix: string; label: string; delay: number }) {
   const { ref, value: animated } = useCountUp(value)
@@ -33,6 +34,7 @@ export function Statistics() {
     <section className="seam-top-navy relative overflow-hidden bg-navy py-28 lg:py-36">
       <div className="dot-grid absolute inset-0 opacity-60" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,90,31,0.14),transparent_50%)]" />
+      <GradientOrbs />
       <div className="container-px relative mx-auto max-w-7xl">
         <SectionTitle
           eyebrow={t('statistics.eyebrow')}

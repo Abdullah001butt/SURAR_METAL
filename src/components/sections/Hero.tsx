@@ -6,7 +6,8 @@ import { ArrowRight, ChevronRight, ShieldCheck, Award, Truck, Factory } from 'lu
 import { Button } from '@/components/ui/Button'
 import { WordReveal } from '@/components/ui/WordReveal'
 import { TypingText } from '@/components/ui/TypingText'
-import heroImg from '@/assets/images/warehouse-hero.jpg'
+import { Magnetic } from '@/components/ui/Magnetic'
+import heroImg from '@/assets/images/warehouse-hero.webp'
 
 const floatingCards = [
   { icon: Award, key: 'experience' },
@@ -91,9 +92,11 @@ export function Hero({ onRequestQuote }: HeroProps) {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="mt-9 flex flex-wrap gap-4"
           >
-            <Button size="lg" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
-              {t('hero.ctaPrimary')}
-            </Button>
+            <Magnetic className="inline-block">
+              <Button size="lg" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={onRequestQuote}>
+                {t('hero.ctaPrimary')}
+              </Button>
+            </Magnetic>
             <Link to="/products">
               <Button variant="outline-light" size="lg" icon={<ChevronRight size={18} className="rtl:rotate-180" />}>
                 {t('hero.ctaSecondary')}

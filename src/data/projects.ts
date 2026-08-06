@@ -1,10 +1,10 @@
 import type { Project } from '@/types'
-import heroImg from '@/assets/images/warehouse-hero.jpg'
-import palletRackingImg from '@/assets/images/pallet-racking.jpg'
-import shelvingSystemsImg from '@/assets/images/shelving-systems.jpg'
-import mezzanineFloorsImg from '@/assets/images/mezzanine-floors.jpg'
-import cantileverRacksImg from '@/assets/images/cantilever-racks.jpg'
-import shelvingAltImg from '@/assets/images/shelving-alt.jpg'
+import heroImg from '@/assets/images/warehouse-hero.webp'
+import palletRackingImg from '@/assets/images/pallet-racking.webp'
+import shelvingSystemsImg from '@/assets/images/shelving-systems.webp'
+import mezzanineFloorsImg from '@/assets/images/mezzanine-floors.webp'
+import cantileverRacksImg from '@/assets/images/cantilever-racks.webp'
+import shelvingAltImg from '@/assets/images/shelving-alt.webp'
 
 export const projects: Project[] = [
   { id: 'p1', image: heroImg, size: 'large' },

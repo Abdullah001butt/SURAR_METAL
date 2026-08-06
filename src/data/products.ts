@@ -1,10 +1,10 @@
 import type { ProductCategory } from '@/types'
-import palletRackingImg from '@/assets/images/pallet-racking.jpg'
-import shelvingSystemsImg from '@/assets/images/shelving-systems.jpg'
-import mezzanineFloorsImg from '@/assets/images/mezzanine-floors.jpg'
-import cantileverRacksImg from '@/assets/images/cantilever-racks.jpg'
-import industrialLockersImg from '@/assets/images/shelving-alt.jpg'
-import warehouseTrolleysImg from '@/assets/images/warehouse-trolleys.jpg'
+import palletRackingImg from '@/assets/images/pallet-racking.webp'
+import shelvingSystemsImg from '@/assets/images/shelving-systems.webp'
+import mezzanineFloorsImg from '@/assets/images/mezzanine-floors.webp'
+import cantileverRacksImg from '@/assets/images/cantilever-racks.webp'
+import industrialLockersImg from '@/assets/images/shelving-alt.webp'
+import warehouseTrolleysImg from '@/assets/images/warehouse-trolleys.webp'
 
 export const productCategories: ProductCategory[] = [
   { id: 'pallet-racking', image: palletRackingImg, href: '/products/pallet-racking' },

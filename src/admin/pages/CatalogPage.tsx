@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { exportElementsToPdf } from '@/admin/utils/pdfExport'
 import logo from '@/assets/logo.png'
 
-import cantileverRacking from '@/assets/images/cantilever-racks.jpg'
+import cantileverRacking from '@/assets/images/cantilever-racks.webp'
 import steelPallet from '@/assets/images/catalog/steel-pallet.jpg'
 import mobilePalletRacking from '@/assets/images/catalog/mobile-pallet-racking.jpg'
 import longSpanRacking from '@/assets/images/catalog/long-span-racking.jpg'
