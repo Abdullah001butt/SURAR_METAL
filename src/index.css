@@ -153,6 +153,11 @@
     50% { background-position: 100% 50%; }
   }
 
+  @keyframes blueprint-drift {
+    from { background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px; }
+    to { background-position: 200px 200px, 200px 200px, 40px 40px, 40px 40px; }
+  }
+
   .custom-cursor-active,
   .custom-cursor-active * {
     cursor: none;

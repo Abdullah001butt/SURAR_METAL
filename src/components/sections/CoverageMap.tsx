@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { MapPin, Check } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
+import { BlueprintGrid } from '@/components/ui/BlueprintGrid'
 
 // Ordered roughly west-to-east along the UAE coastline — this is a schematic
 // coverage strip, not a literal cartographic map (no claim to precise
@@ -23,14 +24,22 @@ export function CoverageMap() {
 
   return (
     <section className="bg-navy relative overflow-hidden py-20 lg:py-24">
-      <div className="dot-grid absolute inset-0 opacity-30" />
+      <BlueprintGrid />
       <div className="container-px relative mx-auto max-w-6xl">
         <SectionTitle eyebrow={t('coverage.eyebrow')} title={t('coverage.title')} align="center" light size="sm" />
         <p className="mx-auto mt-4 max-w-xl text-center text-sm text-white/60">{t('coverage.description')}</p>
 
         <div className="relative mt-16">
-          {/* Decorative connecting route line */}
+          {/* Decorative connecting route line, with a small dot traveling along
+              it on loop — a delivery-route feel that fits an installation
+              business better than a static line. */}
           <div className="absolute top-7 right-0 left-0 hidden h-px bg-gradient-to-r from-transparent via-white/20 to-transparent md:block" />
+          <motion.div
+            aria-hidden
+            animate={{ left: ['2%', '98%'] }}
+            transition={{ duration: 9, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
+            className="absolute top-7 hidden h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_10px_2px_rgba(255,90,31,0.6)] md:block"
+          />
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-4 md:grid-cols-7 md:gap-x-2">
             {EMIRATES.map((emirate, i) => (
