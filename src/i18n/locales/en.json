@@ -105,6 +105,11 @@
     "phone": "Phone",
     "selectProduct": "Select a product",
     "message": "Project details (optional)",
+    "step1Title": "What do you need?",
+    "step2Title": "Tell us about your project",
+    "step3Title": "Your contact details",
+    "next": "Next",
+    "back": "Back",
     "submit": "Submit Request",
     "sending": "Sending...",
     "successTitle": "Request Received",
@@ -181,6 +186,46 @@
   "blogPage": {
     "eyebrow": "Blog",
     "title": "Insights on warehouse design & storage."
+  },
+  "coverage": {
+    "eyebrow": "Where We Work",
+    "title": "Installing across all 7 Emirates.",
+    "description": "Based in Ajman, our engineering and installation teams cover every Emirate — no project is too far.",
+    "served": "We serve this area"
+  },
+  "coverageData": {
+    "abu-dhabi": "Abu Dhabi",
+    "dubai": "Dubai",
+    "sharjah": "Sharjah",
+    "ajman": "Ajman",
+    "umm-al-quwain": "Umm Al Quwain",
+    "ras-al-khaimah": "Ras Al Khaimah",
+    "fujairah": "Fujairah"
+  },
+  "leadMagnet": {
+    "title": "Free: The Warehouse Storage Buying Guide",
+    "description": "A practical PDF guide covering how to choose the right racking system, calculate your storage capacity, and avoid the mistakes most facilities make before buying.",
+    "points": [
+      "Racking type comparison table (selective, drive-in, cantilever & more)",
+      "Simple formula to estimate your storage capacity",
+      "5 common buying mistakes to avoid",
+      "A pre-quote checklist to speed up your site survey"
+    ],
+    "namePlaceholder": "Full Name",
+    "phonePlaceholder": "Phone Number",
+    "emailPlaceholder": "Email (optional)",
+    "downloadButton": "Download Free Guide",
+    "sending": "Preparing...",
+    "successTitle": "Your guide is downloading",
+    "successDescription": "If it didn't start automatically, use the link below.",
+    "downloadAgain": "Download again",
+    "disclaimer": "No spam — just the guide. We may follow up about your project.",
+    "error": "Something went wrong. Please try again or WhatsApp us directly.",
+    "errors": {
+      "name": "Please enter your full name",
+      "phone": "Please enter a valid phone number",
+      "email": "Enter a valid email address"
+    }
   },
   "productsData": {
     "pallet-racking": {

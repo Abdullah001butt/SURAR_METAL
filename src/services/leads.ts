@@ -32,6 +32,28 @@ export async function submitQuoteRequest(data: QuoteSubmission) {
   if (error) throw new Error(error.message)
 }
 
+interface LeadMagnetSubmission {
+  name: string
+  phone: string
+  email?: string
+}
+
+export async function submitLeadMagnetRequest(data: LeadMagnetSubmission) {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured yet.')
+  }
+
+  const { error } = await supabase.from('quote_requests').insert({
+    name: data.name,
+    phone: data.phone,
+    email: data.email || null,
+    product_interest: 'Warehouse Storage Buying Guide (download)',
+    source: 'buying_guide',
+  })
+
+  if (error) throw new Error(error.message)
+}
+
 export async function submitContactMessage(data: ContactSubmission) {
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured yet.')

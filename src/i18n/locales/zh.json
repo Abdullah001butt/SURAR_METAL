@@ -99,6 +99,11 @@
     "phone": "电话号码",
     "selectProduct": "选择产品",
     "message": "项目详情(选填)",
+    "step1Title": "您需要什么?",
+    "step2Title": "告诉我们您的项目",
+    "step3Title": "您的联系方式",
+    "next": "下一步",
+    "back": "上一步",
     "submit": "提交请求",
     "sending": "发送中...",
     "successTitle": "已收到您的请求",
@@ -175,6 +180,46 @@
   "blogPage": {
     "eyebrow": "博客",
     "title": "关于仓库设计与存储的深度见解。"
+  },
+  "coverage": {
+    "eyebrow": "服务范围",
+    "title": "覆盖全部7个酋长国。",
+    "description": "总部位于阿治曼,我们的工程与安装团队覆盖每一个酋长国——距离不是问题。",
+    "served": "我们服务此区域"
+  },
+  "coverageData": {
+    "abu-dhabi": "阿布扎比",
+    "dubai": "迪拜",
+    "sharjah": "沙迦",
+    "ajman": "阿治曼",
+    "umm-al-quwain": "乌姆盖万",
+    "ras-al-khaimah": "拉斯海玛",
+    "fujairah": "富查伊拉"
+  },
+  "leadMagnet": {
+    "title": "免费:仓储系统选购指南",
+    "description": "一份实用的PDF指南,涵盖如何选择合适的货架系统、计算存储容量,以及避免大多数企业在采购前常犯的错误。",
+    "points": [
+      "货架类型对比表(选择性、驶入式、悬臂式等)",
+      "估算存储容量的简单公式",
+      "5个应避免的常见采购错误",
+      "加快现场勘查速度的报价前检查清单"
+    ],
+    "namePlaceholder": "姓名",
+    "phonePlaceholder": "电话号码",
+    "emailPlaceholder": "电子邮箱(选填)",
+    "downloadButton": "下载免费指南",
+    "sending": "准备中...",
+    "successTitle": "指南正在下载",
+    "successDescription": "如果未自动开始下载,请使用下方链接。",
+    "downloadAgain": "重新下载",
+    "disclaimer": "不会发送垃圾信息——仅提供指南。我们可能会就您的项目进行跟进。",
+    "error": "出现错误,请重试或直接通过WhatsApp联系我们。",
+    "errors": {
+      "name": "请输入您的姓名",
+      "phone": "请输入有效的电话号码",
+      "email": "请输入有效的电子邮箱"
+    }
   },
   "productsData": {
     "pallet-racking": { "title": "托盘货架", "description": "选择性、驶入式与后推式货架,专为高密度托盘存储而设计。" },

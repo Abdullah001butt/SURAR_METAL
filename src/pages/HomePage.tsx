@@ -3,8 +3,10 @@ import { TrustedClients } from '@/components/sections/TrustedClients'
 import { ProductCategories } from '@/components/sections/ProductCategories'
 import { Statistics } from '@/components/sections/Statistics'
 import { Industries } from '@/components/sections/Industries'
+import { CoverageMap } from '@/components/sections/CoverageMap'
 import { FeaturedProjects } from '@/components/sections/FeaturedProjects'
 import { ProcessTimeline } from '@/components/sections/ProcessTimeline'
+import { LeadMagnet } from '@/components/sections/LeadMagnet'
 import { Testimonials } from '@/components/sections/Testimonials'
 import { Faq } from '@/components/sections/Faq'
 import { CtaBanner } from '@/components/sections/CtaBanner'
@@ -44,8 +46,10 @@ export function HomePage() {
       <ProductCategories />
       <Statistics />
       <Industries />
+      <CoverageMap />
       <FeaturedProjects />
       <ProcessTimeline />
+      <LeadMagnet />
       <Testimonials />
       <Faq />
       <CtaBanner onRequestQuote={open} />

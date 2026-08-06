@@ -4,10 +4,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { X, Send, Sparkles, AlertCircle } from 'lucide-react'
+import { X, Send, Sparkles, AlertCircle, ArrowRight, ArrowLeft, Check } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { productCategories } from '@/data/products'
 import { submitQuoteRequest } from '@/services/leads'
+import { cn } from '@/utils/cn'
 
 interface QuoteModalProps {
   open: boolean
@@ -15,20 +16,25 @@ interface QuoteModalProps {
   variant?: 'default' | 'exit-intent'
 }
 
+const STEPS = ['product', 'project', 'contact'] as const
+type Step = (typeof STEPS)[number]
+
 export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalProps) {
   const { t } = useTranslation()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [stepIndex, setStepIndex] = useState(0)
+  const step: Step = STEPS[stepIndex]
 
   const quoteSchema = useMemo(
     () =>
       z.object({
-        name: z.string().min(2, t('quoteModal.errors.name')),
+        productInterest: z.string().min(1, t('quoteModal.errors.product')),
         company: z.string().min(2, t('quoteModal.errors.company')),
+        message: z.string().optional(),
+        name: z.string().min(2, t('quoteModal.errors.name')),
         email: z.string().email(t('quoteModal.errors.email')),
         phone: z.string().min(7, t('quoteModal.errors.phone')),
-        productInterest: z.string().min(1, t('quoteModal.errors.product')),
-        message: z.string().optional(),
       }),
     [t],
   )
@@ -38,9 +44,27 @@ export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalPro
   const {
     register,
     handleSubmit,
+    trigger,
+    watch,
+    setValue,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<QuoteFormValues>({ resolver: zodResolver(quoteSchema) })
+
+  const selectedProduct = watch('productInterest')
+
+  const fieldsPerStep: Record<Step, (keyof QuoteFormValues)[]> = {
+    product: ['productInterest'],
+    project: ['company'],
+    contact: ['name', 'email', 'phone'],
+  }
+
+  const goNext = async () => {
+    const valid = await trigger(fieldsPerStep[step])
+    if (valid) setStepIndex((i) => Math.min(i + 1, STEPS.length - 1))
+  }
+
+  const goBack = () => setStepIndex((i) => Math.max(i - 1, 0))
 
   const onSubmit = async (data: QuoteFormValues) => {
     setSubmitError(null)
@@ -58,6 +82,7 @@ export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalPro
     setTimeout(() => {
       reset()
       setSuccess(false)
+      setStepIndex(0)
     }, 300)
   }
 
@@ -111,76 +136,157 @@ export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalPro
                   {variant === 'exit-intent' ? t('quoteModal.exitDescription') : t('quoteModal.description')}
                 </p>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <input
-                        {...register('name')}
-                        placeholder={t('quoteModal.fullName')}
-                        className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
-                      />
-                      {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+                {/* Step indicator */}
+                <div className="mt-5 flex items-center gap-2">
+                  {STEPS.map((s, i) => (
+                    <div key={s} className="flex flex-1 items-center gap-2">
+                      <div
+                        className={cn(
+                          'grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold transition-colors',
+                          i < stepIndex ? 'bg-primary text-white' : i === stepIndex ? 'bg-primary/15 text-primary ring-2 ring-primary' : 'bg-bg text-gray',
+                        )}
+                      >
+                        {i < stepIndex ? <Check size={13} /> : i + 1}
+                      </div>
+                      {i < STEPS.length - 1 && (
+                        <div className={cn('h-0.5 flex-1 rounded-full transition-colors', i < stepIndex ? 'bg-primary' : 'bg-bg')} />
+                      )}
                     </div>
-                    <div>
-                      <input
-                        {...register('company')}
-                        placeholder={t('quoteModal.company')}
-                        className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
-                      />
-                      {errors.company && <p className="mt-1 text-xs text-red-500">{errors.company.message}</p>}
-                    </div>
-                  </div>
+                  ))}
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <input
-                        {...register('email')}
-                        placeholder={t('quoteModal.email')}
-                        className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
-                      />
-                      {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
-                    </div>
-                    <div>
-                      <input
-                        {...register('phone')}
-                        placeholder={t('quoteModal.phone')}
-                        className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
-                      />
-                      {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
-                    </div>
-                  </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
+                  <AnimatePresence mode="wait" initial={false}>
+                    {step === 'product' && (
+                      <motion.div
+                        key="product"
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -16 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-widest text-gray">{t('quoteModal.step1Title')}</p>
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          {productCategories.map((p) => {
+                            const label = t(`productsData.${p.id}.title`)
+                            const isSelected = selectedProduct === label
+                            return (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => setValue('productInterest', label, { shouldValidate: true })}
+                                className={cn(
+                                  'rounded-xl border px-3 py-3 text-start text-sm font-medium transition-colors',
+                                  isSelected
+                                    ? 'border-primary bg-primary/10 text-primary'
+                                    : 'border-navy/10 bg-bg text-navy hover:border-primary/40',
+                                )}
+                              >
+                                {label}
+                              </button>
+                            )
+                          })}
+                        </div>
+                        {errors.productInterest && <p className="mt-2 text-xs text-red-500">{errors.productInterest.message}</p>}
+                      </motion.div>
+                    )}
 
-                  <div>
-                    <select
-                      {...register('productInterest')}
-                      defaultValue=""
-                      className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
-                    >
-                      <option value="" disabled>{t('quoteModal.selectProduct')}</option>
-                      {productCategories.map((p) => (
-                        <option key={p.id} value={t(`productsData.${p.id}.title`)}>{t(`productsData.${p.id}.title`)}</option>
-                      ))}
-                    </select>
-                    {errors.productInterest && <p className="mt-1 text-xs text-red-500">{errors.productInterest.message}</p>}
-                  </div>
+                    {step === 'project' && (
+                      <motion.div
+                        key="project"
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -16 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-4"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-widest text-gray">{t('quoteModal.step2Title')}</p>
+                        <div>
+                          <input
+                            {...register('company')}
+                            placeholder={t('quoteModal.company')}
+                            className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
+                          />
+                          {errors.company && <p className="mt-1 text-xs text-red-500">{errors.company.message}</p>}
+                        </div>
+                        <textarea
+                          {...register('message')}
+                          placeholder={t('quoteModal.message')}
+                          rows={4}
+                          className="w-full resize-none rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
+                        />
+                      </motion.div>
+                    )}
 
-                  <textarea
-                    {...register('message')}
-                    placeholder={t('quoteModal.message')}
-                    rows={3}
-                    className="w-full resize-none rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
-                  />
+                    {step === 'contact' && (
+                      <motion.div
+                        key="contact"
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -16 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-4"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-widest text-gray">{t('quoteModal.step3Title')}</p>
+                        <div>
+                          <input
+                            {...register('name')}
+                            placeholder={t('quoteModal.fullName')}
+                            className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
+                          />
+                          {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <input
+                              {...register('email')}
+                              placeholder={t('quoteModal.email')}
+                              className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
+                            />
+                            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                          </div>
+                          <div>
+                            <input
+                              {...register('phone')}
+                              placeholder={t('quoteModal.phone')}
+                              className="w-full rounded-xl border border-navy/10 bg-bg px-4 py-3 text-sm outline-none focus:border-primary"
+                            />
+                            {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {submitError && (
-                    <div className="flex items-start gap-2 rounded-xl bg-red-50 p-3 text-xs text-red-600">
+                    <div className="mt-4 flex items-start gap-2 rounded-xl bg-red-50 p-3 text-xs text-red-600">
                       <AlertCircle size={16} className="mt-0.5 shrink-0" />
                       {submitError}
                     </div>
                   )}
 
-                  <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? t('quoteModal.sending') : t('quoteModal.submit')}
-                  </Button>
+                  <div className="mt-6 flex gap-3">
+                    {stepIndex > 0 && (
+                      <Button type="button" variant="ghost" onClick={goBack} icon={<ArrowLeft size={16} className="rtl:rotate-180" />}>
+                        {t('quoteModal.back')}
+                      </Button>
+                    )}
+                    {stepIndex < STEPS.length - 1 ? (
+                      <Button
+                        type="button"
+                        size="lg"
+                        className="flex-1"
+                        onClick={goNext}
+                        icon={<ArrowRight size={18} className="rtl:rotate-180" />}
+                      >
+                        {t('quoteModal.next')}
+                      </Button>
+                    ) : (
+                      <Button type="submit" size="lg" className="flex-1" disabled={isSubmitting}>
+                        {isSubmitting ? t('quoteModal.sending') : t('quoteModal.submit')}
+                      </Button>
+                    )}
+                  </div>
                 </form>
               </>
             )}
