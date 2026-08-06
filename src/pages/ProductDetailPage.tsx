@@ -5,8 +5,9 @@ import { CtaBanner } from '@/components/sections/CtaBanner'
 import { useQuoteModal } from '@/hooks/useQuoteModal'
 import { productCategories } from '@/data/products'
 import { Button } from '@/components/ui/Button'
-import { ArrowRight, CheckCircle2, MapPin } from 'lucide-react'
+import { ArrowRight, CheckCircle2, MapPin, MessageCircle } from 'lucide-react'
 import { Seo } from '@/components/ui/Seo'
+import { ProductSpecSheetButton } from '@/components/ui/ProductSpecSheetButton'
 
 export function ProductDetailPage() {
   const { slug } = useParams()
@@ -78,9 +79,21 @@ export function ProductDetailPage() {
                 {servingLine}
               </p>
             )}
-            <Button size="lg" className="mt-8" icon={<ArrowRight size={18} />} onClick={open}>
-              {t('nav.requestQuote')}
-            </Button>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" icon={<ArrowRight size={18} />} onClick={open}>
+                {t('nav.requestQuote')}
+              </Button>
+              <a
+                href={`https://wa.me/971554939866?text=${encodeURIComponent(t('productDetail.whatsappMessage', { product: title }))}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
+              >
+                <MessageCircle size={18} />
+                {t('productDetail.whatsappCta')}
+              </a>
+              <ProductSpecSheetButton product={product} title={title} description={description} features={features} servingLine={servingLine} />
+            </div>
           </div>
         </div>
       </section>

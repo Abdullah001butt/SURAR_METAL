@@ -159,7 +159,11 @@
       "为您的场地量身定制设计",
       "认证安装团队",
       "持续的检查与维护支持"
-    ]
+    ],
+    "whatsappCta": "通过WhatsApp咨询",
+    "whatsappMessage": "您好,我对{{product}}感兴趣,能否发送更多信息和报价?",
+    "downloadSpecSheet": "下载产品规格表(PDF)",
+    "generating": "生成中..."
   },
   "industriesPage": {
     "eyebrow": "行业",
@@ -180,6 +184,11 @@
   "blogPage": {
     "eyebrow": "博客",
     "title": "关于仓库设计与存储的深度见解。"
+  },
+  "blogTeaser": {
+    "eyebrow": "博客精选",
+    "title": "关于仓库设计与存储的深度见解。",
+    "viewAll": "查看全部文章"
   },
   "coverage": {
     "eyebrow": "服务范围",

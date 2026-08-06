@@ -8,6 +8,7 @@ import { FeaturedProjects } from '@/components/sections/FeaturedProjects'
 import { ProcessTimeline } from '@/components/sections/ProcessTimeline'
 import { LeadMagnet } from '@/components/sections/LeadMagnet'
 import { Testimonials } from '@/components/sections/Testimonials'
+import { BlogTeaser } from '@/components/sections/BlogTeaser'
 import { Faq } from '@/components/sections/Faq'
 import { CtaBanner } from '@/components/sections/CtaBanner'
 import { useTranslation } from 'react-i18next'
@@ -51,6 +52,7 @@ export function HomePage() {
       <ProcessTimeline />
       <LeadMagnet />
       <Testimonials />
+      <BlogTeaser />
       <Faq />
       <CtaBanner onRequestQuote={open} />
     </>
