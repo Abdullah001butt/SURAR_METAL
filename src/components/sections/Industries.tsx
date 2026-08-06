@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { SectionTitle } from '@/components/ui/SectionTitle'
+import { IconReveal } from '@/components/ui/IconReveal'
 import { industries } from '@/data/industries'
 
 export function Industries() {
@@ -27,9 +28,9 @@ export function Industries() {
               whileHover={{ y: -6, scale: 1.02 }}
               className="group flex flex-col items-center gap-4 rounded-2xl bg-bg p-8 text-center ring-1 ring-navy/5 transition-colors hover:bg-navy"
             >
-              <div className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+              <IconReveal delay={i * 0.06} className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
                 <industry.icon size={26} />
-              </div>
+              </IconReveal>
               <p className="font-display text-sm font-semibold text-navy group-hover:text-white">{t(`industriesData.${industry.id}`)}</p>
             </motion.div>
           ))}

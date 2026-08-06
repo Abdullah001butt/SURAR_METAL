@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { X, Send, Sparkles, AlertCircle, ArrowRight, ArrowLeft, Check } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { ConfettiBurst } from '@/components/ui/ConfettiBurst'
 import { productCategories } from '@/data/products'
 import { submitQuoteRequest } from '@/services/leads'
 import { cn } from '@/utils/cn'
@@ -113,8 +114,9 @@ export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalPro
             </button>
 
             {success ? (
-              <div className="py-10 text-center">
-                <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary">
+              <div className="relative py-10 text-center">
+                <ConfettiBurst />
+                <div className="relative mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary">
                   <Send size={24} />
                 </div>
                 <h3 className="font-display text-2xl font-semibold text-navy">{t('quoteModal.successTitle')}</h3>

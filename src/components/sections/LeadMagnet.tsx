@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { Download, FileText, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Magnetic } from '@/components/ui/Magnetic'
+import { ConfettiBurst } from '@/components/ui/ConfettiBurst'
 import { submitLeadMagnetRequest } from '@/services/leads'
 
 const GUIDE_URL = '/al-surur-warehouse-buying-guide.pdf'
@@ -72,8 +73,9 @@ export function LeadMagnet() {
 
           <div className="rounded-2xl bg-bg p-6 sm:p-8">
             {unlocked ? (
-              <div className="py-6 text-center">
-                <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
+              <div className="relative py-6 text-center">
+                <ConfettiBurst />
+                <div className="relative mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
                   <CheckCircle2 size={24} />
                 </div>
                 <h3 className="mt-4 font-display text-lg font-semibold text-navy">{t('leadMagnet.successTitle')}</h3>

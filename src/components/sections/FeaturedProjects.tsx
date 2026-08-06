@@ -39,6 +39,7 @@ export function FeaturedProjects() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: (i % 4) * 0.08 }}
+                whileHover={{ y: -6 }}
                 className={cn('group', project.size === 'large' ? 'sm:row-span-2 h-[560px]' : 'h-[270px]')}
               >
                 <TiltCard maxTilt={5} className="h-full w-full overflow-hidden rounded-3xl">

@@ -140,10 +140,22 @@
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #FF5A1F 0%, #FF8A4C 100%);
+    background: linear-gradient(100deg, #FF5A1F 0%, #FF8A4C 30%, #FFC499 45%, #FF8A4C 60%, #FF5A1F 100%);
+    background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: gradient-shimmer 6s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .custom-cursor-active,
+  .custom-cursor-active * {
+    cursor: none;
   }
 
   .no-scrollbar::-webkit-scrollbar {

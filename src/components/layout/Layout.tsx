@@ -6,6 +6,7 @@ import { FloatingWhatsApp } from '@/components/ui/FloatingWhatsApp'
 import { BackToTop } from '@/components/ui/BackToTop'
 import { StickyMobileCta } from '@/components/ui/StickyMobileCta'
 import { ScrollProgressBar } from '@/components/ui/ScrollProgressBar'
+import { CustomCursor } from '@/components/ui/CustomCursor'
 import { QuoteModalContext } from '@/hooks/useQuoteModal'
 import { useExitIntent } from '@/hooks/useExitIntent'
 
@@ -42,6 +43,7 @@ export function Layout() {
   return (
     <QuoteModalContext.Provider value={{ open: openQuote }}>
       <ScrollProgressBar />
+      <CustomCursor />
       <Navbar onRequestQuote={openQuote} />
       <main className="pb-16 lg:pb-0">
         <Outlet />
