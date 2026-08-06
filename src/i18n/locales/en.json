@@ -171,7 +171,8 @@
     "whatsappCta": "Chat on WhatsApp",
     "whatsappMessage": "Hi, I'm interested in {{product}}. Could you send me more info and pricing?",
     "downloadSpecSheet": "Download Spec Sheet (PDF)",
-    "generating": "Generating..."
+    "generating": "Generating...",
+    "specSheetError": "Couldn't generate the PDF. Please try again or WhatsApp us for the spec sheet."
   },
   "industriesPage": {
     "eyebrow": "Industries",
