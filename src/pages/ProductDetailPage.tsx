@@ -10,6 +10,7 @@ import { Seo } from '@/components/ui/Seo'
 import { ProductSpecSheetButton } from '@/components/ui/ProductSpecSheetButton'
 import { RevealImage } from '@/components/ui/RevealImage'
 import { StickyProductNav } from '@/components/ui/StickyProductNav'
+import { DimensionOverlay } from '@/components/ui/DimensionOverlay'
 
 export function ProductDetailPage() {
   const { slug } = useParams()
@@ -70,7 +71,10 @@ export function ProductDetailPage() {
       />
       <section id="overview" className="container-px mx-auto max-w-5xl py-20">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-center">
-          <RevealImage src={product.image} alt={title} className="aspect-4/3 w-full rounded-3xl" />
+          <div className="relative">
+            <RevealImage src={product.image} alt={title} className="aspect-4/3 w-full rounded-3xl" />
+            <DimensionOverlay />
+          </div>
           <div>
             <h2 className="font-display text-2xl font-semibold text-navy">{t('productDetail.whyChoose')}</h2>
             <ul className="mt-6 space-y-4">

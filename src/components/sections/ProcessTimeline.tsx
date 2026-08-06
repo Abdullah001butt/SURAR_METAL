@@ -3,6 +3,7 @@ import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Check } from 'lucide-react'
 import { SectionTitle } from '@/components/ui/SectionTitle'
+import { BoltCorners } from '@/components/ui/BoltCorners'
 import { processSteps } from '@/data/process'
 
 function StepRow({ step, index }: { step: (typeof processSteps)[number]; index: number }) {
@@ -23,7 +24,8 @@ function StepRow({ step, index }: { step: (typeof processSteps)[number]; index: 
         </span>
       </div>
 
-      <div className="flex-1 rounded-2xl bg-bg p-6 ring-1 ring-navy/5 sm:p-7">
+      <div className="relative flex-1 rounded-2xl bg-bg p-6 ring-1 ring-navy/5 sm:p-7">
+        <BoltCorners />
         <h3 className="font-display text-lg font-semibold text-navy sm:text-xl">{t(`processData.${step.id}.title`)}</h3>
         <p className="mt-2 text-sm leading-relaxed text-gray">{t(`processData.${step.id}.description`)}</p>
       </div>

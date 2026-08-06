@@ -1,29 +1,40 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { statistics } from '@/data/statistics'
-import { useCountUp } from '@/hooks/useCountUp'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { GradientOrbs } from '@/components/ui/GradientOrbs'
 import { BlueprintGrid } from '@/components/ui/BlueprintGrid'
+import { BoltCorners } from '@/components/ui/BoltCorners'
+import { Odometer } from '@/components/ui/Odometer'
 
 function StatCard({ value, suffix, label, delay }: { value: number; suffix: string; label: string; delay: number }) {
-  const { ref, value: animated } = useCountUp(value)
-
   return (
     <motion.div
-      ref={ref}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -6 }}
-      className="rounded-3xl bg-white/5 p-8 text-center backdrop-blur-sm ring-1 ring-white/10"
+      className="relative rounded-3xl bg-white/5 p-8 text-center backdrop-blur-sm ring-1 ring-white/10"
     >
+      <BoltCorners light />
       <p className="font-accent text-4xl font-semibold text-primary md:text-5xl">
-        {animated}
-        {suffix}
+        <Odometer value={value} suffix={suffix} />
       </p>
       <p className="mt-2 text-sm font-medium text-white/70">{label}</p>
+
+      {/* Decorative capacity-style fill bar — settles once the odometer above
+          finishes rolling, purely a stylistic accent (not a claim tied to any
+          specific percentage). */}
+      <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10">
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: delay + 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="h-full origin-left rounded-full bg-primary"
+        />
+      </div>
     </motion.div>
   )
 }
