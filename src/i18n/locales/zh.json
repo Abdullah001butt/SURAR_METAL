@@ -168,7 +168,13 @@
     "downloadSpecSheet": "下载产品规格表(PDF)",
     "downloadPdfButton": "下载PDF",
     "generating": "生成中...",
-    "specSheetError": "无法生成PDF,请重试或通过WhatsApp联系我们获取规格表。"
+    "specSheetError": "无法生成PDF,请重试或通过WhatsApp联系我们获取规格表。",
+    "specSheetTitle": "产品规格表",
+    "specSheetCompany": "Al Surur General Store Equipment Trading LLC",
+    "specSheetCtaTitle": "获取免费现场勘查与报价",
+    "specSheetContactLine": "电话: +971 55 493 9866 | WhatsApp: +971 55 493 9866 | www.alsururmetals.com",
+    "specSheetAddress": "Al Owan, Al Nakhil 1, 阿治曼, 阿联酋",
+    "specSheetFooterStats": "18年以上经验 · 已交付500多个项目 · 覆盖全阿联酋安装服务"
   },
   "industriesPage": {
     "eyebrow": "行业",
@@ -188,7 +194,13 @@
   },
   "blogPage": {
     "eyebrow": "博客",
-    "title": "关于仓库设计与存储的深度见解。"
+    "title": "关于仓库设计与存储的深度见解。",
+    "comingSoon": "新文章即将上线,敬请期待。"
+  },
+  "blogPostPage": {
+    "ctaTitle": "您的项目需要这个吗?",
+    "ctaDescription": "Al Surur 在阿联酋全境提供设计、制造与安装服务 — 获取免费咨询与报价。",
+    "backToArticles": "← 返回所有文章"
   },
   "blogTeaser": {
     "eyebrow": "博客精选",

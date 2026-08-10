@@ -174,7 +174,13 @@
     "downloadSpecSheet": "Download Spec Sheet (PDF)",
     "downloadPdfButton": "Download PDF",
     "generating": "Generating...",
-    "specSheetError": "Couldn't generate the PDF. Please try again or WhatsApp us for the spec sheet."
+    "specSheetError": "Couldn't generate the PDF. Please try again or WhatsApp us for the spec sheet.",
+    "specSheetTitle": "Product Spec Sheet",
+    "specSheetCompany": "Al Surur General Store Equipment Trading LLC",
+    "specSheetCtaTitle": "Get a Free Site Survey & Quote",
+    "specSheetContactLine": "Tel: +971 55 493 9866 | WhatsApp: +971 55 493 9866 | www.alsururmetals.com",
+    "specSheetAddress": "Al Owan, Al Nakhil 1, Ajman, UAE",
+    "specSheetFooterStats": "18+ Years Experience · 500+ Projects Delivered · UAE-Wide Installation"
   },
   "industriesPage": {
     "eyebrow": "Industries",
@@ -194,7 +200,13 @@
   },
   "blogPage": {
     "eyebrow": "Blog",
-    "title": "Insights on warehouse design & storage."
+    "title": "Insights on warehouse design & storage.",
+    "comingSoon": "New articles are on the way — check back soon."
+  },
+  "blogPostPage": {
+    "ctaTitle": "Need this for your project?",
+    "ctaDescription": "Al Surur designs, fabricates and installs across the UAE — get a free consultation and quote.",
+    "backToArticles": "← Back to all articles"
   },
   "blogTeaser": {
     "eyebrow": "From the Blog",

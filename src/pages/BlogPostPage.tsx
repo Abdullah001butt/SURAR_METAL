@@ -85,18 +85,18 @@ export function BlogPostPage() {
         />
 
         <div className="mt-14 rounded-3xl bg-navy p-8 text-center sm:p-10">
-          <h2 className="font-display text-2xl font-semibold text-white">Need this for your project?</h2>
+          <h2 className="font-display text-2xl font-semibold text-white">{t('blogPostPage.ctaTitle')}</h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-white/70">
-            Al Surur designs, fabricates and installs across the UAE — get a free consultation and quote.
+            {t('blogPostPage.ctaDescription')}
           </p>
           <Button size="lg" className="mt-6" icon={<ArrowRight size={18} className="rtl:rotate-180" />} onClick={open}>
-            Request a Quote
+            {t('nav.requestQuote')}
           </Button>
         </div>
 
         <div className="mt-8 text-center">
           <Link to="/blog" className="text-sm font-semibold text-primary hover:underline">
-            ← Back to all articles
+            {t('blogPostPage.backToArticles')}
           </Link>
         </div>
       </article>

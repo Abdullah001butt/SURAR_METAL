@@ -52,7 +52,7 @@ export function BlogPage() {
           ))}
 
           {!isLoading && posts?.length === 0 && (
-            <p className="py-10 text-center text-sm text-gray">New articles are on the way — check back soon.</p>
+            <p className="py-10 text-center text-sm text-gray">{t('blogPage.comingSoon')}</p>
           )}
         </div>
       </section>
