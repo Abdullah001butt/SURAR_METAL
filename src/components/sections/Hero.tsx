@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { lazy, Suspense, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -8,6 +8,11 @@ import { WordReveal } from '@/components/ui/WordReveal'
 import { TypingText } from '@/components/ui/TypingText'
 import { Magnetic } from '@/components/ui/Magnetic'
 import heroImg from '@/assets/images/warehouse-hero.webp'
+
+// Three.js is a heavy chunk (~150KB+) — load it only for the visitors who'll
+// actually see it (desktop, via the lg:block wrapper below), never blocking
+// the initial page render or shipping to mobile visitors.
+const RackingScene = lazy(() => import('@/components/ui/RackingScene').then((m) => ({ default: m.RackingScene })))
 
 const floatingCards = [
   { icon: Award, key: 'experience' },
@@ -106,6 +111,9 @@ export function Hero({ onRequestQuote }: HeroProps) {
         </div>
 
         <div className="relative hidden lg:block">
+          <Suspense fallback={null}>
+            <RackingScene className="pointer-events-none absolute -inset-24 -z-10 opacity-80" />
+          </Suspense>
           <div className="grid grid-cols-2 gap-4">
             {floatingCards.map((card, i) => (
               <motion.div
