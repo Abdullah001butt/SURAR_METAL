@@ -1,5 +1,29 @@
 import { isSupabaseConfigured, supabase } from '@/services/supabase'
 
+declare global {
+  interface Window {
+    dataLayer?: unknown[]
+  }
+}
+
+// Fires the Google Ads "Request quote" conversion action right after a lead is
+// actually saved to the database — never on click or page load — so we only
+// ever count real, successful submissions. Guarded so it never throws and
+// blocks the actual lead submission if gtag hasn't loaded (ad blocker, etc.).
+function fireQuoteConversion() {
+  try {
+    window.dataLayer = window.dataLayer || []
+    function gtag(...args: unknown[]) {
+      window.dataLayer!.push(args)
+    }
+    gtag('event', 'conversion', {
+      send_to: 'AW-18383188650/gRFICKvh8eAcEKr15L1E',
+    })
+  } catch {
+    // Tracking must never break the actual lead flow.
+  }
+}
+
 interface QuoteSubmission {
   name: string
   company: string
@@ -30,6 +54,7 @@ export async function submitQuoteRequest(data: QuoteSubmission) {
   })
 
   if (error) throw new Error(error.message)
+  fireQuoteConversion()
 }
 
 interface LeadMagnetSubmission {
@@ -52,6 +77,7 @@ export async function submitLeadMagnetRequest(data: LeadMagnetSubmission) {
   })
 
   if (error) throw new Error(error.message)
+  fireQuoteConversion()
 }
 
 export async function submitContactMessage(data: ContactSubmission) {
