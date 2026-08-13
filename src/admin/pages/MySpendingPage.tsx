@@ -1,12 +1,22 @@
 import { useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Download, Pencil, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { Button } from '@/components/ui/Button'
 import { PersonalExpenseModal } from '@/admin/components/PersonalExpenseModal'
 import { ConfirmDialog } from '@/admin/components/ConfirmDialog'
 import { formatAED } from '@/admin/utils/documentCalc'
+import { exportStyledExcel, STATUS_COLORS } from '@/admin/utils/excelExport'
 import type { PersonalExpense, PersonalExpenseCategory } from '@/admin/types'
+
+const CATEGORY_EXPORT_COLORS: Record<PersonalExpenseCategory, string> = {
+  transport: 'FFFEF3C7',
+  food: 'FFFFEDD5',
+  subscriptions: 'FFDBEAFE',
+  family: 'FFFCE7F3',
+  income: STATUS_COLORS.paid,
+  other: 'FFF1F5F9',
+}
 
 const CATEGORY_COLORS: Record<PersonalExpenseCategory, string> = {
   transport: 'bg-amber-50 text-amber-600',
@@ -74,6 +84,30 @@ export function MySpendingPage() {
     queryClient.invalidateQueries({ queryKey: ['admin-personal-expenses'] })
   }
 
+  const handleExport = () => {
+    const list = entries ?? []
+    exportStyledExcel<PersonalExpense>({
+      filename: `My-Spending-${new Date().toISOString().slice(0, 10)}`,
+      title: 'My Spending — Personal Expense Log',
+      subtitle: `Exported ${new Date().toLocaleDateString()} · Total spent AED ${formatAED(totalSpent)} · Total received AED ${formatAED(totalIncome)}`,
+      sheetName: 'My Spending',
+      columns: [
+        { header: 'Date', width: 14, value: (e) => e.expense_date },
+        { header: 'Description', width: 34, value: (e) => e.description },
+        {
+          header: 'Category',
+          width: 16,
+          value: (e) => e.category,
+          highlight: (e) => CATEGORY_EXPORT_COLORS[e.category],
+        },
+        { header: 'Type', width: 12, value: (e) => (e.category === 'income' ? 'Received' : 'Spent') },
+        { header: 'Amount (AED)', width: 16, value: (e) => e.amount },
+        { header: 'Notes', width: 30, value: (e) => e.notes ?? '' },
+      ],
+      rows: list,
+    })
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -90,6 +124,9 @@ export function MySpendingPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-gray">Total Received</p>
             <p className="font-display text-lg font-bold text-emerald-600" dir="ltr">AED {formatAED(totalIncome)}</p>
           </div>
+          <Button variant="secondary" onClick={handleExport} icon={<Download size={16} />} disabled={!entries?.length}>
+            Export
+          </Button>
           <Button onClick={() => setModalEntry('new')} icon={<Plus size={16} />}>New Entry</Button>
         </div>
       </div>
