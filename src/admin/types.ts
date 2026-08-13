@@ -176,6 +176,19 @@ export interface Expense {
   created_at: string
 }
 
+export type PersonalExpenseCategory = 'transport' | 'food' | 'subscriptions' | 'family' | 'income' | 'other'
+
+export interface PersonalExpense {
+  id: number
+  expense_date: string
+  description: string
+  amount: number
+  category: PersonalExpenseCategory
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface SupplierBill {
   id: number
   supplier_name: string
