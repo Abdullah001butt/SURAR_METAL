@@ -105,6 +105,11 @@ export function MySpendingPage() {
         { header: 'Notes', width: 30, value: (e) => e.notes ?? '' },
       ],
       rows: list,
+      summary: [
+        { label: 'TOTAL SPENT', value: `AED ${formatAED(totalSpent)}`, color: 'FFDC2626' },
+        { label: 'TOTAL RECEIVED', value: `AED ${formatAED(totalIncome)}`, color: 'FF16A34A' },
+        { label: 'NET (RECEIVED − SPENT)', value: `AED ${formatAED(totalIncome - totalSpent)}`, color: 'FF0F172A' },
+      ],
     })
   }
 

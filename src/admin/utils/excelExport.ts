@@ -15,15 +15,24 @@ export interface ExcelColumn<T> {
   highlight?: (row: T) => string | null
 }
 
+export interface SummaryRow {
+  label: string
+  value: string | number
+  /** Fill color (ARGB) for this summary row, e.g. green for income, red for a big total */
+  color?: string
+}
+
 interface SheetOptions<T> {
   title: string
   subtitle?: string
   sheetName?: string
   columns: ExcelColumn<T>[]
   rows: T[]
+  /** Big, bold totals shown at the bottom of the sheet, below the data table */
+  summary?: SummaryRow[]
 }
 
-function addStyledSheet<T>(workbook: ExcelJS.Workbook, { title, subtitle, sheetName = 'Sheet1', columns, rows }: SheetOptions<T>) {
+function addStyledSheet<T>(workbook: ExcelJS.Workbook, { title, subtitle, sheetName = 'Sheet1', columns, rows, summary }: SheetOptions<T>) {
   const sheet = workbook.addWorksheet(sheetName, {
     views: [{ state: 'frozen', ySplit: subtitle ? 4 : 3 }],
     pageSetup: { orientation: 'landscape', fitToPage: true },
@@ -101,6 +110,33 @@ function addStyledSheet<T>(workbook: ExcelJS.Workbook, { title, subtitle, sheetN
     sheet.autoFilter = {
       from: { row: headerRowIndex, column: 1 },
       to: { row: headerRowIndex, column: colCount },
+    }
+  }
+
+  if (summary && summary.length > 0) {
+    let summaryRowIndex = headerRowIndex + rows.length + 2
+    for (const item of summary) {
+      const row = sheet.getRow(summaryRowIndex)
+      row.height = 30
+
+      sheet.mergeCells(summaryRowIndex, 1, summaryRowIndex, colCount - 1)
+      const labelCell = row.getCell(1)
+      labelCell.value = item.label
+      labelCell.font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FF0F172A' } }
+      labelCell.alignment = { vertical: 'middle', horizontal: 'left' }
+
+      const valueCell = row.getCell(colCount)
+      valueCell.value = item.value
+      valueCell.font = { name: 'Calibri', size: 16, bold: true, color: { argb: item.color ? 'FFFFFFFF' : 'FF0F172A' } }
+      valueCell.alignment = { vertical: 'middle', horizontal: 'right' }
+      if (item.color) {
+        labelCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: item.color } }
+        valueCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: item.color } }
+      }
+      labelCell.border = { top: { style: 'medium', color: { argb: BORDER_COLOR } } }
+      valueCell.border = { top: { style: 'medium', color: { argb: BORDER_COLOR } } }
+
+      summaryRowIndex += 1
     }
   }
 }
