@@ -545,13 +545,13 @@ function DocumentEditorPageInner() {
                 <input
                   type="checkbox"
                   checked={manualTotal != null}
-                  onChange={(e) => setManualTotal(e.target.checked ? totals.net : null)}
+                  onChange={(e) => setManualTotal(e.target.checked ? totals.gross : null)}
                   className="h-4 w-4 rounded border-navy/20"
                 />
               </label>
               {manualTotal != null && (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray">Amount (AED)</span>
+                  <span className="text-gray">Amount before VAT (AED)</span>
                   <input
                     type="number"
                     autoFocus
