@@ -17,16 +17,27 @@ export function itemMargin(item: DocumentItem): { amount: number; pct: number } 
 }
 
 export function calcTotals(items: DocumentItem[], discount: number, vatRate: number, manualTotal?: number | null) {
-  const gross = items.reduce((sum, item) => sum + itemAmount(item), 0)
-  const afterDiscount = gross - discount
-  const vatAmount = afterDiscount * (vatRate / 100)
-  const computedNet = afterDiscount + vatAmount
-  // A manually-typed total (e.g. from a handwritten lump-sum quote) wins over
-  // the item-based calculation when set — items may just describe scope of
-  // work without individual pricing.
-  const net = manualTotal != null ? manualTotal : computedNet
+  const itemGross = items.reduce((sum, item) => sum + itemAmount(item), 0)
 
-  return { gross, discount, vatAmount, net, isManual: manualTotal != null }
+  if (manualTotal != null) {
+    // A manually-typed total (e.g. a handwritten lump-sum quote) wins over the
+    // item-based calculation — items may just describe scope of work without
+    // individual pricing (qty/unit filled in, unit price left at 0). In that
+    // case itemGross is 0, so the VAT/Gross breakdown must be back-calculated
+    // from the manual total itself (treated as VAT-inclusive) instead of
+    // showing 0.00 for Gross/VAT while the total shows the real number.
+    const net = manualTotal
+    const afterDiscount = itemGross > 0 ? itemGross - discount : net / (1 + vatRate / 100)
+    const gross = itemGross > 0 ? itemGross : afterDiscount + discount
+    const vatAmount = net - afterDiscount
+    return { gross, discount, vatAmount, net, isManual: true }
+  }
+
+  const afterDiscount = itemGross - discount
+  const vatAmount = afterDiscount * (vatRate / 100)
+  const net = afterDiscount + vatAmount
+
+  return { gross: itemGross, discount, vatAmount, net, isManual: false }
 }
 
 export function calcMarginTotals(items: DocumentItem[]) {
