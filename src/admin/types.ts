@@ -1,4 +1,5 @@
-export type DocType = 'quotation' | 'invoice' | 'tax_invoice' | 'delivery_note'
+export type DocType = 'quotation' | 'invoice' | 'tax_invoice' | 'delivery_note' | 'payment_receipt'
+export type PaymentMethodType = 'cash' | 'cheque' | 'bank_transfer' | 'card'
 export type DocStatus = 'draft' | 'sent' | 'paid' | 'overdue'
 export type LeadStatus = 'new' | 'contacted' | 'quoted' | 'won' | 'lost'
 
@@ -85,6 +86,9 @@ export interface AlSururDocument {
   discount: number
   vat_rate: number
   manual_total: number | null
+  payment_method: PaymentMethodType | null
+  reference_no: string | null
+  bank_name: string | null
   converted_from_id: number | null
   created_at: string
   updated_at: string

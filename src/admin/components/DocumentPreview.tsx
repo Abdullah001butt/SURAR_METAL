@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { ArrowLeft, Download, Loader2, MessageCircle, Printer } from 'lucide-react'
-import { calcTotals, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
+import { calcTotals, formatAED, DOC_TYPE_LABELS, PAYMENT_METHOD_LABELS } from '@/admin/utils/documentCalc'
 import { amountToWordsAED } from '@/admin/utils/numberToWords'
 import { exportElementToPdf } from '@/admin/utils/pdfExport'
 import { sendDocumentViaWhatsApp } from '@/admin/utils/whatsapp'
@@ -17,6 +17,9 @@ export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
   const totals = calcTotals(items, document.discount, document.vat_rate, document.manual_total)
   const isTaxInvoice = document.doc_type === 'tax_invoice'
   const isDeliveryNote = document.doc_type === 'delivery_note'
+  const isReceipt = document.doc_type === 'payment_receipt'
+  const receiptAmount = document.manual_total ?? totals.net
+  const receiptFor = items.map((it) => it.description).filter(Boolean).join(', ')
   const hasWeightColumn = isDeliveryNote || document.doc_type === 'invoice'
   const totalWeight = items.reduce((sum, it) => sum + (it.weight ?? 0), 0)
   const sheetRef = useRef<HTMLDivElement>(null)
@@ -97,6 +100,57 @@ export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
 
         <h1 className="mt-6 text-center text-xl font-bold tracking-widest">{DOC_TYPE_LABELS[document.doc_type]}</h1>
 
+        {isReceipt && (
+          <div className="mt-6">
+            <div className="grid grid-cols-2 gap-6 border border-[#000000] text-xs">
+              <div className="space-y-1 border-e border-[#000000] p-3">
+                <p><span className="font-semibold">Received From:</span> {document.customer?.name ?? ''}</p>
+                <p><span className="font-semibold">Address:</span> {document.customer?.address ?? ''}</p>
+                <p><span className="font-semibold">Phone:</span> {document.customer?.phone ?? ''}</p>
+              </div>
+              <div className="space-y-1 p-3">
+                <p><span className="font-semibold">Receipt No:</span> {document.doc_number}</p>
+                <p><span className="font-semibold">Date:</span> {document.doc_date}</p>
+                <p><span className="font-semibold">Payment Method:</span> {document.payment_method ? PAYMENT_METHOD_LABELS[document.payment_method] : ''}</p>
+                {document.payment_method === 'cheque' && document.reference_no && <p><span className="font-semibold">Cheque No:</span> {document.reference_no}</p>}
+                {document.payment_method === 'bank_transfer' && document.reference_no && <p><span className="font-semibold">Reference No:</span> {document.reference_no}</p>}
+                {document.bank_name && <p><span className="font-semibold">Bank:</span> {document.bank_name}</p>}
+              </div>
+            </div>
+
+            <div className="mt-4 border border-[#000000] p-4 text-sm">
+              <p>
+                Received with thanks from <span className="font-semibold">{document.customer?.name ?? '.....................'}</span> the sum of{' '}
+                <span className="font-semibold">AED {formatAED(receiptAmount)}</span> ({amountToWordsAED(receiptAmount)})
+                {receiptFor && (
+                  <>
+                    {' '}being payment for <span className="font-semibold">{receiptFor}</span>
+                  </>
+                )}
+                {document.payment_terms && <>, {document.payment_terms}</>}.
+              </p>
+            </div>
+
+            <div className="mt-4 flex justify-end border border-[#000000] p-4">
+              <div className="text-end">
+                <p className="text-xs text-[#4b5563]">Amount Received</p>
+                <p className="font-display text-2xl font-bold">AED {formatAED(receiptAmount)}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-6 text-xs">
+              <div>
+                <p className="border-t border-[#000000] pt-2">Customer Signature</p>
+              </div>
+              <div className="text-end">
+                <p className="border-t border-[#000000] pt-2">For Al Surur General Store Equipment Trading LLC</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!isReceipt && (
+        <>
         <div className="mt-4 grid grid-cols-2 gap-6 border border-[#000000] text-xs">
           <div className="space-y-1 border-e border-[#000000] p-3">
             <p><span className="font-semibold">{isTaxInvoice || document.doc_type === 'invoice' || isDeliveryNote ? 'Name' : 'Customer Name'}:</span> {document.customer?.name ?? ''}</p>
@@ -202,6 +256,8 @@ export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
               <p className="mt-4">CUSTOMER</p>
             </div>
           </div>
+        )}
+        </>
         )}
 
         <div className="mt-8 border-t-4 border-[#dc2626] pt-3 text-center text-xs">

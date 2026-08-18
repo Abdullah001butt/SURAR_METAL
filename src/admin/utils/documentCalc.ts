@@ -49,4 +49,12 @@ export const DOC_TYPE_LABELS: Record<string, string> = {
   invoice: 'INVOICE',
   tax_invoice: 'TAX INVOICE',
   delivery_note: 'DELIVERY INVOICE',
+  payment_receipt: 'PAYMENT RECEIPT',
+}
+
+export const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  cash: 'Cash',
+  cheque: 'Cheque',
+  bank_transfer: 'Bank Transfer',
+  card: 'Card',
 }

@@ -14,11 +14,12 @@ import type { ExtractedQuote } from '@/admin/utils/extractQuoteFromPhoto'
 import { calcTotals, calcMarginTotals, itemMargin, formatAED, DOC_TYPE_LABELS } from '@/admin/utils/documentCalc'
 import { logActivity } from '@/admin/utils/activity'
 import { fetchFrequentQuoteItems, fetchCustomerPriorQuotes } from '@/admin/utils/smartQuote'
-import type { AlSururDocument, Customer, DocType, DocStatus, DocumentItem, Product } from '@/admin/types'
+import type { AlSururDocument, Customer, DocType, DocStatus, DocumentItem, PaymentMethodType, Product } from '@/admin/types'
 
-const DOC_TYPES: DocType[] = ['quotation', 'invoice', 'tax_invoice', 'delivery_note']
+const DOC_TYPES: DocType[] = ['quotation', 'invoice', 'tax_invoice', 'delivery_note', 'payment_receipt']
 const QUOTATION_SEQ = 'quotation_number_seq'
 const INVOICE_SEQ = 'invoice_number_seq'
+const RECEIPT_SEQ = 'receipt_number_seq'
 
 function emptyItem(srNo: number): DocumentItem {
   return { sr_no: srNo, item_code: null, description: '', weight: null, qty: 1, unit: 'pcs', unit_price: 0, cost_price: 0 }
@@ -43,10 +44,11 @@ async function fetchDocument(id: number): Promise<AlSururDocument> {
 }
 
 async function nextDocNumber(docType: DocType): Promise<string> {
-  const seqName = docType === 'quotation' ? QUOTATION_SEQ : INVOICE_SEQ
+  const seqName = docType === 'quotation' ? QUOTATION_SEQ : docType === 'payment_receipt' ? RECEIPT_SEQ : INVOICE_SEQ
+  const prefix = docType === 'payment_receipt' ? 'REC' : 'SUR'
   const { data, error } = await supabase.rpc('nextval_public', { seq_name: seqName })
   if (error) throw error
-  return `SUR/${data}`
+  return `${prefix}/${data}`
 }
 
 export function DocumentEditorPage() {
@@ -92,6 +94,9 @@ function DocumentEditorPageInner() {
   const [discount, setDiscount] = useState(0)
   const [vatRate, setVatRate] = useState(5)
   const [manualTotal, setManualTotal] = useState<number | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('cash')
+  const [referenceNo, setReferenceNo] = useState('')
+  const [bankName, setBankName] = useState('')
   const [items, setItems] = useState<DocumentItem[]>([emptyItem(1)])
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
@@ -122,6 +127,9 @@ function DocumentEditorPageInner() {
       setDiscount(existingDoc.discount)
       setVatRate(existingDoc.vat_rate)
       setManualTotal(existingDoc.manual_total ?? null)
+      setPaymentMethod(existingDoc.payment_method ?? 'cash')
+      setReferenceNo(existingDoc.reference_no ?? '')
+      setBankName(existingDoc.bank_name ?? '')
       setItems(existingDoc.items && existingDoc.items.length > 0 ? existingDoc.items : [emptyItem(1)])
       setLoadedId(existingDoc.id)
       setInitialStatus(existingDoc.status)
@@ -233,9 +241,12 @@ function DocumentEditorPageInner() {
         duration_note: durationNote || null,
         load_capacity: loadCapacity || null,
         validity_days: validityDays,
-        discount,
-        vat_rate: vatRate,
+        discount: docType === 'payment_receipt' ? 0 : discount,
+        vat_rate: docType === 'payment_receipt' ? 0 : vatRate,
         manual_total: manualTotal,
+        payment_method: docType === 'payment_receipt' ? paymentMethod : null,
+        reference_no: docType === 'payment_receipt' ? referenceNo || null : null,
+        bank_name: docType === 'payment_receipt' ? bankName || null : null,
         converted_from_id: convertFromId ? Number(convertFromId) : existingDoc?.converted_from_id ?? null,
       }
 
@@ -317,6 +328,9 @@ function DocumentEditorPageInner() {
     discount,
     vat_rate: vatRate,
     manual_total: manualTotal,
+    payment_method: docType === 'payment_receipt' ? paymentMethod : null,
+    reference_no: docType === 'payment_receipt' ? referenceNo || null : null,
+    bank_name: docType === 'payment_receipt' ? bankName || null : null,
     converted_from_id: null,
     created_at: '',
     updated_at: '',
@@ -524,48 +538,123 @@ function DocumentEditorPageInner() {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-2xl bg-white p-6 ring-1 ring-navy/5">
-            <h2 className="font-display text-lg font-semibold text-navy">Totals</h2>
-            <div className="mt-4 space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-gray">Gross</span>
-                <span className="font-semibold text-navy" dir="ltr">AED {formatAED(totals.gross)}</span>
+          {docType === 'payment_receipt' && (
+            <div className="rounded-2xl bg-white p-6 ring-1 ring-navy/5">
+              <h2 className="font-display text-lg font-semibold text-navy">Payment Details</h2>
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-gray">Payment method</label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value as PaymentMethodType)}
+                    className="mt-1 w-full rounded-lg border border-navy/10 bg-bg px-3 py-2 text-sm outline-none focus:border-primary capitalize"
+                  >
+                    <option value="cash">Cash</option>
+                    <option value="cheque">Cheque</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="card">Card</option>
+                  </select>
+                </div>
+                {paymentMethod === 'cheque' && (
+                  <>
+                    <div>
+                      <label className="text-xs font-semibold text-gray">Cheque No.</label>
+                      <input
+                        placeholder="e.g. 001077"
+                        value={referenceNo}
+                        onChange={(e) => setReferenceNo(e.target.value)}
+                        className="mt-1 w-full rounded-lg border border-navy/10 bg-bg px-3 py-2 text-sm outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-gray">Bank name</label>
+                      <input
+                        placeholder="e.g. Emirates NBD"
+                        value={bankName}
+                        onChange={(e) => setBankName(e.target.value)}
+                        className="mt-1 w-full rounded-lg border border-navy/10 bg-bg px-3 py-2 text-sm outline-none focus:border-primary"
+                      />
+                    </div>
+                  </>
+                )}
+                {paymentMethod === 'bank_transfer' && (
+                  <div>
+                    <label className="text-xs font-semibold text-gray">Transaction / Reference No.</label>
+                    <input
+                      placeholder="Transaction reference"
+                      value={referenceNo}
+                      onChange={(e) => setReferenceNo(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-navy/10 bg-bg px-3 py-2 text-sm outline-none focus:border-primary"
+                    />
+                  </div>
+                )}
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray">Discount</span>
-                <input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} className="w-24 rounded-lg border border-navy/10 bg-bg px-2 py-1 text-end text-sm outline-none focus:border-primary" dir="ltr" />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray">VAT %</span>
-                <input type="number" value={vatRate} onChange={(e) => setVatRate(Number(e.target.value))} className="w-24 rounded-lg border border-navy/10 bg-bg px-2 py-1 text-end text-sm outline-none focus:border-primary" dir="ltr" />
-              </div>
+            </div>
+          )}
 
-              <label className="flex items-center justify-between border-t border-navy/10 pt-2">
-                <span className="text-gray">Set amount manually</span>
-                <input
-                  type="checkbox"
-                  checked={manualTotal != null}
-                  onChange={(e) => setManualTotal(e.target.checked ? totals.gross : null)}
-                  className="h-4 w-4 rounded border-navy/20"
-                />
-              </label>
-              {manualTotal != null && (
+          <div className="rounded-2xl bg-white p-6 ring-1 ring-navy/5">
+            <h2 className="font-display text-lg font-semibold text-navy">{docType === 'payment_receipt' ? 'Amount' : 'Totals'}</h2>
+            <div className="mt-4 space-y-2 text-sm">
+              {docType === 'payment_receipt' ? (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray">Amount before VAT (AED)</span>
+                  <span className="text-gray">Amount Received (AED)</span>
                   <input
                     type="number"
                     autoFocus
-                    value={manualTotal}
+                    value={manualTotal ?? 0}
                     onChange={(e) => setManualTotal(Number(e.target.value))}
                     className="w-32 rounded-lg border border-primary/40 bg-primary/5 px-2 py-1 text-end text-sm font-semibold outline-none focus:border-primary"
                     dir="ltr"
                   />
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray">Gross</span>
+                    <span className="font-semibold text-navy" dir="ltr">AED {formatAED(totals.gross)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray">Discount</span>
+                    <input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} className="w-24 rounded-lg border border-navy/10 bg-bg px-2 py-1 text-end text-sm outline-none focus:border-primary" dir="ltr" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray">VAT %</span>
+                    <input type="number" value={vatRate} onChange={(e) => setVatRate(Number(e.target.value))} className="w-24 rounded-lg border border-navy/10 bg-bg px-2 py-1 text-end text-sm outline-none focus:border-primary" dir="ltr" />
+                  </div>
+
+                  <label className="flex items-center justify-between border-t border-navy/10 pt-2">
+                    <span className="text-gray">Set amount manually</span>
+                    <input
+                      type="checkbox"
+                      checked={manualTotal != null}
+                      onChange={(e) => setManualTotal(e.target.checked ? totals.gross : null)}
+                      className="h-4 w-4 rounded border-navy/20"
+                    />
+                  </label>
+                  {manualTotal != null && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray">Amount before VAT (AED)</span>
+                      <input
+                        type="number"
+                        autoFocus
+                        value={manualTotal}
+                        onChange={(e) => setManualTotal(Number(e.target.value))}
+                        className="w-32 rounded-lg border border-primary/40 bg-primary/5 px-2 py-1 text-end text-sm font-semibold outline-none focus:border-primary"
+                        dir="ltr"
+                      />
+                    </div>
+                  )}
+                </>
               )}
 
               <div className="flex items-center justify-between border-t border-navy/10 pt-2">
-                <span className="font-semibold text-navy">Net Total{manualTotal != null && <span className="ms-1 text-[10px] font-normal text-primary">(manual)</span>}</span>
-                <span className="font-display text-lg font-bold text-primary" dir="ltr">AED {formatAED(totals.net)}</span>
+                <span className="font-semibold text-navy">
+                  {docType === 'payment_receipt' ? 'Amount Received' : 'Net Total'}
+                  {manualTotal != null && docType !== 'payment_receipt' && <span className="ms-1 text-[10px] font-normal text-primary">(manual)</span>}
+                </span>
+                <span className="font-display text-lg font-bold text-primary" dir="ltr">
+                  AED {formatAED(docType === 'payment_receipt' ? manualTotal ?? 0 : totals.net)}
+                </span>
               </div>
             </div>
           </div>
