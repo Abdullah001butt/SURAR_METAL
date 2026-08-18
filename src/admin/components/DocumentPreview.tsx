@@ -7,6 +7,8 @@ import { sendDocumentViaWhatsApp } from '@/admin/utils/whatsapp'
 import type { AlSururDocument } from '@/admin/types'
 import logo from '@/assets/logo.png'
 
+const COMPANY_TRN_NO = '104126865500003'
+
 interface DocumentPreviewProps {
   document: AlSururDocument
   onClose: () => void
@@ -162,6 +164,7 @@ export function DocumentPreview({ document, onClose }: DocumentPreviewProps) {
           <div className="space-y-1 p-3">
             <p><span className="font-semibold">{DOC_TYPE_LABELS[document.doc_type]} No:</span> {document.doc_number}</p>
             <p><span className="font-semibold">Date:</span> {document.doc_date}</p>
+            {isTaxInvoice && <p><span className="font-semibold">Company TRN No:</span> {COMPANY_TRN_NO}</p>}
             {document.po_ref && <p><span className="font-semibold">PO Ref:</span> {document.po_ref}</p>}
             {document.place_of_supply && <p><span className="font-semibold">Place of Supply:</span> {document.place_of_supply}</p>}
             {document.payment_terms && <p><span className="font-semibold">Payment Terms:</span> {document.payment_terms}</p>}
