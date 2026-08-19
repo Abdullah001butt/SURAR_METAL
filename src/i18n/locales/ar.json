@@ -173,6 +173,7 @@
     "whatsappMessage": "مرحباً، أنا مهتم بـ {{product}}. هل يمكن إرسال المزيد من المعلومات والأسعار؟",
     "downloadSpecSheet": "تحميل نشرة المواصفات (PDF)",
     "downloadPdfButton": "تحميل PDF",
+    "relatedReading": "مقالات ذات صلة",
     "generating": "جارٍ الإنشاء...",
     "specSheetError": "تعذّر إنشاء ملف PDF. يرجى المحاولة مرة أخرى أو التواصل معنا عبر واتساب للحصول على نشرة المواصفات.",
     "specSheetTitle": "نشرة مواصفات المنتج",

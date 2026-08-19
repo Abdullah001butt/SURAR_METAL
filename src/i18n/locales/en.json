@@ -173,6 +173,7 @@
     "whatsappMessage": "Hi, I'm interested in {{product}}. Could you send me more info and pricing?",
     "downloadSpecSheet": "Download Spec Sheet (PDF)",
     "downloadPdfButton": "Download PDF",
+    "relatedReading": "Related Reading",
     "generating": "Generating...",
     "specSheetError": "Couldn't generate the PDF. Please try again or WhatsApp us for the spec sheet.",
     "specSheetTitle": "Product Spec Sheet",

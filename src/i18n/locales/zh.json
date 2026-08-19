@@ -167,6 +167,7 @@
     "whatsappMessage": "您好,我对{{product}}感兴趣,能否发送更多信息和报价?",
     "downloadSpecSheet": "下载产品规格表(PDF)",
     "downloadPdfButton": "下载PDF",
+    "relatedReading": "相关阅读",
     "generating": "生成中...",
     "specSheetError": "无法生成PDF,请重试或通过WhatsApp联系我们获取规格表。",
     "specSheetTitle": "产品规格表",

@@ -11,6 +11,7 @@ import { ProductSpecSheetButton } from '@/components/ui/ProductSpecSheetButton'
 import { RevealImage } from '@/components/ui/RevealImage'
 import { StickyProductNav } from '@/components/ui/StickyProductNav'
 import { DimensionOverlay } from '@/components/ui/DimensionOverlay'
+import { RelatedArticles } from '@/components/ui/RelatedArticles'
 
 export function ProductDetailPage() {
   const { slug } = useParams()
@@ -112,6 +113,7 @@ export function ProductDetailPage() {
       <div id="quote">
         <CtaBanner onRequestQuote={open} />
       </div>
+      <RelatedArticles productId={product.id} />
     </>
   )
 }
