@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { Hero } from '@/components/sections/Hero'
 import { TrustedClients } from '@/components/sections/TrustedClients'
 import { ProductCategories } from '@/components/sections/ProductCategories'
@@ -6,15 +7,20 @@ import { Industries } from '@/components/sections/Industries'
 import { CoverageMap } from '@/components/sections/CoverageMap'
 import { FeaturedProjects } from '@/components/sections/FeaturedProjects'
 import { ProcessTimeline } from '@/components/sections/ProcessTimeline'
-import { LeadMagnet } from '@/components/sections/LeadMagnet'
 import { Testimonials } from '@/components/sections/Testimonials'
-import { BlogTeaser } from '@/components/sections/BlogTeaser'
 import { Faq } from '@/components/sections/Faq'
 import { CtaBanner } from '@/components/sections/CtaBanner'
 import { useTranslation } from 'react-i18next'
 import { useQuoteModal } from '@/hooks/useQuoteModal'
 import { Seo } from '@/components/ui/Seo'
 import { faqItems } from '@/data/testimonials'
+
+// Both sections below need the Supabase client (204KB) and/or react-hook-form
+// + zod (98KB) — lazy-loading them keeps that weight out of the critical
+// initial bundle instead of dragging it in for every visitor before they've
+// even seen the hero. Neither is above-the-fold or part of the LCP path.
+const BlogTeaser = lazy(() => import('@/components/sections/BlogTeaser').then((m) => ({ default: m.BlogTeaser })))
+const LeadMagnet = lazy(() => import('@/components/sections/LeadMagnet').then((m) => ({ default: m.LeadMagnet })))
 
 export function HomePage() {
   const { open } = useQuoteModal()
@@ -50,9 +56,13 @@ export function HomePage() {
       <CoverageMap />
       <FeaturedProjects />
       <ProcessTimeline />
-      <LeadMagnet />
+      <Suspense fallback={null}>
+        <LeadMagnet />
+      </Suspense>
       <Testimonials />
-      <BlogTeaser />
+      <Suspense fallback={null}>
+        <BlogTeaser />
+      </Suspense>
       <Faq />
       <CtaBanner onRequestQuote={open} />
     </>
