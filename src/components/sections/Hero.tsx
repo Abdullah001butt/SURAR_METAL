@@ -8,9 +8,12 @@ import { WordReveal } from '@/components/ui/WordReveal'
 import { TypingText } from '@/components/ui/TypingText'
 import { Magnetic } from '@/components/ui/Magnetic'
 
-// Served from /public (not a Vite-hashed import) so it matches the exact URL
-// preloaded in index.html's <link rel="preload"> — see the comment there for why.
+// Served from /public (not a Vite-hashed import) so these match the exact
+// URLs preloaded in index.html's <link rel="preload"> — see the comment
+// there for why. Two sizes so mobile devices (the majority of traffic)
+// don't download a full 1920px desktop image for a ~412px-wide viewport.
 const heroImg = '/hero-bg.webp'
+const heroImgMobile = '/hero-bg-mobile.webp'
 
 // Three.js is a heavy chunk (~150KB+) — load it only for the visitors who'll
 // actually see it (desktop, via the lg:block wrapper below), never blocking
@@ -45,9 +48,15 @@ export function Hero({ onRequestQuote }: HeroProps) {
 
   return (
     <section ref={sectionRef} className="relative flex min-h-screen items-center overflow-hidden bg-navy pt-20">
-      <motion.div
-        className="absolute inset-0 bg-cover bg-center opacity-55 contrast-[1.08] saturate-[0.85]"
-        style={{ backgroundImage: `url(${heroImg})`, y: bgY, scale: bgScale }}
+      <motion.img
+        src={heroImg}
+        srcSet={`${heroImgMobile} 900w, ${heroImg} 1920w`}
+        sizes="100vw"
+        alt=""
+        fetchPriority="high"
+        loading="eager"
+        className="absolute inset-0 h-full w-full object-cover opacity-55 contrast-[1.08] saturate-[0.85]"
+        style={{ y: bgY, scale: bgScale }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/55 rtl:bg-gradient-to-l" />
       <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/50" />

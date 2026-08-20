@@ -22,11 +22,36 @@
          Hero section's background image and the actual LCP element on
          mobile; without this the CSR app can't request it until React has
          downloaded, parsed, and rendered, which measured ~10s LCP on mobile. -->
-    <link rel="preload" as="image" href="/hero-bg.webp" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="image"
+      href="/hero-bg.webp"
+      imagesrcset="/hero-bg-mobile.webp 900w, /hero-bg.webp 1920w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Tajawal:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Noto Sans SC (Chinese) is intentionally excluded here — it's a large
+         font family the vast majority of visitors never need, and is now
+         loaded on demand only for visitors who switch to Chinese (see
+         src/i18n/index.ts). Removing it from this base request cuts real
+         render-blocking weight off every page load. -->
+    <!-- Non-render-blocking load: the stylesheet fetches with low priority
+         (media="print" doesn't match screen, so it's non-blocking), then
+         swaps to media="all" once loaded. The <noscript> fallback covers
+         the (rare) case of JS being disabled. This is the standard pattern
+         for loading a render-blocking-by-default stylesheet asynchronously. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" />
+    </noscript>
     <title>Al Surur General Store Equipment Trading LLC | Warehouse Storage Solutions UAE</title>
 
     <!-- Google tag (gtag.js) — Google Ads AW-18383188650 + GA4 G-PL3VY31WDK.

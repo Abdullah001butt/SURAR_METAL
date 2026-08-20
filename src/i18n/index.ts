@@ -38,7 +38,27 @@ function applyDirection(lng: string) {
   document.documentElement.lang = lng
 }
 
-applyDirection(i18n.resolvedLanguage ?? i18n.language ?? 'en')
-i18n.on('languageChanged', applyDirection)
+// Noto Sans SC (Chinese) is a large font family that the overwhelming
+// majority of visitors (English/Arabic, UAE-based) never need — it was
+// previously loaded synchronously for everyone via the base <link> in
+// index.html, contributing real render-blocking weight to every page load.
+// Load it only for the visitors who actually switch to Chinese.
+let zhFontLoaded = false
+function ensureZhFont(lng: string) {
+  if (lng !== 'zh' || zhFontLoaded) return
+  zhFontLoaded = true
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap'
+  document.head.appendChild(link)
+}
+
+const initialLng = i18n.resolvedLanguage ?? i18n.language ?? 'en'
+applyDirection(initialLng)
+ensureZhFont(initialLng)
+i18n.on('languageChanged', (lng) => {
+  applyDirection(lng)
+  ensureZhFont(lng)
+})
 
 export default i18n
