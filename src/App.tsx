@@ -5,8 +5,10 @@ import { Layout } from '@/components/layout/Layout'
 import { ScrollToTop } from '@/components/layout/ScrollToTop'
 import { AuthGuard } from '@/admin/components/AuthGuard'
 import logo from '@/assets/logo.png'
-
-const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })))
+// Loaded eagerly, not lazily — this is the landing page for most real visitors
+// (organic search, every paid ad click), so it should never pay a lazy-load
+// waterfall penalty the way secondary pages reasonably can.
+import { HomePage } from '@/pages/HomePage'
 const ProductsPage = lazy(() => import('@/pages/ProductsPage').then((m) => ({ default: m.ProductsPage })))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage })))
 const IndustriesPage = lazy(() => import('@/pages/IndustriesPage').then((m) => ({ default: m.IndustriesPage })))
