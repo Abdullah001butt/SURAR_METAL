@@ -1,27 +1,38 @@
 import { useEffect, useState } from 'react'
 
-/** Whether the page has scrolled past `threshold` px. Polls via requestAnimationFrame
- *  instead of the native 'scroll' event — Lenis (smooth-scroll) doesn't reliably fire
- *  native scroll events on `window` while it's animating, which silently broke every
- *  scroll-gated UI element (Back to Top, the WhatsApp button) that used to listen for it. */
+/** Whether the page has scrolled past `threshold` px. Listens for the native
+ *  'scroll' event (passive, rAF-throttled) rather than continuously polling —
+ *  this codebase has no smooth-scroll library (no Lenis or similar) that would
+ *  suppress native scroll events, so there's no need to pay for an always-on
+ *  animation-frame loop on every page just to catch scroll position changes
+ *  that, in practice, only happen while the user is actually scrolling. */
 export function useScrollPast(threshold: number): boolean {
   const [past, setPast] = useState(false)
 
   useEffect(() => {
-    let raf: number
-    let lastState = false
+    let raf = 0
+    let lastState = window.scrollY > threshold
+    setPast(lastState)
 
-    const tick = () => {
+    const check = () => {
+      raf = 0
       const isPast = window.scrollY > threshold
       if (isPast !== lastState) {
         lastState = isPast
         setPast(isPast)
       }
-      raf = requestAnimationFrame(tick)
     }
 
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(check)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [threshold])
 
   return past
