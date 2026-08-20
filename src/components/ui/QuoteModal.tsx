@@ -8,7 +8,7 @@ import { X, Send, Sparkles, AlertCircle, ArrowRight, ArrowLeft, Check } from 'lu
 import { Button } from '@/components/ui/Button'
 import { ConfettiBurst } from '@/components/ui/ConfettiBurst'
 import { productCategories } from '@/data/products'
-import { submitQuoteRequest } from '@/services/leads'
+import { saveAbandonedQuoteDraft, submitQuoteRequest } from '@/services/leads'
 import { cn } from '@/utils/cn'
 
 interface QuoteModalProps {
@@ -78,6 +78,18 @@ export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalPro
   }
 
   const handleClose = () => {
+    if (!success) {
+      const values = watch()
+      saveAbandonedQuoteDraft({
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        company: values.company,
+        productInterest: values.productInterest,
+        message: values.message,
+        stepReached: step,
+      })
+    }
     onClose()
     setSubmitError(null)
     setTimeout(() => {

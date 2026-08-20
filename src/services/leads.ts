@@ -80,6 +80,42 @@ export async function submitLeadMagnetRequest(data: LeadMagnetSubmission) {
   fireQuoteConversion()
 }
 
+interface AbandonedQuoteDraft {
+  name?: string
+  email?: string
+  phone?: string
+  company?: string
+  productInterest?: string
+  message?: string
+  stepReached: string
+}
+
+// Captures whatever the visitor typed into the quote wizard if they close it
+// without submitting — but only when there's actually enough to follow up on
+// (a name plus a phone or email), so this doesn't fill up with people who
+// opened the modal and immediately closed it. Fire-and-forget: never blocks
+// or interrupts the close action, and a failure here is silently swallowed
+// since losing a partial-lead capture is not worth showing the visitor an
+// error for something they didn't ask to happen.
+export async function saveAbandonedQuoteDraft(data: AbandonedQuoteDraft) {
+  if (!isSupabaseConfigured) return
+  if (!data.name || !(data.phone || data.email)) return
+
+  try {
+    await supabase.from('abandoned_quotes').insert({
+      name: data.name,
+      email: data.email || null,
+      phone: data.phone || null,
+      company: data.company || null,
+      product_interest: data.productInterest || null,
+      message: data.message || null,
+      step_reached: data.stepReached,
+    })
+  } catch {
+    // Best-effort only — never surface this to the visitor.
+  }
+}
+
 export async function submitContactMessage(data: ContactSubmission) {
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured yet.')

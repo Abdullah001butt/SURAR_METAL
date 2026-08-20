@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun, BookOpen, ClipboardCheck, Receipt, Landmark, PieChart, PhoneCall, Settings, Wallet } from 'lucide-react'
+import { LayoutDashboard, Inbox, FileText, Users, Package, LogOut, BarChart3, Menu, X, Newspaper, Briefcase, Kanban, Moon, Sun, BookOpen, ClipboardCheck, Receipt, Landmark, PieChart, PhoneCall, Settings, Wallet, UserX } from 'lucide-react'
 import { useAdminAuth } from '@/admin/hooks/useAdminAuth'
 import { useTheme } from '@/admin/hooks/useTheme'
 import { GlobalSearch } from '@/admin/components/GlobalSearch'
@@ -12,6 +12,7 @@ import logo from '@/assets/logo.png'
 const navItems = [
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/dashboard/leads', label: 'Leads', icon: Inbox },
+  { to: '/dashboard/abandoned-quotes', label: 'Abandoned Quotes', icon: UserX },
   { to: '/dashboard/pipeline', label: 'Sales Pipeline', icon: Kanban },
   { to: '/dashboard/call-tracker', label: 'Call Tracker', icon: PhoneCall },
   { to: '/dashboard/documents', label: 'Documents', icon: FileText },

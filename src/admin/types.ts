@@ -110,6 +110,21 @@ export interface QuoteRequest {
   created_at: string
 }
 
+export interface AbandonedQuote {
+  id: number
+  name: string | null
+  email: string | null
+  phone: string | null
+  company: string | null
+  product_interest: string | null
+  message: string | null
+  step_reached: string
+  contacted: boolean
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface ContactMessage {
   id: number
   name: string

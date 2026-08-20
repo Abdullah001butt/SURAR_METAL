@@ -22,6 +22,7 @@ const LoginPage = lazy(() => import('@/admin/pages/LoginPage').then((m) => ({ de
 const AdminLayout = lazy(() => import('@/admin/components/AdminLayout').then((m) => ({ default: m.AdminLayout })))
 const OverviewPage = lazy(() => import('@/admin/pages/OverviewPage').then((m) => ({ default: m.OverviewPage })))
 const LeadsPage = lazy(() => import('@/admin/pages/LeadsPage').then((m) => ({ default: m.LeadsPage })))
+const AbandonedQuotesPage = lazy(() => import('@/admin/pages/AbandonedQuotesPage').then((m) => ({ default: m.AbandonedQuotesPage })))
 const CustomersPage = lazy(() => import('@/admin/pages/CustomersPage').then((m) => ({ default: m.CustomersPage })))
 const CustomerDetailPage = lazy(() => import('@/admin/pages/CustomerDetailPage').then((m) => ({ default: m.CustomerDetailPage })))
 const ProductCatalogPage = lazy(() => import('@/admin/pages/ProductCatalogPage').then((m) => ({ default: m.ProductCatalogPage })))
@@ -77,6 +78,7 @@ function App() {
             >
               <Route index element={<OverviewPage />} />
               <Route path="leads" element={<LeadsPage />} />
+              <Route path="abandoned-quotes" element={<AbandonedQuotesPage />} />
               <Route path="customers" element={<CustomersPage />} />
               <Route path="customers/:id" element={<CustomerDetailPage />} />
               <Route path="products" element={<ProductCatalogPage />} />
