@@ -90,6 +90,22 @@ interface AbandonedQuoteDraft {
   stepReached: string
 }
 
+function isWorthSaving(data: AbandonedQuoteDraft) {
+  return Boolean(data.name && (data.phone || data.email))
+}
+
+function abandonedQuotePayload(data: AbandonedQuoteDraft) {
+  return {
+    name: data.name,
+    email: data.email || null,
+    phone: data.phone || null,
+    company: data.company || null,
+    product_interest: data.productInterest || null,
+    message: data.message || null,
+    step_reached: data.stepReached,
+  }
+}
+
 // Captures whatever the visitor typed into the quote wizard if they close it
 // without submitting — but only when there's actually enough to follow up on
 // (a name plus a phone or email), so this doesn't fill up with people who
@@ -99,20 +115,35 @@ interface AbandonedQuoteDraft {
 // error for something they didn't ask to happen.
 export async function saveAbandonedQuoteDraft(data: AbandonedQuoteDraft) {
   if (!isSupabaseConfigured) return
-  if (!data.name || !(data.phone || data.email)) return
+  if (!isWorthSaving(data)) return
 
   try {
-    await supabase.from('abandoned_quotes').insert({
-      name: data.name,
-      email: data.email || null,
-      phone: data.phone || null,
-      company: data.company || null,
-      product_interest: data.productInterest || null,
-      message: data.message || null,
-      step_reached: data.stepReached,
-    })
+    await supabase.from('abandoned_quotes').insert(abandonedQuotePayload(data))
   } catch {
     // Best-effort only — never surface this to the visitor.
+  }
+}
+
+// Covers the case saveAbandonedQuoteDraft can't: the visitor closing the
+// browser tab or navigating away entirely, rather than clicking the modal's
+// close button. A normal fetch() call gets cancelled the instant the page
+// starts unloading — navigator.sendBeacon is the browser API built
+// specifically to survive that, queuing the request to complete even after
+// the page is gone. Its real limitation: it can't set custom headers, so the
+// anon key goes in the URL query string (confirmed this works against
+// Supabase's REST API) instead of the usual Authorization header the
+// Supabase JS client uses.
+export function sendAbandonedQuoteBeacon(data: AbandonedQuoteDraft) {
+  if (!isSupabaseConfigured) return
+  if (!isWorthSaving(data)) return
+  if (typeof navigator === 'undefined' || !navigator.sendBeacon) return
+
+  try {
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/abandoned_quotes?apikey=${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+    const blob = new Blob([JSON.stringify(abandonedQuotePayload(data))], { type: 'application/json' })
+    navigator.sendBeacon(url, blob)
+  } catch {
+    // Best-effort only.
   }
 }
 

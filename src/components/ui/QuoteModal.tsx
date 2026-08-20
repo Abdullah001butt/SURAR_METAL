@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,7 +8,7 @@ import { X, Send, Sparkles, AlertCircle, ArrowRight, ArrowLeft, Check } from 'lu
 import { Button } from '@/components/ui/Button'
 import { ConfettiBurst } from '@/components/ui/ConfettiBurst'
 import { productCategories } from '@/data/products'
-import { saveAbandonedQuoteDraft, submitQuoteRequest } from '@/services/leads'
+import { saveAbandonedQuoteDraft, sendAbandonedQuoteBeacon, submitQuoteRequest } from '@/services/leads'
 import { cn } from '@/utils/cn'
 
 interface QuoteModalProps {
@@ -53,6 +53,32 @@ export function QuoteModal({ open, onClose, variant = 'default' }: QuoteModalPro
   } = useForm<QuoteFormValues>({ resolver: zodResolver(quoteSchema) })
 
   const selectedProduct = watch('productInterest')
+
+  // Covers closing the browser tab / navigating away entirely, which never
+  // fires handleClose. Refs (not state) so the listener always reads the
+  // latest values without needing to re-attach on every keystroke.
+  const successRef = useRef(success)
+  successRef.current = success
+  const stepRef = useRef(step)
+  stepRef.current = step
+  useEffect(() => {
+    if (!open) return
+    const onPageHide = () => {
+      if (successRef.current) return
+      const values = watch()
+      sendAbandonedQuoteBeacon({
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        company: values.company,
+        productInterest: values.productInterest,
+        message: values.message,
+        stepReached: stepRef.current,
+      })
+    }
+    window.addEventListener('pagehide', onPageHide)
+    return () => window.removeEventListener('pagehide', onPageHide)
+  }, [open, watch])
 
   const fieldsPerStep: Record<Step, (keyof QuoteFormValues)[]> = {
     product: ['productInterest'],
