@@ -16,6 +16,14 @@
     <meta property="og:image" content="https://www.alsururmetals.com/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Static, unhashed path (not a Vite-processed asset) so the browser's
+         preload scanner can start fetching this the instant it parses this
+         HTML — in parallel with the JS bundle, not after it. This is the
+         Hero section's background image and the actual LCP element on
+         mobile; without this the CSR app can't request it until React has
+         downloaded, parsed, and rendered, which measured ~10s LCP on mobile. -->
+    <link rel="preload" as="image" href="/hero-bg.webp" fetchpriority="high" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Tajawal:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />

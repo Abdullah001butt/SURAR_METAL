@@ -7,7 +7,10 @@ import { Button } from '@/components/ui/Button'
 import { WordReveal } from '@/components/ui/WordReveal'
 import { TypingText } from '@/components/ui/TypingText'
 import { Magnetic } from '@/components/ui/Magnetic'
-import heroImg from '@/assets/images/warehouse-hero.webp'
+
+// Served from /public (not a Vite-hashed import) so it matches the exact URL
+// preloaded in index.html's <link rel="preload"> — see the comment there for why.
+const heroImg = '/hero-bg.webp'
 
 // Three.js is a heavy chunk (~150KB+) — load it only for the visitors who'll
 // actually see it (desktop, via the lg:block wrapper below), never blocking
